@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Today -->
+    <string name="today_title">Today</string>
+    <string name="today_settings">Settings</string>
+    <string name="today_ring_description">%1$d of %2$d anchors logged</string>
+    <string name="today_headline_empty">Ready when you are</string>
+    <string name="today_headline_partial">Steady so far</string>
+    <string name="today_headline_done">Everything logged</string>
+    <string name="today_subtitle_empty">Tap an anchor when it happens.</string>
+    <string name="today_subtitle_partial">%1$d of %2$d logged today.</string>
+    <string name="today_subtitle_done">A steady day.</string>
+    <string name="today_action_log">Log</string>
+    <string name="today_action_start_routine">Start routine</string>
+    <string name="today_log_anchor_label">Log %1$s</string>
+    <string name="today_target_time">~%1$s</string>
+    <string name="today_status_logged">Logged at %1$s</string>
+    <string name="today_status_pending_with_target">Not logged yet, usually around %1$s</string>
+    <string name="today_status_pending">Not logged yet</string>
+    <string name="today_snackbar_logged">%1$s logged at %2$s</string>
+    <string name="today_snackbar_undo">Undo</string>
+    <string name="today_running_banner">%1$s is running</string>
+    <string name="today_running_open">Open</string>
+    <string name="today_routine_unavailable">That routine isn\'t available.</string>
+
+    <!-- Rhythm -->
+    <string name="rhythm_week_label">This week</string>
+    <string name="rhythm_title">Rhythm</string>
+    <string name="rhythm_settings">Settings</string>
+    <string name="rhythm_consistency_label">Consistency</string>
+    <string name="rhythm_consistency_caption">Logs within %1$d minutes of your usual time</string>
+    <string name="rhythm_percent">%1$d%%</string>
+    <string name="rhythm_early_title">Not enough days yet</string>
+    <string name="rhythm_early_body">Log your anchors on three different days to see your rhythm. You have logged on %1$d of %2$d.</string>
+    <string name="rhythm_building_title">Almost there</string>
+    <string name="rhythm_building_body">Keep logging. Each anchor needs three logs before it can be scored.</string>
+    <string name="rhythm_drift_label">Wake drift</string>
+    <string name="rhythm_steadiest_label">Steadiest anchor</string>
+    <string name="rhythm_value_none">Not yet</string>
+    <plurals name="rhythm_minutes">
+        <item quantity="one">%1$d minute</item>
+        <item quantity="other">%1$d minutes</item>
+    </plurals>
+    <string name="rhythm_day_description">%1$s, %2$d percent</string>
+    <string name="rhythm_day_no_data">%1$s, no data</string>
+
+    <!-- List -->
+    <string name="routines_title">Routines</string>
+    <string name="routines_settings">Settings</string>
+    <string name="routines_new">New routine</string>
+    <string name="routines_start">Start</string>
+    <string name="routines_open_label">Open %1$s</string>
+    <string name="routines_empty_title">No routines yet</string>
+    <string name="routines_empty_body">Create a routine to guide a stretch, a warm-up, or a wind-down.</string>
+    <string name="routines_unavailable">That routine isn\'t available.</string>
+
+    <!-- Shared formatting -->
+    <string name="routines_duration_min">%1$d min</string>
+    <string name="routines_duration_sec">%1$d sec</string>
+    <string name="routines_duration_min_sec">%1$d min %2$d sec</string>
+    <plurals name="routines_steps">
+        <item quantity="one">%1$d step</item>
+        <item quantity="other">%1$d steps</item>
+    </plurals>
+    <string name="routines_starts_anchor">Starts %1$s</string>
+    <string name="routines_logs_anchor">Logs %1$s when you start</string>
+
+    <!-- Detail -->
+    <string name="detail_back">Routines</string>
+    <string name="detail_start">Start</string>
+    <string name="detail_edit">Edit</string>
+    <string name="detail_delete">Delete routine</string>
+    <string name="detail_delete_title">Delete this routine?</string>
+    <string name="detail_delete_body">%1$s will be removed. Runs you have already done stay in your history.</string>
+    <string name="detail_delete_confirm">Delete</string>
+    <string name="detail_cancel">Cancel</string>
+    <string name="detail_not_found_title">This routine is gone</string>
+    <string name="detail_not_found_body">It may have been deleted.</string>
+    <string name="detail_step_description">Step %1$d, %2$s, %3$s</string>
+
+    <!-- Editor -->
+    <string name="editor_title_new">New routine</string>
+    <string name="editor_title_edit">Edit routine</string>
+    <string name="editor_cancel">Cancel</string>
+    <string name="editor_save">Save</string>
+    <string name="editor_name_label">Name</string>
+    <string name="editor_anchor_label">Starts anchor</string>
+    <string name="editor_anchor_none">None</string>
+    <string name="editor_anchor_change">Choose anchor</string>
+    <string name="editor_steps_heading">Steps</string>
+    <string name="editor_add_step">Add step</string>
+    <string name="editor_hint">Changes apply to your next run.</string>
+    <string name="editor_edit_step_label">Edit %1$s</string>
+    <string name="editor_move_up">Move %1$s up</string>
+    <string name="editor_move_down">Move %1$s down</string>
+    <string name="editor_step_sheet_new">New step</string>
+    <string name="editor_step_sheet_edit">Edit step</string>
+    <string name="editor_step_title">Step name</string>
+    <string name="editor_step_minutes">Minutes</string>
+    <string name="editor_step_seconds">Seconds</string>
+    <string name="editor_step_instruction">Instruction (optional)</string>
+    <string name="editor_step_done">Done</string>
+    <string name="editor_step_delete">Delete step</string>
+    <string name="editor_anchor_sheet_title">Starts anchor</string>
+    <string name="editor_anchor_sheet_body">Starting this routine logs the anchor for you.</string>
+    <string name="editor_discard_title">Discard changes?</string>
+    <string name="editor_discard_body">Your changes to this routine will be lost.</string>
+    <string name="editor_discard_confirm">Discard</string>
+    <string name="editor_keep_editing">Keep editing</string>
+
+    <!-- Editor validation -->
+    <string name="editor_issue_name_blank">Give the routine a name.</string>
+    <string name="editor_issue_name_too_long">Use %1$d characters or fewer.</string>
+    <string name="editor_issue_no_steps">Add at least one step.</string>
+    <string name="editor_issue_too_many_steps">Use %1$d steps or fewer.</string>
+    <string name="editor_issue_total_too_long">A routine can be %1$d hours long at most.</string>
+    <string name="editor_issue_steps_invalid">Check the steps.</string>
+    <string name="editor_step_error_title">Give the step a name.</string>
+    <string name="editor_step_error_short">Use at least %1$d seconds.</string>
+    <string name="editor_step_error_long">Use %1$d minutes at most.</string>
+
+    <!-- Player -->
+    <string name="player_stop">Stop</string>
+    <string name="player_step_counter">Step %1$d of %2$d</string>
+    <string name="player_now">Now</string>
+    <string name="player_paused">Paused</string>
+    <string name="player_next">Next: %1$s</string>
+    <string name="player_last_step">Last step</string>
+    <string name="player_pause">Pause</string>
+    <string name="player_resume">Resume</string>
+    <string name="player_skip">Skip</string>
+    <string name="player_finish">Finish</string>
+    <string name="player_stop_title">Stop this routine?</string>
+    <string name="player_stop_body">Your progress is saved as stopped early.</string>
+    <string name="player_stop_confirm">Stop</string>
+    <string name="player_keep_going">Keep going</string>
+
+    <!-- Summary -->
+    <string name="summary_title_done">%1$s done</string>
+    <string name="summary_title_stopped">%1$s stopped</string>
+    <string name="summary_steps">%1$d of %2$d steps</string>
+    <string name="summary_steps_skipped">%1$d of %2$d steps, %3$d skipped</string>
+    <string name="summary_steps_stopped">%1$d of %2$d steps before you stopped</string>
+    <string name="summary_duration">Duration</string>
+    <string name="summary_started">Started</string>
+    <string name="summary_done">Done</string>
+    <string name="summary_not_found_title">No summary to show</string>
+    <string name="summary_not_found_body">This run could not be found.</string>
+</resources>

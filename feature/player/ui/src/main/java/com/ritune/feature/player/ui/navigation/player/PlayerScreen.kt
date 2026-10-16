@@ -1,4 +1,4 @@
-package com.ritune.feature.today.ui.navigation.player
+package com.ritune.feature.player.ui.navigation.player
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,36 +31,36 @@ import com.ritune.core.designsystem.theme.Ritune
 
 @Composable
 fun PlayerScreen(
-    viewModel: PlayerViewModel,
+//    viewModel: PlayerViewModel,
     onFinished: (runId: String) -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
-    LaunchedEffect(viewModel) {
-        viewModel.effects.collect { effect ->
-            when (effect) {
-                PlayerUiEffect.Close -> onClose()
-                is PlayerUiEffect.RunFinished -> onFinished(effect.runId)
-            }
-        }
-    }
-
-    // The user opened this screen on purpose to watch the timer.
-    // The routine itself keeps running with the screen off, so this only stops the display
-    // sleeping while the player is visible.
-    val view = LocalView.current
-    DisposableEffect(view) {
-        view.keepScreenOn = true
-        onDispose { view.keepScreenOn = false }
-    }
-
-    PlayerContent(
-        state = state,
-        onEvent = viewModel::onEvent,
-        modifier = modifier
-    )
+//    val state by viewModel.state.collectAsStateWithLifecycle()
+//
+//    LaunchedEffect(viewModel) {
+//        viewModel.effects.collect { effect ->
+//            when (effect) {
+//                PlayerUiEffect.Close -> onClose()
+//                is PlayerUiEffect.RunFinished -> onFinished(effect.runId)
+//            }
+//        }
+//    }
+//
+//    // The user opened this screen on purpose to watch the timer.
+//    // The routine itself keeps running with the screen off, so this only stops the display
+//    // sleeping while the player is visible.
+//    val view = LocalView.current
+//    DisposableEffect(view) {
+//        view.keepScreenOn = true
+//        onDispose { view.keepScreenOn = false }
+//    }
+//
+//    PlayerContent(
+//        state = state,
+//        onEvent = viewModel::onEvent,
+//        modifier = modifier
+//    )
 }
 
 @Composable

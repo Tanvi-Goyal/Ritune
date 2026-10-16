@@ -1,4 +1,4 @@
-package com.ritune.feature.today.ui.navigation
+package com.ritune.feature.player.ui.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -6,10 +6,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
-import com.ritune.feature.today.ui.navigation.player.PlayerScreen
-import com.ritune.feature.today.ui.navigation.player.PlayerViewModel
-import com.ritune.feature.today.ui.navigation.summary.SummaryScreen
-import com.ritune.feature.today.ui.navigation.summary.SummaryViewModel
+import com.ritune.feature.player.ui.navigation.player.PlayerScreen
+import com.ritune.feature.player.ui.navigation.summary.SummaryScreen
+import com.ritune.feature.player.ui.navigation.summary.SummaryViewModel
 import kotlinx.serialization.Serializable
 
 /**
@@ -31,19 +30,19 @@ fun NavGraphBuilder.playerGraph(
 ) {
     composable<PlayerRoute>(
         deepLinks = listOf(
-            navDeepLink<PlayerRoute>(basePath = "")
+//            navDeepLink<PlayerRoute>(basePath = "")
         )
     ) {
-        val viewModel: PlayerViewModel = hiltViewModel()
+//        val viewModel: PlayerViewModel = hiltViewModel()
         PlayerScreen(
-            viewModel = viewModel,
+//            viewModel = viewModel,
             onFinished = onFinished,
             onClose = onClose
         )
     }
     composable<SummaryRoute>(
         deepLinks = listOf(
-            navDeepLink<SummaryRoute>(basePath = "")
+//            navDeepLink<SummaryRoute>(basePath = "")
         )
     ) {
         val viewModel: SummaryViewModel = hiltViewModel()

@@ -1,4 +1,4 @@
-package com.ritune.feature.today.ui.navigation.summary
+package com.ritune.feature.player.ui.navigation.summary
 
 import kotlin.time.Duration
 import kotlin.time.Instant

@@ -1,4 +1,4 @@
-package com.ritune.feature.today.ui.navigation
+package com.ritune.feature.player.ui.navigation
 
 import android.os.Build
 import android.text.format.DateFormat
@@ -32,4 +32,3 @@ internal fun rememberTimeOfDayFormatter(): (Instant) -> String {
         format
     }
 }
-

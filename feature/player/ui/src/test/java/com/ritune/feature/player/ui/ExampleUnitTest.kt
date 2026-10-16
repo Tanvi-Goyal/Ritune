@@ -1,4 +1,4 @@
-package com.ritune.feature.today.ui
+package com.ritune.feature.player.ui
 
 import org.junit.Test
 

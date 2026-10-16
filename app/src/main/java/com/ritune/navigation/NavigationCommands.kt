@@ -3,8 +3,8 @@ package com.ritune.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.ritune.feature.onboarding.ui.navigation.OnboardingRoute
-import com.ritune.feature.today.ui.navigation.PlayerRoute
-import com.ritune.feature.today.ui.navigation.SummaryRoute
+import com.ritune.feature.player.ui.navigation.PlayerRoute
+import com.ritune.feature.player.ui.navigation.SummaryRoute
 import com.ritune.feature.today.ui.navigation.TodayRoute
 
 fun NavController.navigateToTopLevel(topLevelDestination: TopLevelDestination) {

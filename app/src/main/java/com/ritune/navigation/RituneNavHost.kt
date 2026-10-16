@@ -14,7 +14,7 @@ import com.ritune.core.designsystem.theme.rituneTween
 import com.ritune.feature.onboarding.ui.navigation.onboardingScreen
 import com.ritune.feature.rhythm.ui.navigation.rhythmScreen
 import com.ritune.feature.routine.ui.navigation.routinesGraph
-import com.ritune.feature.today.ui.navigation.playerGraph
+import com.ritune.feature.player.ui.navigation.playerGraph
 import com.ritune.feature.today.ui.navigation.todayScreen
 
 @RequiresApi(Build.VERSION_CODES.O)

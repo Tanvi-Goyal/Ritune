@@ -1,4 +1,4 @@
-package com.ritune.feature.today.ui.navigation.summary
+package com.ritune.feature.player.ui.navigation.summary
 
 import android.os.Build
 import androidx.activity.compose.BackHandler
@@ -38,7 +38,7 @@ import com.ritune.core.designsystem.components.PrimaryButton
 import com.ritune.core.designsystem.components.RituneCard
 import com.ritune.core.designsystem.components.formatTimer
 import com.ritune.core.designsystem.theme.Ritune
-import com.ritune.feature.today.ui.navigation.rememberTimeOfDayFormatter
+import com.ritune.feature.player.ui.navigation.rememberTimeOfDayFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -47,24 +47,24 @@ fun SummaryScreen(
     onDone: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
-    LaunchedEffect(viewModel) {
-        viewModel.effects.collect { effect ->
-            when (effect) {
-                SummaryUiEffect.Close -> onDone()
-            }
-        }
-    }
-    BackHandler {
-        viewModel.onEvent(SummaryUiEvent.Done)
-    }
-
-    SummaryContent(
-        state = state,
-        onEvent = viewModel::onEvent,
-        modifier = modifier
-    )
+//    val state by viewModel.state.collectAsStateWithLifecycle()
+//
+//    LaunchedEffect(viewModel) {
+//        viewModel.effects.collect { effect ->
+//            when (effect) {
+//                SummaryUiEffect.Close -> onDone()
+//            }
+//        }
+//    }
+//    BackHandler {
+//        viewModel.onEvent(SummaryUiEvent.Done)
+//    }
+//
+//    SummaryContent(
+//        state = state,
+//        onEvent = viewModel::onEvent,
+//        modifier = modifier
+//    )
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

@@ -47,24 +47,24 @@ fun SummaryScreen(
     onDone: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-//    val state by viewModel.state.collectAsStateWithLifecycle()
-//
-//    LaunchedEffect(viewModel) {
-//        viewModel.effects.collect { effect ->
-//            when (effect) {
-//                SummaryUiEffect.Close -> onDone()
-//            }
-//        }
-//    }
-//    BackHandler {
-//        viewModel.onEvent(SummaryUiEvent.Done)
-//    }
-//
-//    SummaryContent(
-//        state = state,
-//        onEvent = viewModel::onEvent,
-//        modifier = modifier
-//    )
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel) {
+        viewModel.effects.collect { effect ->
+            when (effect) {
+                SummaryUiEffect.Close -> onDone()
+            }
+        }
+    }
+    BackHandler {
+        viewModel.onEvent(SummaryUiEvent.Done)
+    }
+
+    SummaryContent(
+        state = state,
+        onEvent = viewModel::onEvent,
+        modifier = modifier
+    )
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

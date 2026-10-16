@@ -1,10 +1,14 @@
 package com.ritune.core.data.repositoriesImpl
 
 import com.ritune.core.data.mapper.toEntity
-import com.ritune.core.domain.repositories.RunHistoryRepository
+import com.ritune.core.data.mapper.toModel
 import com.ritune.core.database.dao.RoutineDao
 import com.ritune.core.database.dao.RunDao
+import com.ritune.core.domain.repositories.RunHistoryRepository
+import com.ritune.core.models.RunId
 import com.ritune.core.models.RunSummary
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class RunHistoryRepositoryImpl @Inject constructor(
@@ -14,5 +18,10 @@ class RunHistoryRepositoryImpl @Inject constructor(
     override suspend fun save(summary: RunSummary) {
         val name = routines.nameOf(summary.routineId.id).orEmpty()
         runs.save(summary.toEntity(routineName = name))
+    }
+
+    override fun observe(runId: RunId): Flow<RunSummary?> {
+        val run = runs.observe(runId.id)
+        return run.map { it?.toModel() }
     }
 }

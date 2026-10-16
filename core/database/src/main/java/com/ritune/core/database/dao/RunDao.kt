@@ -17,4 +17,7 @@ interface RunDao {
 
     @Query("SELECT * FROM runs WHERE startedAt >= :fromMs ORDER BY startedAt DESC")
     fun observeSince(fromMs: Long): Flow<List<RunEntity>>
+
+    @Query("SELECT * FROM runs WHERE runId = :id")
+    fun observe(id: String): Flow<RunEntity?>
 }

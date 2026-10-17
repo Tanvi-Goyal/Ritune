@@ -9,22 +9,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 
 object RituneMotion {
-    const val ShortMs = 150
-    const val MediumMs = 200
+    const val SHORT_MS = 150
+    const val MEDIUM_MS = 200
 }
 
-/** True when the user turned animations off (system "Remove animations" sets the scale to 0). */
 @Composable
 fun rememberReducedMotion(): Boolean {
     val resolver = LocalContext.current.contentResolver
     return remember(resolver) {
-        Settings.Global.getFloat(resolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f
+        Settings.Global.getFloat(
+            resolver,
+            Settings.Global.ANIMATOR_DURATION_SCALE, 1f
+        ) == 0f
     }
 }
 
-/** Short tween, or an instant change when reduced motion is on. */
 fun <T> rituneTween(
     reducedMotion: Boolean,
-    durationMs: Int = RituneMotion.MediumMs
+    durationMs: Int = RituneMotion.MEDIUM_MS
 ): FiniteAnimationSpec<T> =
     if (reducedMotion) snap() else tween(durationMs)

@@ -1,6 +1,6 @@
 package com.ritune.core.data.repositoriesImpl
 
-import com.ritune.core.data.mapper.toAnchorEvent
+import com.ritune.core.data.mapper.toModel
 import com.ritune.core.data.mapper.toEntity
 import com.ritune.core.domain.repositories.AnchorEventRepository
 import com.ritune.core.database.dao.AnchorEventDao
@@ -18,20 +18,20 @@ class AnchorEventRepositoryImpl @Inject constructor(
 
     override fun observeBetween(from: Instant, to: Instant): Flow<List<AnchorEvent>> =
         dao.observeBetween(from.toEpochMilliseconds(), to.toEpochMilliseconds())
-            .map { rows -> rows.map { it.toAnchorEvent() } }
+            .map { rows -> rows.map { it.toModel() } }
 
     override suspend fun latest(anchorId: AnchorId): AnchorEvent? =
-        dao.latest(anchorId.id)?.toAnchorEvent()
+        dao.latest(anchorId.value)?.toModel()
 
     override suspend fun append(event: AnchorEvent) {
         dao.insert(event.toEntity())
     }
 
     override suspend fun remove(id: EventId) {
-        dao.delete(id.id)
+        dao.delete(id.value)
     }
 
     override suspend fun replace(id: EventId, event: AnchorEvent) {
-        dao.update(id.id, event.toEntity())
+        dao.update(id.value, event.toEntity())
     }
 }

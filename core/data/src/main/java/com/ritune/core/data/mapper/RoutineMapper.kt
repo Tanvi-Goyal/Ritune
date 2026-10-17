@@ -41,10 +41,13 @@ private fun StepCueEntity.toCueOrNull(): Cue? = when (type) {
     else -> null
 }
 
-internal fun Routine.toEntity(sortOrder: Int, builtIn: Boolean = this.builtIn) = RoutineEntity(
-    id = id.id,
+internal fun Routine.toEntity(
+    sortOrder: Int,
+    builtIn: Boolean = this.builtIn
+) = RoutineEntity(
+    id = id.value,
     name = name,
-    anchorId = anchorId?.id,
+    anchorId = anchorId?.value,
     sortOrder = sortOrder,
     builtIn = builtIn,
 )
@@ -52,8 +55,8 @@ internal fun Routine.toEntity(sortOrder: Int, builtIn: Boolean = this.builtIn) =
 internal fun Routine.toDrafts(): List<StepDraft> = steps.mapIndexed { index, step ->
     StepDraft(
         step = StepEntity(
-            routineId = id.id,
-            stepId = step.id.id,
+            routineId = id.value,
+            stepId = step.id.value,
             position = index,
             title = step.title,
             durationMs = step.duration.inWholeMilliseconds,

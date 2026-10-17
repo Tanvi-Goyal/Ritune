@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import com.ritune.core.designsystem.theme.rememberReducedMotion
 import com.ritune.core.designsystem.theme.rituneTween
 
-/** Progress ring with "done/total" in the centre. [description] is read by TalkBack, e.g. "3 of 5 anchors logged". */
 @Composable
 fun ConsistencyRing(
     done: Int,
@@ -52,10 +51,29 @@ fun ConsistencyRing(
             val stroke = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round)
             val inset = stroke.width / 2f
             val topLeft = Offset(inset, inset)
-            val arcSize = Size(this.size.width - stroke.width, this.size.height - stroke.width)
-            drawArc(color = track, startAngle = 0f, sweepAngle = 360f, useCenter = false, topLeft = topLeft, size = arcSize, style = stroke)
+            val arcSize = Size(
+                width = this.size.width - stroke.width,
+                height = this.size.height - stroke.width
+            )
+            drawArc(
+                color = track,
+                startAngle = 0f,
+                sweepAngle = 360f,
+                useCenter = false,
+                topLeft = topLeft,
+                size = arcSize,
+                style = stroke
+            )
             if (animated > 0f) {
-                drawArc(color = progress, startAngle = -90f, sweepAngle = 360f * animated, useCenter = false, topLeft = topLeft, size = arcSize, style = stroke)
+                drawArc(
+                    color = progress,
+                    startAngle = -90f,
+                    sweepAngle = 360f * animated,
+                    useCenter = false,
+                    topLeft = topLeft,
+                    size = arcSize,
+                    style = stroke
+                )
             }
         }
         Text(

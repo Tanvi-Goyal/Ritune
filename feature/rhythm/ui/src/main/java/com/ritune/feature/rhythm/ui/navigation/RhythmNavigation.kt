@@ -5,8 +5,8 @@ import androidx.annotation.RequiresApi
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.ritune.feature.rhythm.ui.navigation.screens.RhythmScreen
-import com.ritune.feature.rhythm.ui.navigation.screens.RhythmViewModel
+import com.ritune.feature.rhythm.ui.screens.RhythmScreen
+import com.ritune.feature.rhythm.ui.screens.RhythmViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable

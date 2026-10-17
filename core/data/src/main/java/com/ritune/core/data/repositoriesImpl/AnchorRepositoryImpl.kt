@@ -1,6 +1,6 @@
 package com.ritune.core.data.repositoriesImpl
 
-import com.ritune.core.data.mapper.toAnchor
+import com.ritune.core.data.mapper.toModel
 import com.ritune.core.domain.repositories.AnchorRepository
 import com.ritune.core.database.dao.AnchorDao
 import com.ritune.core.models.Anchor
@@ -16,12 +16,12 @@ class AnchorRepositoryImpl @Inject constructor(
 
     override fun observeAll(): Flow<List<Anchor>> {
         return dao.observeActiveAnchors().map { entities ->
-            entities.map { it.toAnchor() }
+            entities.map { it.toModel() }
         }
     }
 
     override suspend fun updateTarget(id: AnchorId, target: LocalTime?) =
-        dao.updateTarget(id.id, target?.toMinutes())
+        dao.updateTarget(id.value, target?.toMinutes())
 }
 
 private fun LocalTime?.toMinutes(): Int? {

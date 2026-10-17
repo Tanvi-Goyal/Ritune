@@ -16,12 +16,12 @@ class RunHistoryRepositoryImpl @Inject constructor(
     private val routines: RoutineDao
 ) : RunHistoryRepository {
     override suspend fun save(summary: RunSummary) {
-        val name = routines.nameOf(summary.routineId.id).orEmpty()
+        val name = routines.nameOf(summary.routineId.value).orEmpty()
         runs.save(summary.toEntity(routineName = name))
     }
 
     override fun observe(runId: RunId): Flow<RunSummary?> {
-        val run = runs.observe(runId.id)
+        val run = runs.observe(runId.value)
         return run.map { it?.toModel() }
     }
 }

@@ -7,7 +7,7 @@ import com.ritune.core.models.EventId
 import com.ritune.core.models.EventSource
 import kotlin.time.Instant
 
-internal fun AnchorEventEntity.toAnchorEvent() = AnchorEvent(
+internal fun AnchorEventEntity.toModel() = AnchorEvent(
     id = EventId(id),
     anchorId = AnchorId(anchorId),
     occurredAt = Instant.fromEpochMilliseconds(occurredAt),
@@ -16,8 +16,8 @@ internal fun AnchorEventEntity.toAnchorEvent() = AnchorEvent(
 )
 
 internal fun AnchorEvent.toEntity() = AnchorEventEntity(
-    id = id.id,
-    anchorId = anchorId.id,
+    id = id.value,
+    anchorId = anchorId.value,
     occurredAt = occurredAt.toEpochMilliseconds(),
     utcOffsetSeconds = utcOffsetSeconds,
     source = source.name,

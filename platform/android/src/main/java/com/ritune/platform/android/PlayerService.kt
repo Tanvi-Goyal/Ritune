@@ -12,7 +12,7 @@ import android.os.PowerManager
 import androidx.annotation.RequiresApi
 import androidx.core.app.ServiceCompat
 import com.ritune.core.domain.ports.PlayerController
-import com.ritune.core.models.PlayerState
+import com.ritune.core.models.player.PlayerState
 import com.ritune.core.models.RunOutcome
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope

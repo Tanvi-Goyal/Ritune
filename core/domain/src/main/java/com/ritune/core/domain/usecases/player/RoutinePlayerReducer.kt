@@ -1,13 +1,13 @@
 package com.ritune.core.domain.usecases.player
 
 import com.ritune.core.models.Moment
-import com.ritune.core.models.PlayerEffect
-import com.ritune.core.models.PlayerEvent
-import com.ritune.core.models.PlayerState
+import com.ritune.core.models.player.PlayerEffect
+import com.ritune.core.models.player.PlayerEvent
+import com.ritune.core.models.player.PlayerState
 import com.ritune.core.models.RunOutcome
 import com.ritune.core.models.RunSummary
 import com.ritune.core.models.Session
-import com.ritune.core.models.Transition
+import com.ritune.core.models.player.Transition
 import kotlin.time.Duration.Companion.milliseconds
 
 object RoutinePlayerReducer {

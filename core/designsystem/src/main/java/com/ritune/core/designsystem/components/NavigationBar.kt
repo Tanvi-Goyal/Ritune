@@ -25,15 +25,20 @@ fun RituneNavigationBar(
     val colors = MaterialTheme.colorScheme
     Column(modifier) {
         RituneDivider()
-        NavigationBar(containerColor = colors.surface, tonalElevation = 0.dp) {
+        NavigationBar(
+            containerColor = colors.surface,
+            tonalElevation = 0.dp
+        ) {
             items.forEachIndexed { index, item ->
                 NavigationBarItem(
                     selected = index == selectedIndex,
                     onClick = { onSelect(index) },
                     icon = {
-                        Icon(painterResource(item.iconRes), contentDescription = null) },
+                        Icon(painterResource(item.iconRes), contentDescription = null)
+                    },
                     label = {
-                        Text(item.label, style = MaterialTheme.typography.labelMedium) },
+                        Text(item.label, style = MaterialTheme.typography.labelMedium)
+                    },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = colors.onPrimaryContainer,
                         selectedTextColor = colors.primary,

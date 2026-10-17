@@ -7,8 +7,8 @@ import androidx.core.content.ContextCompat
 import com.ritune.core.domain.ports.PlayerController
 import com.ritune.core.domain.ports.RunRecorder
 import com.ritune.core.domain.ports.StartResult
-import com.ritune.core.models.PlayerEffect
-import com.ritune.core.models.PlayerState
+import com.ritune.core.models.player.PlayerEffect
+import com.ritune.core.models.player.PlayerState
 import com.ritune.core.models.Routine
 import com.ritune.platform.android.di.PlayerEngineScope
 import dagger.hilt.android.qualifiers.ApplicationContext

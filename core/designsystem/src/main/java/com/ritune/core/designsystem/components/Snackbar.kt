@@ -52,7 +52,6 @@ fun RituneSnackbar(
     }
 }
 
-/** Drop this where a Scaffold expects its snackbarHost. */
 @Composable
 fun RituneSnackbarHost(
     hostState: SnackbarHostState,

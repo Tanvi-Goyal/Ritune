@@ -2,13 +2,13 @@ package com.ritune.platform.android
 
 import com.ritune.core.domain.usecases.player.RoutinePlayerReducer
 import com.ritune.core.models.IdGenerator
-import com.ritune.core.models.PlayerEffect
-import com.ritune.core.models.PlayerEvent
-import com.ritune.core.models.PlayerState
+import com.ritune.core.models.player.PlayerEffect
+import com.ritune.core.models.player.PlayerEvent
+import com.ritune.core.models.player.PlayerState
 import com.ritune.core.models.Routine
 import com.ritune.core.models.RunId
 import com.ritune.core.models.Timekeeper
-import com.ritune.core.models.Transition
+import com.ritune.core.models.player.Transition
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

@@ -6,18 +6,6 @@ import com.ritune.core.models.RunId
 import com.ritune.core.models.RunSummary
 import kotlin.time.Instant
 
-internal fun RunSummary.toEntity(routineName: String) = RunEntity(
-    runId = runId.id,
-    routineId = routineId.id,
-    routineName = routineName,
-    startedAt = startedAt.toEpochMilliseconds(),
-    finishedAt = finishedAt.toEpochMilliseconds(),
-    outcome = outcome.name,
-    completedSteps = completedSteps,
-    skippedSteps = skippedSteps,
-    totalSteps = totalSteps,
-)
-
 fun RunEntity.toModel() = RunSummary(
     runId = RunId(runId),
     routineId = RoutineId(routineId),
@@ -27,4 +15,16 @@ fun RunEntity.toModel() = RunSummary(
     completedSteps = completedSteps,
     skippedSteps = skippedSteps,
     totalSteps = totalSteps
+)
+
+internal fun RunSummary.toEntity(routineName: String) = RunEntity(
+    runId = runId.value,
+    routineId = routineId.value,
+    routineName = routineName,
+    startedAt = startedAt.toEpochMilliseconds(),
+    finishedAt = finishedAt.toEpochMilliseconds(),
+    outcome = outcome.name,
+    completedSteps = completedSteps,
+    skippedSteps = skippedSteps,
+    totalSteps = totalSteps,
 )

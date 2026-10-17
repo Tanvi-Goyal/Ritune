@@ -11,7 +11,7 @@ import android.os.SystemClock
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
-import com.ritune.core.models.PlayerState
+import com.ritune.core.models.player.PlayerState
 import com.ritune.core.models.RunSummary
 import com.ritune.core.models.Session
 import com.ritune.core.navigation.DeepLinks
@@ -113,7 +113,7 @@ class PlayerNotifications @Inject constructor(
             .setCategory(NotificationCompat.CATEGORY_STATUS)
             .setContentIntent(
                 open(
-                    "${DeepLinks.SUMMARY}/${summary.runId.id}",
+                    "${DeepLinks.SUMMARY}/${summary.runId.value}",
                     requestCode = 2
                 )
             )

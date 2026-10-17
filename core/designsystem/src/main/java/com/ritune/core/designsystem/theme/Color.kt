@@ -7,13 +7,8 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-// Mirrors design/tokens.json. Screens and components never use these hex values directly:
-// read MaterialTheme.colorScheme and Ritune.extras so light and dark both work.
-
-/** Roles Material 3 has no slot for. */
 @Immutable
 data class RituneExtras(
-    /** In-progress fill: the current step segment, secondary chart bars. */
     val accentMid: Color,
 )
 
@@ -21,8 +16,6 @@ internal val LightExtras = RituneExtras(accentMid = Color(0xFF7DBFA9))
 internal val DarkExtras = RituneExtras(accentMid = Color(0xFF2F8F75))
 internal val LocalRituneExtras = staticCompositionLocalOf { LightExtras }
 
-// Secondary and tertiary roles reuse the accent on purpose: Ritune has one accent colour.
-// outline is the off-switch track and control borders (3:1 against surface); outlineVariant is the hairline.
 internal val LightColorScheme: ColorScheme = lightColorScheme(
     primary = Color(0xFF0F6E56),
     onPrimary = Color(0xFFFFFFFF),

@@ -7,10 +7,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import com.ritune.core.navigation.DeepLinks
-import com.ritune.feature.player.ui.navigation.player.PlayerScreen
-import com.ritune.feature.player.ui.navigation.player.PlayerViewModel
-import com.ritune.feature.player.ui.navigation.summary.SummaryScreen
-import com.ritune.feature.player.ui.navigation.summary.SummaryViewModel
+import com.ritune.feature.player.ui.screens.player.PlayerScreen
+import com.ritune.feature.player.ui.screens.player.PlayerViewModel
+import com.ritune.feature.player.ui.screens.summary.SummaryScreen
+import com.ritune.feature.player.ui.screens.summary.SummaryViewModel
 import kotlinx.serialization.Serializable
 
 /**

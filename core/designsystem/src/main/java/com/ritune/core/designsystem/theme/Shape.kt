@@ -4,7 +4,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes
 import androidx.compose.ui.unit.dp
 
-/** Named shapes for components. Sheets use SheetTop explicitly; Material's default is 28dp. */
 object RituneShapes {
     val Card = RoundedCornerShape(16.dp)
     val Button = RoundedCornerShape(percent = 50)

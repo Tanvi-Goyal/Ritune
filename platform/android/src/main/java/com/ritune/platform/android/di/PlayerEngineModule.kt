@@ -9,8 +9,8 @@ import com.ritune.core.models.IdGenerator
 import com.ritune.core.models.Timekeeper
 import com.ritune.platform.android.EnginePlayerController
 import com.ritune.platform.android.PlayerEngine
-import com.ritune.platform.android.time.SystemTimekeeper
-import com.ritune.platform.android.time.UuidIdGenerator
+import com.ritune.platform.android.SystemTimekeeper
+import com.ritune.platform.android.UuidGenerator
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -39,7 +39,7 @@ abstract class PlayerEngineBindings {
 
     @Binds
     @Singleton
-    abstract fun bindsIdGenerator(impl: UuidIdGenerator): IdGenerator
+    abstract fun bindsIdGenerator(impl: UuidGenerator): IdGenerator
 
 //    @Binds
 //    abstract fun settings(impl: DataStoreSettingsRepository): SettingsRepository

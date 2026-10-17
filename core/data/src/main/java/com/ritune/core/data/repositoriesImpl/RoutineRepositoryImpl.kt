@@ -17,16 +17,14 @@ class RoutineRepositoryImpl @Inject constructor(
     override fun observeAll(): Flow<List<Routine>> =
         dao.observeAll()
             .map { rows ->
-                rows.filter {
-                    it.steps.isNotEmpty()
-                }.map { it.toRoutine() }
+                rows.filter { it.steps.isNotEmpty() }.map { it.toRoutine() }
             }
 
     override suspend fun get(id: RoutineId): Routine? =
-        dao.get(id.id)?.takeIf { it.steps.isNotEmpty() }?.toRoutine()
+        dao.get(id.value)?.takeIf { it.steps.isNotEmpty() }?.toRoutine()
 
     override suspend fun save(routine: Routine) {
-        val existing = dao.get(routine.id.id)
+        val existing = dao.get(routine.id.value)
         val sortOrder = existing?.routine?.sortOrder ?: dao.count()
         val builtIn = existing?.routine?.builtIn ?: routine.builtIn
         dao.replace(
@@ -36,6 +34,6 @@ class RoutineRepositoryImpl @Inject constructor(
     }
 
     override suspend fun delete(id: RoutineId) {
-        dao.delete(id.id)
+        dao.delete(id.value)
     }
 }

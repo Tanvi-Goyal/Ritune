@@ -10,11 +10,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import kotlin.time.Duration
 
-/**
- * Big countdown. Tabular figures keep the digits from jittering as the time changes.
- * Pass [contentDescription] only if you want something other than "2:14" read aloud; do not make it a
- * live region, the player would announce every second.
- */
 @Composable
 fun TimerText(
     remaining: Duration,
@@ -38,7 +33,8 @@ fun TimerText(
 }
 
 fun formatTimer(remaining: Duration): String {
-    val totalSeconds = (remaining.inWholeMilliseconds.coerceAtLeast(0) + 999) / 1000
+    val totalSeconds = (remaining.inWholeMilliseconds
+        .coerceAtLeast(0) + 999) / 1000
     val hours = totalSeconds / 3600
     val minutes = (totalSeconds % 3600) / 60
     val seconds = totalSeconds % 60

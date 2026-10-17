@@ -53,7 +53,6 @@ fun NavGraphBuilder.routinesGraph(
         }
 
         composable<RoutineDetailRoute> { entry ->
-            val route = entry.toRoute<RoutineDetailRoute>()
             val viewModel: RoutineDetailViewModel = hiltViewModel()
             RoutineDetailScreen(
                 viewModel = viewModel,

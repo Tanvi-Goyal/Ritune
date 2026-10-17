@@ -6,6 +6,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
+import com.ritune.core.navigation.DeepLinks
 import com.ritune.feature.player.ui.navigation.player.PlayerScreen
 import com.ritune.feature.player.ui.navigation.player.PlayerViewModel
 import com.ritune.feature.player.ui.navigation.summary.SummaryScreen
@@ -31,7 +32,7 @@ fun NavGraphBuilder.playerGraph(
 ) {
     composable<PlayerRoute>(
         deepLinks = listOf(
-//            navDeepLink<PlayerRoute>(basePath = "")
+            navDeepLink<PlayerRoute>(basePath = DeepLinks.PLAYER)
         )
     ) {
         val viewModel: PlayerViewModel = hiltViewModel()
@@ -43,7 +44,7 @@ fun NavGraphBuilder.playerGraph(
     }
     composable<SummaryRoute>(
         deepLinks = listOf(
-//            navDeepLink<SummaryRoute>(basePath = "")
+            navDeepLink<SummaryRoute>(basePath = DeepLinks.SUMMARY_PATTERN)
         )
     ) {
         val viewModel: SummaryViewModel = hiltViewModel()

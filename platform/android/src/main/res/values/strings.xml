@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Notification -->
+    <string name="notif_channel_name">Routine in progress</string>
+    <string name="notif_channel_description">Shows the current step and lets you pause or skip.</string>
+    <string name="notif_step_progress">Step %1$d of %2$d · %3$s</string>
+    <string name="notif_paused">Paused · %1$s left</string>
+    <string name="notif_starting">Starting routine</string>
+    <string name="notif_action_pause">Pause</string>
+    <string name="notif_action_resume">Resume</string>
+    <string name="notif_action_skip">Skip</string>
+    <string name="notif_action_finish">Finish</string>
+    <string name="notif_done_title">%1$s done</string>
+    <string name="notif_done_text">Tap to see the summary.</string>
+</resources>

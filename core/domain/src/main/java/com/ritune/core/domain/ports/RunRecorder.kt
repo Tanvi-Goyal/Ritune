@@ -1,7 +1,7 @@
 package com.ritune.core.domain.ports
 
-import com.ritune.core.domain.models.player.Session
 import com.ritune.core.models.RunSummary
+import com.ritune.core.models.Session
 
 interface RunRecorder {
     suspend fun onRunStarted(session: Session)

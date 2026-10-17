@@ -1,86 +1,151 @@
-//package com.ritune.feature.player.ui.navigation
-//
-//import android.os.Build
-//import androidx.annotation.RequiresApi
-//import androidx.compose.material3.MaterialTheme
-//import androidx.compose.material3.SnackbarHostState
-//import androidx.compose.material3.Surface
-//import androidx.compose.runtime.Composable
-//import androidx.compose.runtime.remember
-//import androidx.compose.ui.tooling.preview.PreviewLightDark
-//import com.ritune.core.designsystem.theme.RituneTheme
-//import kotlinx.datetime.LocalDate
-//import kotlinx.datetime.LocalTime
-//
-//private val evening = RoutineRef("evening-reset", "Evening reset")
-//
-//private fun item(
-//    id: String,
-//    name: String,
-//    target: LocalTime,
-//    logged: LocalTime? = null,
-//    routine: RoutineRef? = null
-//) =
-//    AnchorItem(id, name, target, logged, routine)
-//
-//private fun content(logged: Int, running: String? = null): TodayUiState.Content {
-//    val times = listOf(
-//        LocalTime(6, 42),
-//        LocalTime(7, 5),
-//        LocalTime(12, 30),
-//        LocalTime(19, 28),
-//        LocalTime(21, 46)
-//    )
-//    val base = listOf(
-//        item("wake", "Wake", LocalTime(6, 45)),
-//        item("daylight", "Daylight", LocalTime(7, 15)),
-//        item("workout", "Workout", LocalTime(12, 30)),
-//        item("last-meal", "Last meal", LocalTime(19, 30)),
-//        item("shutdown", "Shutdown", LocalTime(22, 0), routine = evening),
-//    )
-//    val anchors = base.mapIndexed { i, a -> if (i < logged) a.copy(loggedAt = times[i]) else a }
-//    return TodayUiState.Content(
-//        LocalDate(2026, 10, 9), anchors, running
-//    )
-//}
-//
-//@RequiresApi(Build.VERSION_CODES.O)
-//@Composable
-//private fun Preview(state: TodayUiState) {
-//    RituneTheme {
-//        Surface(color = MaterialTheme.colorScheme.background) {
-//            TodayContent(
-//                state,
-//                remember { SnackbarHostState() },
-//                onEvent = {},
-//                onOpenSettings = {}
-//            )
-//        }
-//    }
-//}
-//
-//@RequiresApi(Build.VERSION_CODES.O)
-//@PreviewLightDark
-//@Composable
-//private fun TodayPartlyDonePreview() = Preview(content(logged = 3))
-//
-//@RequiresApi(Build.VERSION_CODES.O)
-//@PreviewLightDark
-//@Composable
-//private fun TodayFreshDayPreview() = Preview(content(logged = 0))
-//
-//@RequiresApi(Build.VERSION_CODES.O)
-//@PreviewLightDark
-//@Composable
-//private fun TodayAllLoggedPreview() = Preview(content(logged = 5))
-//
-//@RequiresApi(Build.VERSION_CODES.O)
-//@PreviewLightDark
-//@Composable
-//private fun TodayRoutineRunningPreview() =
-//    Preview(content(logged = 4, running = "Evening reset"))
-//
-//@RequiresApi(Build.VERSION_CODES.O)
-//@PreviewLightDark
-//@Composable
-//private fun TodayLoadingPreview() = Preview(TodayUiState.Loading)
+package com.ritune.feature.player.ui.navigation
+
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.ritune.core.designsystem.theme.RituneTheme
+import com.ritune.feature.player.ui.navigation.player.PlayerContent
+import com.ritune.feature.player.ui.navigation.player.PlayerUiState
+import com.ritune.feature.player.ui.navigation.summary.SummaryContent
+import com.ritune.feature.player.ui.navigation.summary.SummaryUiState
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
+
+private fun active(
+    stepIndex: Int = 1,
+    title: String = "Write tomorrow's top three",
+    next: String? = "Light stretch",
+    remaining: Duration = 134.seconds,
+    paused: Boolean = false,
+    instruction: String? = null,
+    confirming: Boolean = false,
+) = PlayerUiState.Active(
+    routineName = "Evening reset",
+    stepIndex = stepIndex,
+    stepCount = 4,
+    stepTitle = title,
+    instruction = instruction,
+    nextStepTitle = next,
+    remaining = remaining,
+    isPaused = paused,
+    confirmingStop = confirming,
+)
+
+private val started = Instant.parse("2026-10-09T16:16:00Z")
+
+private fun summary(
+    completed: Boolean = true,
+    completedSteps: Int = 4,
+    skipped: Int = 0,
+    total: Int = 4
+) = SummaryUiState.Content(
+    "Evening reset",
+    completed,
+    completedSteps,
+    skipped,
+    total,
+    8.minutes + 2.seconds,
+    started
+)
+
+@Composable
+private fun Themed(content: @Composable () -> Unit) {
+    RituneTheme {
+        Surface(
+            color = MaterialTheme.colorScheme.background,
+            content = content
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun PlayerRunningPreview() = Themed { PlayerContent(active(), {}) }
+
+@PreviewLightDark
+@Composable
+private fun PlayerPausedPreview() =
+    Themed { PlayerContent(active(paused = true, remaining = 65.seconds), {}) }
+
+@PreviewLightDark
+@Composable
+private fun PlayerWithInstructionPreview() = Themed {
+    PlayerContent(
+        active(
+            stepIndex = 0,
+            title = "Put screens away",
+            instruction = "Close laptops and tablets.",
+            next = "Write tomorrow's top three"
+        ), {})
+}
+
+@PreviewLightDark
+@Composable
+private fun PlayerLastStepPreview() = Themed {
+    PlayerContent(
+        active(
+            stepIndex = 3,
+            title = "Slow breathing",
+            next = null,
+            remaining = 40.seconds
+        ), {})
+}
+
+@PreviewLightDark
+@Composable
+private fun PlayerStopDialogPreview() = Themed {
+    PlayerContent(
+        active(confirming = true),
+        {})
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@PreviewLightDark
+@Composable
+private fun SummaryCompletedPreview() = Themed {
+    SummaryContent(
+        summary(),
+        {})
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@PreviewLightDark
+@Composable
+private fun SummaryWithSkippedPreview() =
+    Themed {
+        SummaryContent(
+            summary(
+                completedSteps = 3,
+                skipped = 1
+            ),
+            {}
+        )
+    }
+
+@RequiresApi(Build.VERSION_CODES.O)
+@PreviewLightDark
+@Composable
+private fun SummaryStoppedPreview() =
+    Themed {
+        SummaryContent(
+            summary(
+                completed = false,
+                completedSteps = 1
+            ),
+            {})
+    }
+
+@RequiresApi(Build.VERSION_CODES.O)
+@PreviewLightDark
+@Composable
+private fun SummaryNotFoundPreview() = Themed {
+    SummaryContent(
+        SummaryUiState.NotFound,
+        {}
+    )
+}

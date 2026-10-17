@@ -16,6 +16,7 @@
             <option value="$PROJECT_DIR$/core/designsystem" />
             <option value="$PROJECT_DIR$/core/domain" />
             <option value="$PROJECT_DIR$/core/models" />
+            <option value="$PROJECT_DIR$/core/navigation" />
             <option value="$PROJECT_DIR$/core/player" />
             <option value="$PROJECT_DIR$/feature" />
             <option value="$PROJECT_DIR$/feature/onboarding" />
@@ -28,6 +29,8 @@
             <option value="$PROJECT_DIR$/feature/routine/ui" />
             <option value="$PROJECT_DIR$/feature/today" />
             <option value="$PROJECT_DIR$/feature/today/ui" />
+            <option value="$PROJECT_DIR$/platform" />
+            <option value="$PROJECT_DIR$/platform/android" />
           </set>
         </option>
       </GradleProjectSettings>

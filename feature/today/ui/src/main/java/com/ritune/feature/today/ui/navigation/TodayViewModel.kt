@@ -3,13 +3,16 @@ package com.ritune.feature.today.ui.navigation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ritune.core.domain.models.anchor.LogResult
+import com.ritune.core.domain.ports.StartResult
 import com.ritune.core.domain.usecases.anchor.LogAnchor
-import com.ritune.core.domain.usecases.routine.ObserveRoutines
 import com.ritune.core.domain.usecases.anchor.ObserveToday
 import com.ritune.core.domain.usecases.anchor.UndoLogAnchor
+import com.ritune.core.domain.usecases.player.StartRoutine
+import com.ritune.core.domain.usecases.routine.ObserveRoutines
 import com.ritune.core.models.AnchorId
 import com.ritune.core.models.EventId
 import com.ritune.core.models.EventSource
+import com.ritune.core.models.RoutineId
 import com.ritune.core.models.Timekeeper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,6 +45,7 @@ class TodayViewModel @Inject constructor(
     private val undoLogAnchor: UndoLogAnchor,
     private val observeRoutines: ObserveRoutines,
     private val timekeeper: Timekeeper,
+    private val startRoutine: StartRoutine,
 ) : ViewModel() {
 
     private val timeZone: () -> TimeZone = { TimeZone.currentSystemDefault() }
@@ -96,12 +100,14 @@ class TodayViewModel @Inject constructor(
     }
 
     private fun start(routineId: String) {
-//        viewModelScope.launch {
-//            when (player.start(RoutineId(routineId))) {
-//                StartResult.Started, StartResult.AlreadyRunning -> send(TodayEffect.OpenPlayer)
-//                StartResult.RoutineNotFound -> send(TodayEffect.RoutineUnavailable)
-//            }
-//        }
+        viewModelScope.launch {
+            when (startRoutine(RoutineId(routineId))) {
+                StartResult.Started, StartResult.AlreadyRunning ->
+                    send(TodayEffect.OpenPlayer)
+
+                StartResult.RoutineNotFound -> send(TodayEffect.RoutineUnavailable)
+            }
+        }
     }
 
     private fun send(effect: TodayEffect) {

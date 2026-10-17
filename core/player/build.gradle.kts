@@ -13,4 +13,8 @@ kotlin {
 }
 dependencies {
     implementation(project(":core:models"))
+    implementation(libs.kotlinx.coroutines.core)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

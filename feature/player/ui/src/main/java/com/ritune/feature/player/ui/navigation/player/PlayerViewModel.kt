@@ -2,7 +2,6 @@ package com.ritune.feature.player.ui.navigation.player
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ritune.core.domain.models.player.PlayerState
 import com.ritune.core.domain.models.player.RunProgress
 import com.ritune.core.domain.usecases.player.ObservePlayerState
 import com.ritune.core.domain.usecases.player.ObserveRunProgress
@@ -10,6 +9,7 @@ import com.ritune.core.domain.usecases.player.PauseRun
 import com.ritune.core.domain.usecases.player.ResumeRun
 import com.ritune.core.domain.usecases.player.SkipStep
 import com.ritune.core.domain.usecases.player.StopRun
+import com.ritune.core.models.PlayerState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow

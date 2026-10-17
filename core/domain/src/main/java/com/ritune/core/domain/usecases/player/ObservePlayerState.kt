@@ -1,7 +1,7 @@
 package com.ritune.core.domain.usecases.player
 
-import com.ritune.core.domain.models.player.PlayerState
 import com.ritune.core.domain.ports.PlayerController
+import com.ritune.core.models.PlayerState
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 

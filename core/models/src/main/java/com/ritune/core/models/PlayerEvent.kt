@@ -1,8 +1,4 @@
-package com.ritune.core.player
-
-import com.ritune.core.models.Moment
-import com.ritune.core.models.Routine
-import com.ritune.core.models.RunId
+package com.ritune.core.models
 
 sealed interface PlayerEvent {
     data class Start(val routine: Routine, val runId: RunId, val at: Moment) : PlayerEvent

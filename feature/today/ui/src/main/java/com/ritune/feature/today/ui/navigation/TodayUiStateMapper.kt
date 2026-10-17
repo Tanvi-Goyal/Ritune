@@ -29,7 +29,11 @@ internal fun buildContent(
     }
     val runningName = null
 
-    return TodayUiState.Content(day = day, anchors = anchors, runningRoutineName = runningName)
+    return TodayUiState.Content(
+        day = day,
+        anchors = anchors,
+        runningRoutineName = runningName
+    )
 }
 
 internal fun routinesByAnchor(routines: List<Routine>): Map<AnchorId, Routine> = buildMap {

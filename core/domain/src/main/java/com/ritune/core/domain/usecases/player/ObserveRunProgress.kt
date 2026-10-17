@@ -1,10 +1,10 @@
 package com.ritune.core.domain.usecases.player
 
-import com.ritune.core.domain.models.player.PlayerState
 import com.ritune.core.domain.models.player.RunProgress
-import com.ritune.core.domain.models.player.remainingAt
 import com.ritune.core.domain.ports.PlayerController
+import com.ritune.core.models.PlayerState
 import com.ritune.core.models.Timekeeper
+import com.ritune.core.models.remainingAt
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow

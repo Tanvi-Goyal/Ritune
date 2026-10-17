@@ -1,5 +1,6 @@
 package com.ritune.core.domain.models.player
 
+import com.ritune.core.models.PlayerState
 import kotlin.time.Duration
 
 data class RunProgress(

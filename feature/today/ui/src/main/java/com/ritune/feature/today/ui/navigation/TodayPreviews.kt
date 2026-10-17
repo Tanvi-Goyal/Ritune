@@ -38,9 +38,13 @@ private fun content(logged: Int, running: String? = null): TodayUiState.Content 
         item("last-meal", "Last meal", LocalTime(19, 30)),
         item("shutdown", "Shutdown", LocalTime(22, 0), routine = evening),
     )
-    val anchors = base.mapIndexed { i, a -> if (i < logged) a.copy(loggedAt = times[i]) else a }
+    val anchors = base.mapIndexed { i, a ->
+        if (i < logged) a.copy(loggedAt = times[i]) else a
+    }
     return TodayUiState.Content(
-        LocalDate(2026, 10, 9), anchors, running
+        LocalDate(2026, 10, 9),
+        anchors,
+        running
     )
 }
 

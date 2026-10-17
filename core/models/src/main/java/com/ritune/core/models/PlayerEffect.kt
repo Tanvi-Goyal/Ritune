@@ -1,6 +1,4 @@
-package com.ritune.core.player
-
-import com.ritune.core.models.RunSummary
+package com.ritune.core.models
 
 sealed interface PlayerEffect {
     data class RunStarted(val session: Session) : PlayerEffect

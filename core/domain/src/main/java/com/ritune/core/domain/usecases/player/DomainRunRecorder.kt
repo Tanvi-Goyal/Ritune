@@ -1,11 +1,11 @@
 package com.ritune.core.domain.usecases.player
 
-import com.ritune.core.domain.models.player.Session
 import com.ritune.core.domain.ports.RunRecorder
 import com.ritune.core.domain.repositories.RunHistoryRepository
 import com.ritune.core.domain.usecases.anchor.LogAnchor
 import com.ritune.core.models.EventSource
 import com.ritune.core.models.RunSummary
+import com.ritune.core.models.Session
 import javax.inject.Inject
 
 /** Glue between the player and the domain: starting a routine logs its anchor,

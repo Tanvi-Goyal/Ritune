@@ -13,7 +13,7 @@ import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalTime
 import java.time.format.DateTimeFormatter
 
-/** Time of day in the user's locale, honouring the system 12 or 24 hour setting. */
+/** Time of day in the user's locale, honoring the system 12 or 24 hour setting. */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 internal fun rememberTimeFormatter(): (LocalTime) -> String {
@@ -21,7 +21,11 @@ internal fun rememberTimeFormatter(): (LocalTime) -> String {
     val locale = LocalConfiguration.current.locales[0]
     val is24Hour = DateFormat.is24HourFormat(context)
     return remember(locale, is24Hour) {
-        val pattern = DateFormat.getBestDateTimePattern(locale, if (is24Hour) "Hm" else "hm")
+        val pattern = DateFormat.getBestDateTimePattern(
+            locale,
+            if (is24Hour) "Hm"
+            else "hm"
+        )
         val formatter = DateTimeFormatter.ofPattern(pattern, locale)
         val format: (LocalTime) -> String = { time ->
             formatter.format(time.toJavaLocalTime())
@@ -46,25 +50,3 @@ internal fun rememberDateFormatter(): (LocalDate) -> String {
         format
     }
 }
-
-/** Weekday names in the user's language: "M" for the bar label, "Monday" for TalkBack. */
-internal class WeekdayFormatters(
-    private val narrow: DateTimeFormatter,
-    private val full: DateTimeFormatter,
-) {
-    fun narrow(day: LocalDate): String = narrow.format(day.toJavaLocalDate())
-    fun full(day: LocalDate): String = full.format(day.toJavaLocalDate())
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-internal fun rememberWeekdayFormatters(): WeekdayFormatters {
-    val locale = LocalConfiguration.current.locales[0]
-    return remember(locale) {
-        WeekdayFormatters(
-            narrow = DateTimeFormatter.ofPattern("EEEEE", locale),
-            full = DateTimeFormatter.ofPattern("EEEE", locale),
-        )
-    }
-}
-

@@ -42,6 +42,7 @@ android {
 dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
+    implementation(project(":platform:android"))
 
     implementation(project(":feature:onboarding:ui"))
     implementation(project(":feature:rhythm:ui"))

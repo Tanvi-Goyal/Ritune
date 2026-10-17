@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.ritune.core.domain.models.routine.DeleteResult
+import com.ritune.core.domain.ports.StartResult
 import com.ritune.core.domain.usecases.anchor.ObserveAnchors
+import com.ritune.core.domain.usecases.player.StartRoutine
 import com.ritune.core.domain.usecases.routine.DeleteRoutine
 import com.ritune.core.domain.usecases.routine.ObserveRoutine
 import com.ritune.core.models.Anchor
@@ -29,7 +31,7 @@ class RoutineDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     observeRoutine: ObserveRoutine,
     observeAnchors: ObserveAnchors,
-//    private val startRoutine: StartRoutine,
+    private val startRoutine: StartRoutine,
     private val deleteRoutine: DeleteRoutine,
 ) : ViewModel() {
 
@@ -55,14 +57,14 @@ class RoutineDetailViewModel @Inject constructor(
     fun onEvent(event: RoutineDetailEvent) {
         when (event) {
             RoutineDetailEvent.Start -> viewModelScope.launch {
-//                val effect = when (startRoutine(routineId)) {
-//                    StartResult.Started, StartResult.AlreadyRunning ->
-//                        RoutineDetailEffect.OpenPlayer
-//
-//                    StartResult.RoutineNotFound ->
-//                        RoutineDetailEffect.RoutineUnavailable
-//                }
-//                _effects.trySend(effect)
+                val effect = when (startRoutine(routineId)) {
+                    StartResult.Started, StartResult.AlreadyRunning ->
+                        RoutineDetailEffect.OpenPlayer
+
+                    StartResult.RoutineNotFound ->
+                        RoutineDetailEffect.RoutineUnavailable
+                }
+                _effects.trySend(effect)
             }
 
             RoutineDetailEvent.RequestDelete -> confirmingDelete.value = true

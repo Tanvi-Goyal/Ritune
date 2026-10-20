@@ -12,9 +12,10 @@ import com.ritune.core.designsystem.theme.RituneMotion
 import com.ritune.core.designsystem.theme.rememberReducedMotion
 import com.ritune.core.designsystem.theme.rituneTween
 import com.ritune.feature.onboarding.ui.navigation.onboardingScreen
+import com.ritune.feature.player.ui.navigation.playerGraph
 import com.ritune.feature.rhythm.ui.navigation.rhythmScreen
 import com.ritune.feature.routine.ui.navigation.routinesGraph
-import com.ritune.feature.player.ui.navigation.playerGraph
+import com.ritune.feature.settings.ui.navigation.settingsGraph
 import com.ritune.feature.today.ui.navigation.todayScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -49,13 +50,13 @@ fun RituneNavHost(
     ) {
         onboardingScreen(onFinished = { navController.finishOnboarding() })
         todayScreen(
-            onOpenSettings = { /*navController.navigateToSettings()*/ },
+            onOpenSettings = { navController.navigateToSettings() },
             onOpenPlayer = { navController.navigateToPlayer() },
         )
-        rhythmScreen(onOpenSettings = { /*navController.navigateToSettings()*/ })
+        rhythmScreen(onOpenSettings = { navController.navigateToSettings() })
         routinesGraph(
             navController = navController,
-            onOpenSettings = { /*navController.navigateToSettings()*/ },
+            onOpenSettings = { navController.navigateToSettings() },
             onOpenPlayer = { navController.navigateToPlayer() },
         )
         playerGraph(
@@ -63,6 +64,6 @@ fun RituneNavHost(
             onClose = { navController.popBackStack() },
             onSummaryDone = { navController.popBackStack() },
         )
-//        settingsGraph(navController)
+        settingsGraph(navController)
     }
 }

@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/core/data" />
             <option value="$PROJECT_DIR$/core/database" />
+            <option value="$PROJECT_DIR$/core/datastore" />
             <option value="$PROJECT_DIR$/core/designsystem" />
             <option value="$PROJECT_DIR$/core/domain" />
             <option value="$PROJECT_DIR$/core/models" />
@@ -26,6 +27,8 @@
             <option value="$PROJECT_DIR$/feature/rhythm/ui" />
             <option value="$PROJECT_DIR$/feature/routine" />
             <option value="$PROJECT_DIR$/feature/routine/ui" />
+            <option value="$PROJECT_DIR$/feature/settings" />
+            <option value="$PROJECT_DIR$/feature/settings/ui" />
             <option value="$PROJECT_DIR$/feature/today" />
             <option value="$PROJECT_DIR$/feature/today/ui" />
             <option value="$PROJECT_DIR$/platform" />

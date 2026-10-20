@@ -5,6 +5,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.ritune.feature.onboarding.ui.navigation.OnboardingRoute
 import com.ritune.feature.player.ui.navigation.PlayerRoute
 import com.ritune.feature.player.ui.navigation.SummaryRoute
+import com.ritune.feature.settings.ui.navigation.SettingsGraph
 import com.ritune.feature.today.ui.navigation.TodayRoute
 
 fun NavController.navigateToTopLevel(topLevelDestination: TopLevelDestination) {
@@ -17,9 +18,9 @@ fun NavController.navigateToTopLevel(topLevelDestination: TopLevelDestination) {
     }
 }
 
-//fun NavController.navigateToSettings() {
-//    navigate(SettingsGraph) { launchSingleTop = true }
-//}
+fun NavController.navigateToSettings() {
+    navigate(SettingsGraph) { launchSingleTop = true }
+}
 
 fun NavController.navigateToPlayer() {
     navigate(PlayerRoute) { launchSingleTop = true }

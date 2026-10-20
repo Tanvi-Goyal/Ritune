@@ -147,16 +147,34 @@
     <string name="summary_not_found_title">No summary to show</string>
     <string name="summary_not_found_body">This run could not be found.</string>
 
-    <!-- Notification -->
-    <string name="notif_channel_name">Routine in progress</string>
-    <string name="notif_channel_description">Shows the current step and lets you pause or skip.</string>
-    <string name="notif_step_progress">Step %1$d of %2$d · %3$s</string>
-    <string name="notif_paused">Paused · %1$s left</string>
-    <string name="notif_starting">Starting routine</string>
-    <string name="notif_action_pause">Pause</string>
-    <string name="notif_action_resume">Resume</string>
-    <string name="notif_action_skip">Skip</string>
-    <string name="notif_action_finish">Finish</string>
-    <string name="notif_done_title">%1$s done</string>
-    <string name="notif_done_text">Tap to see the summary.</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_back">Back</string>
+
+    <string name="settings_cues_heading">Cues</string>
+    <string name="settings_haptics">Haptics</string>
+    <string name="settings_haptics_hint">A short buzz at each step</string>
+    <string name="settings_speech">Spoken step names</string>
+    <string name="settings_speech_hint">Reads each step aloud</string>
+    <string name="settings_sound">Sounds</string>
+    <string name="settings_sound_hint">A soft bell at each step</string>
+    <string name="settings_countdown">3-2-1 countdown</string>
+    <string name="settings_countdown_hint">Counts down the last three seconds</string>
+    <string name="settings_cues_note">Changes apply from the next step.</string>
+
+    <string name="settings_general_heading">General</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_reminders">Reminders</string>
+    <string name="settings_delete">Delete all data</string>
+    <string name="settings_delete_hint">Cannot be undone</string>
+    <string name="settings_delete_blocked">Finish or stop your routine first.</string>
+
+    <string name="settings_delete_title">Delete all data?</string>
+    <string name="settings_delete_body">This removes every logged anchor and run, and restores the default anchors. It can\'t be undone.</string>
+    <string name="settings_delete_confirm">Delete</string>
+    <string name="settings_cancel">Cancel</string>
+    <string name="settings_deleted">All data deleted.</string>
+    <string name="settings_delete_failed">Could not delete your data. Try again.</string>
 </resources>

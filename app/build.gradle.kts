@@ -49,6 +49,7 @@ dependencies {
     implementation(project(":feature:routine:ui"))
     implementation(project(":feature:today:ui"))
     implementation(project(":feature:player:ui"))
+    implementation(project(":feature:settings:ui"))
 
     implementation(project(":core:designsystem"))
     implementation(platform(libs.androidx.compose.bom))

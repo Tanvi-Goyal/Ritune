@@ -5,12 +5,13 @@ import com.ritune.core.data.mapper.toDrafts
 import com.ritune.core.data.mapper.toEntity
 import com.ritune.core.database.RituneDatabase
 import com.ritune.core.domain.initialization.AppInitializer
+import com.ritune.core.domain.ports.DataResetter
 import com.ritune.core.models.DefaultCatalog
 import javax.inject.Inject
 
 class DatabaseSeeder @Inject constructor(
     private val db: RituneDatabase
-) : AppInitializer {
+) : AppInitializer, DataResetter {
 
     override suspend fun initialize() = seedIfEmpty()
 
@@ -33,7 +34,7 @@ class DatabaseSeeder @Inject constructor(
     }
 
     /** "Delete all data" (S-3): wipes every table, then restores the defaults. */
-    suspend fun resetAll() {
+    override suspend fun resetAll() {
         db.clearAllTables()
         seedIfEmpty()
     }

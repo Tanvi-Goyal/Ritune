@@ -21,6 +21,7 @@ android {
 dependencies {
     api(project(":core:models"))
     api(project(":core:database"))
+    api(project(":core:datastore"))
     implementation(project(":core:domain"))
 
     // hilt

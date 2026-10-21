@@ -1,12 +1,15 @@
 package com.ritune.core.domain.usecases.player
 
+import com.ritune.core.models.Cue
+import com.ritune.core.models.HapticPattern
 import com.ritune.core.models.Moment
-import com.ritune.core.models.player.PlayerEffect
-import com.ritune.core.models.player.PlayerEvent
-import com.ritune.core.models.player.PlayerState
 import com.ritune.core.models.RunOutcome
 import com.ritune.core.models.RunSummary
 import com.ritune.core.models.Session
+import com.ritune.core.models.SoundCue
+import com.ritune.core.models.player.PlayerEffect
+import com.ritune.core.models.player.PlayerEvent
+import com.ritune.core.models.player.PlayerState
 import com.ritune.core.models.player.Transition
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -42,6 +45,7 @@ object RoutinePlayerReducer {
             effects = listOf(
                 PlayerEffect.RunStarted(session),
                 PlayerEffect.StepStarted(session),
+                PlayerEffect.PlayCues(session.currentStep.cues),
                 PlayerEffect.ScheduleStepEnd(deadline),
             )
         )
@@ -147,7 +151,8 @@ object RoutinePlayerReducer {
                 state = PlayerState.Running(next, deadline),
                 effects = listOf(
                     PlayerEffect.StepStarted(next),
-                    PlayerEffect.ScheduleStepEnd(deadline)
+                    PlayerEffect.PlayCues(next.currentStep.cues),
+                    PlayerEffect.ScheduleStepEnd(deadline),
                 )
             )
         } else {
@@ -171,10 +176,17 @@ object RoutinePlayerReducer {
 
         return Transition(
             state = PlayerState.Finished(summary),
-            effects = listOf(
-                PlayerEffect.CancelStepEnd,
-                PlayerEffect.RunFinished(summary)
-            )
+            effects = buildList {
+                add(PlayerEffect.CancelStepEnd)
+                if (outcome == RunOutcome.COMPLETED)
+                    add(PlayerEffect.PlayCues(CompletionCues))
+                add(PlayerEffect.RunFinished(summary))
+            }
         )
     }
+
+    val CompletionCues: List<Cue> = listOf(
+        Cue.Haptic(HapticPattern.COMPLETE),
+        Cue.Sound(SoundCue.CHIME),
+    )
 }

@@ -2,12 +2,12 @@ package com.ritune.platform.android
 
 import com.ritune.core.domain.usecases.player.RoutinePlayerReducer
 import com.ritune.core.models.IdGenerator
-import com.ritune.core.models.player.PlayerEffect
-import com.ritune.core.models.player.PlayerEvent
-import com.ritune.core.models.player.PlayerState
 import com.ritune.core.models.Routine
 import com.ritune.core.models.RunId
 import com.ritune.core.models.Timekeeper
+import com.ritune.core.models.player.PlayerEffect
+import com.ritune.core.models.player.PlayerEvent
+import com.ritune.core.models.player.PlayerState
 import com.ritune.core.models.player.Transition
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -104,7 +104,9 @@ class PlayerEngine(
                 PlayerEffect.CancelStepEnd -> cancelStepEnd()
                 is PlayerEffect.RunStarted,
                 is PlayerEffect.StepStarted,
-                is PlayerEffect.RunFinished -> effectChannel.send(effect)
+                is PlayerEffect.PlayCues,
+                is PlayerEffect.RunFinished,
+                is PlayerEffect.CountdownTick -> effectChannel.send(effect)
             }
         }
         return transition
@@ -113,6 +115,12 @@ class PlayerEngine(
     private fun scheduleStepEnd(deadlineMono: Long) {
         stepEndJob?.cancel()
         stepEndJob = scope.launch {
+            for (secondsLeft in COUNTDOWN_SECONDS downTo 1) {
+                val wait = deadlineMono - secondsLeft * 1000L - timekeeper.now().monoMillis
+                if (wait < 0) continue
+                delay(wait.milliseconds)
+                effectChannel.send(PlayerEffect.CountdownTick(secondsLeft))
+            }
             val waitMillis = (deadlineMono - timekeeper.now().monoMillis)
                 .coerceAtLeast(0)
             delay(waitMillis.milliseconds)
@@ -135,5 +143,9 @@ class PlayerEngine(
         effectChannel.close()
         actor.cancel()
         cancelStepEnd()
+    }
+
+    private companion object {
+        const val COUNTDOWN_SECONDS = 3
     }
 }

@@ -37,4 +37,8 @@ dependencies {
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    testImplementation(kotlin("test"))
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

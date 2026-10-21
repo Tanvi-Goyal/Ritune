@@ -44,27 +44,43 @@ object DefaultCatalog {
                 "Put screens away",
                 2.minutes,
                 "Close laptops and tablets.",
-                listOf(changeCue, Cue.Speech("Put screens away"))
+                listOf(
+                    changeCue,
+                    Cue.Speech("Put screens away"),
+                    Cue.Sound(SoundCue.SOFT_BELL)
+                )
             ),
             Step(
                 StepId("top-three"),
                 "Write tomorrow's top three",
                 3.minutes,
                 null,
-                listOf(changeCue, Cue.Speech("Write tomorrow's top three"))
+                listOf(
+                    changeCue,
+                    Cue.Speech("Write tomorrow's top three"),
+                    Cue.Sound(SoundCue.SOFT_BELL)
+                )
             ),
             Step(
                 StepId("stretch"),
                 "Light stretch",
                 2.minutes,
                 null,
-                listOf(changeCue, Cue.Speech("Light stretch"))
+                listOf(
+                    changeCue,
+                    Cue.Speech("Light stretch"),
+                    Cue.Sound(SoundCue.SOFT_BELL)
+                )
             ),
             Step(
                 StepId("breathe"),
                 "Slow breathing",
                 1.minutes,
-                null, listOf(changeCue, Cue.Speech("Slow breathing"))
+                null, listOf(
+                    changeCue,
+                    Cue.Speech("Slow breathing"),
+                    Cue.Sound(SoundCue.SOFT_BELL)
+                )
             ),
         ),
     )

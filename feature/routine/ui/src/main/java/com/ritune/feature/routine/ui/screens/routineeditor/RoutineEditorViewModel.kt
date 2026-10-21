@@ -17,6 +17,7 @@ import com.ritune.core.models.Cue
 import com.ritune.core.models.HapticPattern
 import com.ritune.core.models.Routine
 import com.ritune.core.models.RoutineId
+import com.ritune.core.models.SoundCue
 import com.ritune.core.models.StepId
 import com.ritune.feature.routine.ui.navigation.RoutineEditorRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -314,5 +315,9 @@ class RoutineEditorViewModel @Inject constructor(
     )
 
     fun defaultCuesFor(title: String): List<Cue> =
-        listOf(Cue.Haptic(HapticPattern.STEP_CHANGE), Cue.Speech(title.trim()))
+        listOf(
+            Cue.Haptic(HapticPattern.STEP_CHANGE),
+            Cue.Speech(title.trim()),
+            Cue.Sound(SoundCue.SOFT_BELL)
+        )
 }

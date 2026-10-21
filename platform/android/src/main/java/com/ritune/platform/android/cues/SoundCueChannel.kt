@@ -1,0 +1,84 @@
+package com.ritune.platform.android.cues
+
+import android.content.Context
+import android.media.AudioAttributes
+import android.media.SoundPool
+import android.util.Log
+import androidx.annotation.RawRes
+import com.ritune.core.models.Cue
+import com.ritune.core.models.SoundCue
+import com.ritune.platform.android.R
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
+
+/**
+ * Short clips through SoundPool: decoded once at [prepare], so playing has no latency at step change.
+ * Loading is async, so a clip that has not finished loading is skipped rather than delayed.
+ */
+@Singleton
+class SoundCueChannel @Inject constructor(
+    @ApplicationContext private val context: Context,
+) : CueChannel {
+
+    private var pool: SoundPool? = null
+    private var sampleIds: Map<SoundCue, Int> = emptyMap()
+    private val loaded = mutableSetOf<Int>()
+
+    override fun handles(cue: Cue) = cue is Cue.Sound
+
+    override fun prepare() {
+        if (pool != null) return
+        val newPool = SoundPool.Builder()
+            .setMaxStreams(MAX_STREAMS)
+            .setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build()
+            )
+            .build()
+        // Created on the main thread, so this listener also runs there.
+        newPool.setOnLoadCompleteListener { _, sampleId, status ->
+            if (status == LOAD_OK) loaded += sampleId
+            else Log.w(TAG, "Failed to load sample $sampleId (status $status)")
+        }
+        sampleIds = SoundCue.entries.associateWith { newPool.load(context, rawFor(it), PRIORITY) }
+        pool = newPool
+    }
+
+    override fun play(cue: Cue) {
+        if (cue !is Cue.Sound) return
+        val pool = pool ?: return
+        val sampleId = sampleIds[cue.sound] ?: return
+        if (sampleId !in loaded) {
+            Log.w(TAG, "${cue.sound} not loaded yet, skipping")
+            return
+        }
+        pool.play(sampleId, VOLUME, VOLUME, PRIORITY, NO_LOOP, NORMAL_RATE)
+    }
+
+    override fun release() {
+        pool?.release()
+        pool = null
+        sampleIds = emptyMap()
+        loaded.clear()
+    }
+
+    @RawRes
+    private fun rawFor(sound: SoundCue): Int = when (sound) {
+        SoundCue.SOFT_BELL -> R.raw.soft_bell
+        SoundCue.TICK -> R.raw.tick
+        SoundCue.CHIME -> R.raw.chime
+    }
+
+    private companion object {
+        const val TAG = "SoundCueChannel"
+        const val MAX_STREAMS = 2 // a bell can overlap a countdown tick
+        const val LOAD_OK = 0
+        const val PRIORITY = 1
+        const val VOLUME = 1f
+        const val NO_LOOP = 0
+        const val NORMAL_RATE = 1f
+    }
+}

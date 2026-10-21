@@ -40,12 +40,6 @@ abstract class PlayerEngineBindings {
     @Binds
     @Singleton
     abstract fun bindsIdGenerator(impl: UuidGenerator): IdGenerator
-
-//    @Binds
-//    abstract fun settings(impl: DataStoreSettingsRepository): SettingsRepository
-//
-//    @Binds
-//    abstract fun onboarding(impl: DataStoreOnboardingStore): OnboardingStore
 }
 
 @Module
@@ -56,15 +50,6 @@ object PlayerEngineProviders {
     @PlayerEngineScope
     fun providePlayerEngineScope(): CoroutineScope =
         CoroutineScope(SupervisorJob() + Dispatchers.Default)
-
-//    @Provides
-//    @Singleton
-//    fun cueDispatcher(
-//        haptic: HapticCueChannel,
-//        speech: SpeechCueChannel,
-//        sound: SoundCueChannel
-//    ): CueDispatcher =
-//        ChannelCueDispatcher(listOf(haptic, speech, sound))
 
     @Provides
     @Singleton
@@ -82,22 +67,4 @@ object PlayerEngineProviders {
         ids: IdGenerator,
         @PlayerEngineScope scope: CoroutineScope,
     ): PlayerEngine = PlayerEngine(timekeeper, ids, scope)
-
-//    @Provides
-//    @Singleton
-//    fun playerEngine(
-//        timekeeper: Timekeeper,
-//        ids: IdGenerator,
-//        cues: CueDispatcher,
-//        recorder: RunRecorder,
-//        @EngineScope scope: CoroutineScope,
-//    ): PlayerEngine = PlayerEngine(
-//        timekeeper = timekeeper,
-//        ids = ids,
-//        scheduler = CoroutineStepScheduler(timekeeper, scope),
-//        cues = cues,
-//        recorder = recorder,
-//        scope = scope,
-//        onError = { Log.e("PlayerEngine", "A cue or recording step failed", it) },
-//    )
 }

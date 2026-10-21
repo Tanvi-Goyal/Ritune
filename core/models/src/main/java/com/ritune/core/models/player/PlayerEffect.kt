@@ -1,5 +1,6 @@
 package com.ritune.core.models.player
 
+import com.ritune.core.models.Cue
 import com.ritune.core.models.RunSummary
 import com.ritune.core.models.Session
 
@@ -9,6 +10,8 @@ sealed interface PlayerEffect {
     data class ScheduleStepEnd(val deadlineMono: Long) : PlayerEffect
     data object CancelStepEnd : PlayerEffect
     data class RunFinished(val summary: RunSummary) : PlayerEffect
+    data class PlayCues(val cues: List<Cue>) : PlayerEffect
+    data class CountdownTick(val secondsLeft: Int) : PlayerEffect
 }
 
 data class Transition(

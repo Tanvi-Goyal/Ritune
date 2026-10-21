@@ -4,6 +4,7 @@ package com.ritune.platform.android
 import android.content.Context
 import android.util.Log
 import androidx.core.content.ContextCompat
+import com.ritune.core.domain.ports.CuePlayer
 import com.ritune.core.domain.ports.PlayerController
 import com.ritune.core.domain.ports.RunRecorder
 import com.ritune.core.domain.ports.StartResult
@@ -28,6 +29,7 @@ import javax.inject.Singleton
 class EnginePlayerController @Inject constructor(
     private val engine: PlayerEngine,
     private val recorder: RunRecorder,
+    private val cuePlayer: CuePlayer,
     @PlayerEngineScope private val scope: CoroutineScope,
     @ApplicationContext private val context: Context,
 ) : PlayerController {
@@ -39,10 +41,19 @@ class EnginePlayerController @Inject constructor(
             engine.effects.collect { effect ->
                 try {
                     when (effect) {
-                        is PlayerEffect.RunStarted -> recorder.onRunStarted(effect.session)
-                        is PlayerEffect.RunFinished -> recorder.onRunFinished(effect.summary)
+                        is PlayerEffect.RunStarted -> {
+                            cuePlayer.prepare()
+                            recorder.onRunStarted(effect.session)
+                        }
+                        is PlayerEffect.RunFinished -> {
+                            recorder.onRunFinished(effect.summary)
+                            cuePlayer.release()
+                        }
                         is PlayerEffect.StepStarted -> Unit
                         is PlayerEffect.ScheduleStepEnd, PlayerEffect.CancelStepEnd -> Unit
+                        is PlayerEffect.PlayCues -> cuePlayer.play(cues = effect.cues)
+                        is PlayerEffect.CountdownTick ->
+                            cuePlayer.countdown(secondsLeft = effect.secondsLeft)
                     }
                 } catch (cancellation: CancellationException) {
                     throw cancellation

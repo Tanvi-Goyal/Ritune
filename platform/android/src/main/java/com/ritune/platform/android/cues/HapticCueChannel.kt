@@ -8,7 +8,6 @@ import android.os.VibrationAttributes
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import com.ritune.core.models.Cue
 import com.ritune.core.models.HapticPattern
@@ -36,25 +35,20 @@ class HapticCueChannel @Inject constructor(
 
         // Alarm usage: the user started a timer,
         // and some OEMs drop default-usage vibrations with the screen off.
-        when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
-                vibrator.vibrate(
-                    effectFor(cue.pattern),
-                    VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM),
-                )
-
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> @Suppress("DEPRECATION")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            vibrator.vibrate(
+                effectFor(cue.pattern),
+                VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM),
+            )
+        } else {
+            @Suppress("DEPRECATION")
             vibrator.vibrate(
                 effectFor(cue.pattern),
                 AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build(),
             )
-
-            else -> @Suppress("DEPRECATION")
-            vibrator.vibrate(timingsFor(cue.pattern), NO_REPEAT)
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun effectFor(pattern: HapticPattern): VibrationEffect = when {
         pattern == HapticPattern.TICK && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ->
             VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK)

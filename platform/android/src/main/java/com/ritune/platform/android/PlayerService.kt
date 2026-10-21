@@ -9,7 +9,6 @@ import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
-import androidx.annotation.RequiresApi
 import androidx.core.app.ServiceCompat
 import com.ritune.core.domain.ports.PlayerController
 import com.ritune.core.models.player.PlayerState
@@ -45,13 +44,11 @@ class PlayerService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
         super.onCreate()
         notifications.ensureChannel()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             ACTION_PAUSE -> scope.launch { controller.pause() }

@@ -138,6 +138,8 @@
     <!-- Summary -->
     <string name="summary_title_done">%1$s done</string>
     <string name="summary_title_stopped">%1$s stopped</string>
+    <string name="summary_title_skipped">%1$s skipped</string>
+    <string name="summary_routine_fallback">Routine</string>
     <string name="summary_steps">%1$d of %2$d steps</string>
     <string name="summary_steps_skipped">%1$d of %2$d steps, %3$d skipped</string>
     <string name="summary_steps_stopped">%1$d of %2$d steps before you stopped</string>
@@ -147,6 +149,9 @@
     <string name="summary_not_found_title">No summary to show</string>
     <string name="summary_not_found_body">This run could not be found.</string>
 
+    <string name="nav_today">Today</string>
+    <string name="nav_rhythm">Rhythm</string>
+    <string name="nav_routines">Routines</string>
     <string name="settings_title">Settings</string>
     <string name="settings_back">Back</string>
 
@@ -166,7 +171,6 @@
     <string name="settings_theme_system">System</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
-    <string name="settings_reminders">Reminders</string>
     <string name="settings_delete">Delete all data</string>
     <string name="settings_delete_hint">Cannot be undone</string>
     <string name="settings_delete_blocked">Finish or stop your routine first.</string>

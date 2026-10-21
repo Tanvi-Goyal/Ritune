@@ -1,7 +1,5 @@
 package com.ritune.feature.today.ui.screens
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -44,7 +42,6 @@ import com.ritune.feature.today.ui.mapper.rememberTimeFormatter
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalTime
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TodayScreen(
     viewModel: TodayViewModel,
@@ -97,7 +94,6 @@ fun TodayScreen(
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TodayContent(
     state: TodayUiState,
@@ -121,7 +117,6 @@ fun TodayContent(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun TodayUi(
     state: TodayUiState.Content,

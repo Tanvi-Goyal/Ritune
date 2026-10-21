@@ -1,7 +1,5 @@
 package com.ritune.feature.today.ui.screens
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -48,7 +46,6 @@ private fun content(logged: Int, running: String? = null): TodayUiState.Content 
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun Preview(state: TodayUiState) {
     RituneTheme {
@@ -63,28 +60,23 @@ private fun Preview(state: TodayUiState) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @PreviewLightDark
 @Composable
 private fun TodayPartlyDonePreview() = Preview(content(logged = 3))
 
-@RequiresApi(Build.VERSION_CODES.O)
 @PreviewLightDark
 @Composable
 private fun TodayFreshDayPreview() = Preview(content(logged = 0))
 
-@RequiresApi(Build.VERSION_CODES.O)
 @PreviewLightDark
 @Composable
 private fun TodayAllLoggedPreview() = Preview(content(logged = 5))
 
-@RequiresApi(Build.VERSION_CODES.O)
 @PreviewLightDark
 @Composable
 private fun TodayRoutineRunningPreview() =
     Preview(content(logged = 4, running = "Evening reset"))
 
-@RequiresApi(Build.VERSION_CODES.O)
 @PreviewLightDark
 @Composable
 private fun TodayLoadingPreview() = Preview(TodayUiState.Loading)

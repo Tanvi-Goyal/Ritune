@@ -1,14 +1,12 @@
 package com.ritune
 
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -24,12 +22,13 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     private val themeViewModel: AppThemeViewModel by viewModels()
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         val splash = installSplashScreen()
 
         super.onCreate(savedInstanceState)
-        splash.setKeepOnScreenCondition { viewModel.startDestination.value == null }
+        splash.setKeepOnScreenCondition {
+            viewModel.startDestination.value == null || themeViewModel.themeMode.value == null
+        }
 
         setContent {
             val mode by themeViewModel.themeMode.collectAsState()

@@ -35,7 +35,7 @@ private fun Preview(state: SettingsUiState) {
                 remember { SnackbarHostState() },
                 onEvent = {},
                 onBack = {},
-                onOpenReminders = {})
+            )
         }
     }
 }

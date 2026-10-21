@@ -1,7 +1,5 @@
 package com.ritune.feature.rhythm.ui.screens
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -28,7 +26,6 @@ private fun content(
 ) =
     RhythmUiState.Content(weekEnd, days, summary)
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun Preview(state: RhythmUiState) {
     RituneTheme {
@@ -40,7 +37,6 @@ private fun Preview(state: RhythmUiState) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @PreviewLightDark
 @Composable
 private fun RhythmScoredPreview() = Preview(
@@ -54,7 +50,6 @@ private fun RhythmScoredPreview() = Preview(
     ),
 )
 
-@RequiresApi(Build.VERSION_CODES.O)
 @PreviewLightDark
 @Composable
 private fun RhythmScoredWithGapsPreview() = Preview(
@@ -68,7 +63,6 @@ private fun RhythmScoredWithGapsPreview() = Preview(
     ),
 )
 
-@RequiresApi(Build.VERSION_CODES.O)
 @PreviewLightDark
 @Composable
 private fun RhythmNoDriftYetPreview() = Preview(
@@ -82,18 +76,15 @@ private fun RhythmNoDriftYetPreview() = Preview(
     ),
 )
 
-@RequiresApi(Build.VERSION_CODES.O)
 @PreviewLightDark
 @Composable
 private fun RhythmEarlyPreview() =
     Preview(content(RhythmSummary.Early(loggedDays = 1, requiredDays = 3)))
 
-@RequiresApi(Build.VERSION_CODES.O)
 @PreviewLightDark
 @Composable
 private fun RhythmBuildingPreview() = Preview(content(RhythmSummary.Building))
 
-@RequiresApi(Build.VERSION_CODES.O)
 @PreviewLightDark
 @Composable
 private fun RhythmLoadingPreview() = Preview(RhythmUiState.Loading)

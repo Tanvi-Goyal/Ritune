@@ -1,7 +1,5 @@
 package com.ritune.feature.player.ui.navigation
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -24,7 +22,6 @@ data object PlayerRoute
 data class SummaryRoute(val runId: String)
 
 /** Deep links only navigate. Opening one never starts, stops, or changes a run. */
-@RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.playerGraph(
     onFinished: (runId: String) -> Unit,
     onClose: () -> Unit,

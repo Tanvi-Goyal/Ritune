@@ -1,7 +1,5 @@
 package com.ritune.feature.player.ui.screens
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -114,7 +112,6 @@ private fun PlayerStopDialogPreview() = Themed {
         {})
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @PreviewLightDark
 @Composable
 private fun SummaryCompletedPreview() = Themed {
@@ -123,7 +120,6 @@ private fun SummaryCompletedPreview() = Themed {
         {})
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @PreviewLightDark
 @Composable
 private fun SummaryWithSkippedPreview() =
@@ -137,7 +133,6 @@ private fun SummaryWithSkippedPreview() =
         )
     }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @PreviewLightDark
 @Composable
 private fun SummaryStoppedPreview() =
@@ -150,7 +145,6 @@ private fun SummaryStoppedPreview() =
             {})
     }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @PreviewLightDark
 @Composable
 private fun SummaryNotFoundPreview() = Themed {

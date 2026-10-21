@@ -3,9 +3,7 @@ package com.ritune
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
-import android.os.Build
 import androidx.activity.ComponentActivity
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -32,7 +30,6 @@ import com.ritune.navigation.RituneNavHost
 import com.ritune.navigation.TopLevelDestination
 import com.ritune.navigation.navigateToTopLevel
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RituneApp(
     startDestination: Any,
@@ -60,12 +57,7 @@ fun RituneApp(
     }
 
     val items = TopLevelDestination.entries.map {
-        val label = if (it.labelRes != 0) {
-            stringResource(it.labelRes)
-        } else {
-            it.name.lowercase().replaceFirstChar { char -> char.uppercase() }
-        }
-        RituneNavItem(label, it.iconRes)
+        RituneNavItem(stringResource(it.labelRes), it.iconRes)
     }
 
     Scaffold(

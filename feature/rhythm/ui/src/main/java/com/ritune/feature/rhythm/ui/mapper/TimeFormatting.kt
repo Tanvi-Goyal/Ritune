@@ -1,7 +1,5 @@
 package com.ritune.feature.rhythm.ui.mapper
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
@@ -18,7 +16,6 @@ internal class WeekdayFormatters(
     fun full(day: LocalDate): String = full.format(day.toJavaLocalDate())
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 internal fun rememberWeekdayFormatters(): WeekdayFormatters {
     val locale = LocalConfiguration.current.locales[0]

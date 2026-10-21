@@ -13,12 +13,10 @@ import com.ritune.core.domain.usecases.routine.SaveRoutine
 import com.ritune.core.domain.usecases.routine.StepInput
 import com.ritune.core.models.Anchor
 import com.ritune.core.models.AnchorId
-import com.ritune.core.models.Cue
-import com.ritune.core.models.HapticPattern
 import com.ritune.core.models.Routine
 import com.ritune.core.models.RoutineId
-import com.ritune.core.models.SoundCue
 import com.ritune.core.models.StepId
+import com.ritune.core.models.defaultStepCues
 import com.ritune.feature.routine.ui.navigation.RoutineEditorRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -296,7 +294,7 @@ class RoutineEditorViewModel @Inject constructor(
                 title = step.title,
                 duration = step.seconds.seconds,
                 instruction = step.instruction.ifBlank { null },
-                cues = defaultCuesFor(step.title),
+                cues = defaultStepCues(step.title),
             )
         },
     )
@@ -313,11 +311,4 @@ class RoutineEditorViewModel @Inject constructor(
             )
         },
     )
-
-    fun defaultCuesFor(title: String): List<Cue> =
-        listOf(
-            Cue.Haptic(HapticPattern.STEP_CHANGE),
-            Cue.Speech(title.trim()),
-            Cue.Sound(SoundCue.SOFT_BELL)
-        )
 }

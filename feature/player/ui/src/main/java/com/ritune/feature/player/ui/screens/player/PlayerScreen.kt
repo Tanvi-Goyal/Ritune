@@ -1,5 +1,10 @@
 package com.ritune.feature.player.ui.screens.player
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -53,11 +59,27 @@ fun PlayerScreen(
         onDispose { view.keepScreenOn = false }
     }
 
+    RequestNotificationPermission()
+
     PlayerContent(
         state = state,
         onEvent = viewModel::onEvent,
         modifier = modifier
     )
+}
+
+// The run works without it; only the ongoing and "done" notifications are hidden if denied.
+@Composable
+private fun RequestNotificationPermission() {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
+    LaunchedEffect(Unit) {
+        val permission = Manifest.permission.POST_NOTIFICATIONS
+        if (context.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+            launcher.launch(permission)
+        }
+    }
 }
 
 @Composable

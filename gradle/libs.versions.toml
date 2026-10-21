@@ -13,7 +13,6 @@ kotlin = "2.4.21"
 composeBom = "2026.09.00"
 androidxComposeFoundation = "1.12.1"
 kotlinStdlib = "2.4.21"
-kotlinTest = "2.4.10"
 runner = "1.7.0"
 core = "1.7.0"
 jetbrainsKotlinJvm = "2.4.21"
@@ -27,10 +26,10 @@ uiToolingPreview = "1.12.1"
 uiTooling = "1.12.1"
 coreSplashscreen = "1.2.0"
 navigationCompose = "2.10.2"
-kotlinxSerializationJson = "1.11.0"
+kotlinxSerializationJson = "1.12.0"
 androidxNavigation = "2.10.2"
 kotlinxCoroutines = "1.11.0"
-datastore = "1.1.1"
+datastore = "1.2.1"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -65,7 +64,7 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "androidxComposeFoundation" }
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinStdlib" }
-kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlinTest" }
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
 androidx-room3 = { group = "androidx.room3", name = "room3-runtime", version.ref = "room_version" }

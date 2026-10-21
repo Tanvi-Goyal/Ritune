@@ -41,7 +41,6 @@ import com.ritune.core.models.ThemeSetting
 fun SettingsScreen(
     viewModel: SettingsViewModel,
     onBack: () -> Unit,
-    onOpenReminders: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -63,7 +62,6 @@ fun SettingsScreen(
         snackbarHostState = snackbarHostState,
         onEvent = viewModel::onEvent,
         onBack = onBack,
-        onOpenReminders = onOpenReminders,
         modifier = modifier,
     )
 }
@@ -74,12 +72,11 @@ fun SettingsContent(
     snackbarHostState: SnackbarHostState,
     onEvent: (SettingsEvent) -> Unit,
     onBack: () -> Unit,
-    onOpenReminders: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier.fillMaxSize()) {
         if (state is SettingsUiState.Content)
-            Body(state, onEvent, onBack, onOpenReminders)
+            Body(state, onEvent, onBack)
 
         RituneSnackbarHost(
             snackbarHostState,
@@ -95,7 +92,6 @@ private fun Body(
     state: SettingsUiState.Content,
     onEvent: (SettingsEvent) -> Unit,
     onBack: () -> Unit,
-    onOpenReminders: () -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
     Column(
@@ -163,8 +159,6 @@ private fun Body(
                 value = state.theme.label(),
                 onClick = { onEvent(SettingsEvent.ThemeClicked) },
             )
-            RituneDivider()
-            ValueRow(label = stringResource(R.string.settings_reminders), onClick = onOpenReminders)
             RituneDivider()
             ValueRow(
                 label = stringResource(R.string.settings_delete),

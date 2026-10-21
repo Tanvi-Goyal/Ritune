@@ -1,7 +1,5 @@
 package com.ritune.feature.rhythm.ui.screens
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,7 +30,6 @@ import com.ritune.core.domain.usecases.rhythm.ConsistencyCalculator
 import com.ritune.feature.rhythm.ui.mapper.rememberWeekdayFormatters
 import kotlin.math.roundToInt
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RhythmScreen(
     viewModel: RhythmViewModel,
@@ -47,7 +44,6 @@ fun RhythmScreen(
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RhythmContent(
     state: RhythmUiState,
@@ -64,7 +60,6 @@ fun RhythmContent(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun RhythmBody(
     state: RhythmUiState.Content,
@@ -161,7 +156,6 @@ private fun MessageCard(title: String, body: String) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun ConsistencyCard(percent: Int, days: List<DayBar>) {
     val colors = MaterialTheme.colorScheme

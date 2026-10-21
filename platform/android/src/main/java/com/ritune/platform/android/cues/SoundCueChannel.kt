@@ -14,7 +14,8 @@ import javax.inject.Singleton
 
 /**
  * Short clips through SoundPool: decoded once at [prepare], so playing has no latency at step change.
- * Loading is async, so a clip that has not finished loading is skipped rather than delayed.
+ * Loading is async and the first step starts right after [prepare], so a cue that arrives
+ * before its clip is ready waits and plays as soon as the load completes.
  */
 @Singleton
 class SoundCueChannel @Inject constructor(
@@ -24,6 +25,7 @@ class SoundCueChannel @Inject constructor(
     private var pool: SoundPool? = null
     private var sampleIds: Map<SoundCue, Int> = emptyMap()
     private val loaded = mutableSetOf<Int>()
+    private val waiting = mutableSetOf<Int>()
 
     override fun handles(cue: Cue) = cue is Cue.Sound
 
@@ -39,9 +41,14 @@ class SoundCueChannel @Inject constructor(
             )
             .build()
         // Created on the main thread, so this listener also runs there.
-        newPool.setOnLoadCompleteListener { _, sampleId, status ->
-            if (status == LOAD_OK) loaded += sampleId
-            else Log.w(TAG, "Failed to load sample $sampleId (status $status)")
+        newPool.setOnLoadCompleteListener { loadedPool, sampleId, status ->
+            if (status != LOAD_OK) {
+                Log.w(TAG, "Failed to load sample $sampleId (status $status)")
+                waiting -= sampleId
+                return@setOnLoadCompleteListener
+            }
+            loaded += sampleId
+            if (waiting.remove(sampleId)) loadedPool.playOnce(sampleId)
         }
         sampleIds = SoundCue.entries.associateWith { newPool.load(context, rawFor(it), PRIORITY) }
         pool = newPool
@@ -51,18 +58,19 @@ class SoundCueChannel @Inject constructor(
         if (cue !is Cue.Sound) return
         val pool = pool ?: return
         val sampleId = sampleIds[cue.sound] ?: return
-        if (sampleId !in loaded) {
-            Log.w(TAG, "${cue.sound} not loaded yet, skipping")
-            return
-        }
-        pool.play(sampleId, VOLUME, VOLUME, PRIORITY, NO_LOOP, NORMAL_RATE)
+        if (sampleId in loaded) pool.playOnce(sampleId) else waiting += sampleId
     }
 
     override fun release() {
         pool?.release()
         pool = null
+        waiting.clear()
         sampleIds = emptyMap()
         loaded.clear()
+    }
+
+    private fun SoundPool.playOnce(sampleId: Int) {
+        play(sampleId, VOLUME, VOLUME, PRIORITY, NO_LOOP, NORMAL_RATE)
     }
 
     @RawRes

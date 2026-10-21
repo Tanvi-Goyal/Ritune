@@ -6,9 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.SystemClock
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import com.ritune.core.models.player.PlayerState
@@ -30,7 +28,6 @@ class PlayerNotifications @Inject constructor(
         NotificationManager::class.java
     )
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun ensureChannel() {
         val channel = NotificationChannel(
             CHANNEL_ID,

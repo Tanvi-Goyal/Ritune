@@ -23,7 +23,7 @@ class DatabaseSeeder @Inject constructor(
                 })
             }
             if (db.routineDao().count() == 0) {
-                listOf(DefaultCatalog.eveningReset).forEachIndexed { i, routine ->
+                DefaultCatalog.routines.forEachIndexed { i, routine ->
                     db.routineDao().replace(
                         routine.toEntity(sortOrder = i, builtIn = true),
                         routine.toDrafts()

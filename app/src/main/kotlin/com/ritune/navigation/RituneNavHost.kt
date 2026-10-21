@@ -1,7 +1,5 @@
 package com.ritune.navigation
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
@@ -18,7 +16,6 @@ import com.ritune.feature.routine.ui.navigation.routinesGraph
 import com.ritune.feature.settings.ui.navigation.settingsGraph
 import com.ritune.feature.today.ui.navigation.todayScreen
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RituneNavHost(
     navController: NavHostController,

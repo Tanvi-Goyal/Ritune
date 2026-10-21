@@ -1,8 +1,6 @@
 package com.ritune.feature.player.ui.mapper
 
-import android.os.Build
 import android.text.format.DateFormat
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
@@ -14,7 +12,6 @@ import kotlin.time.toJavaInstant
 
 /** A moment as a time of day in the device's time zone,
  * honoring the system 12 or 24 hour setting. */
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 internal fun rememberTimeOfDayFormatter(): (Instant) -> String {
     val context = LocalContext.current

@@ -7,7 +7,6 @@ data class Routine(
     val name: String,
     val steps: List<Step>,
     val anchorId: AnchorId? = null,
-    val cues: List<Cue> = emptyList(),
     val builtIn: Boolean = false,
 ) {
     init {

@@ -1,19 +1,19 @@
 # Ritune
 
-**A daily-rhythm app for Android.** Log the anchors of your day (wake, daylight, workout, last meal, shutdown) and run guided routines with haptic, sound and spoken cues that keep working with the screen off.
+**A daily-rhythm app for Android.** Log the anchors of your day (wake, morning light, movement, last meal, screens off, lights out) and run guided routines with haptic, sound and spoken cues that keep working with the screen off.
 
 Built as a portfolio project to practise production Android: a modular Clean Architecture codebase, a pure state-machine player, a foreground service, and Android media APIs, all in Kotlin and Jetpack Compose.
 
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.4-7F52FF?logo=kotlin&logoColor=white)
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4?logo=jetpackcompose&logoColor=white)
-![Min SDK](https://img.shields.io/badge/minSdk-24-3DDC84?logo=android&logoColor=white)
+![Min SDK](https://img.shields.io/badge/minSdk-26-3DDC84?logo=android&logoColor=white)
 ![Architecture](https://img.shields.io/badge/architecture-Clean%20%2B%20MVI-informational)
 
-| Today | Rhythm | Routines | Editor |
+| Today | Rhythm | Rhythm (dark) | Routines |
 |:---:|:---:|:---:|:---:|
-| <img src="docs/screenshots/today.png" width="200"/> | <img src="docs/screenshots/rhythm.png" width="200"/> | <img src="docs/screenshots/routines.png" width="200"/> | <img src="docs/screenshots/editor.png" width="200"/> |
-| **Player** | **Player (dark)** | **Routine detail** | **Settings** |
-| <img src="docs/screenshots/player.png" width="200"/> | <img src="docs/screenshots/player_dark.png" width="200"/> | <img src="docs/screenshots/routine_detail.png" width="200"/> | <img src="docs/screenshots/settings.png" width="200"/> |
+| <img src="docs/screenshots/today.png" width="200"/> | <img src="docs/screenshots/rhythm.png" width="200"/> | <img src="docs/screenshots/rhythm_dark.png" width="200"/> | <img src="docs/screenshots/routines.png" width="200"/> |
+| **Editor** | **Player** | **Player (dark)** | **Settings** |
+| <img src="docs/screenshots/editor.png" width="200"/> | <img src="docs/screenshots/player.png" width="200"/> | <img src="docs/screenshots/player_dark.png" width="200"/> | <img src="docs/screenshots/settings.png" width="200"/> |
 
 ---
 
@@ -25,6 +25,7 @@ Built as a portfolio project to practise production Android: a modular Clean Arc
 - **Guided player**: step timer with pause, resume, skip and stop. It survives the screen turning off and process backgrounding, and has an ongoing notification with actions.
 - **Cues**: a haptic pattern, a bell and the spoken step name at each step, a 3-2-1 countdown, and a completion chime. Each one can be turned on or off, and changes apply mid-run.
 - **Settings**: cue toggles, theme, and delete all data.
+- **Starter content**: six circadian anchors, from a steady wake time to a steady bedtime, and seven short built-in routines (morning start, light walk, 20-minute strength, close the kitchen, evening reset, wind down, focus block). All are seeded from `DefaultCatalog` on first launch and after "Delete all data".
 
 ## Tech stack
 
@@ -223,7 +224,7 @@ Cues are best checked on a physical device, since emulators don't vibrate. The s
 
 ## Roadmap
 
-- [ ] Onboarding flow (the route exists; it's a placeholder for now)
+- [ ] Onboarding flow (module and DataStore flag exist; not wired into the start destination yet)
 - [ ] Anchor reminders (notifications at target times)
 - [ ] Unit tests for the reducer, the consistency calculator and the engine's virtual-time countdown; UI tests for the main flows
 - [ ] Home-screen widget for one-tap anchor logging (`EventSource.WIDGET` is already modelled)

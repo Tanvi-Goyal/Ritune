@@ -1,8 +1,6 @@
 package com.ritune.feature.player.ui.screens.summary
 
-import android.os.Build
 import androidx.activity.compose.BackHandler
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,7 +38,6 @@ import com.ritune.core.designsystem.components.formatTimer
 import com.ritune.core.designsystem.theme.Ritune
 import com.ritune.feature.player.ui.mapper.rememberTimeOfDayFormatter
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SummaryScreen(
     viewModel: SummaryViewModel,
@@ -68,7 +65,6 @@ fun SummaryScreen(
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SummaryContent(
     state: SummaryUiState,
@@ -100,15 +96,17 @@ fun SummaryContent(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun ContentBody(state: SummaryUiState.Content) {
     val colors = MaterialTheme.colorScheme
     val formatTime = rememberTimeOfDayFormatter()
     val title = stringResource(
-        if (state.completed) R.string.summary_title_done
-        else R.string.summary_title_stopped,
-        state.routineName,
+        when {
+            !state.completed -> R.string.summary_title_stopped
+            state.completedSteps == 0 -> R.string.summary_title_skipped
+            else -> R.string.summary_title_done
+        },
+        state.routineName ?: stringResource(R.string.summary_routine_fallback),
     )
     val steps = when {
         !state.completed -> stringResource(

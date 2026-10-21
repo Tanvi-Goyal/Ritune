@@ -1,8 +1,6 @@
 package com.ritune.feature.today.ui.mapper
 
-import android.os.Build
 import android.text.format.DateFormat
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
@@ -14,7 +12,6 @@ import kotlinx.datetime.toJavaLocalTime
 import java.time.format.DateTimeFormatter
 
 /** Time of day in the user's locale, honoring the system 12 or 24 hour setting. */
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 internal fun rememberTimeFormatter(): (LocalTime) -> String {
     val context = LocalContext.current
@@ -35,7 +32,6 @@ internal fun rememberTimeFormatter(): (LocalTime) -> String {
 }
 
 /** "Friday, 9 October" in the user's locale and word order. */
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 internal fun rememberDateFormatter(): (LocalDate) -> String {
     val locale = LocalConfiguration.current.locales[0]

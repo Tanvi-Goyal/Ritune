@@ -9,7 +9,8 @@ sealed interface SummaryUiState {
     data object NotFound : SummaryUiState
 
     data class Content(
-        val routineName: String,
+        /** Null when the routine was deleted after the run. */
+        val routineName: String?,
         val completed: Boolean,
         val completedSteps: Int,
         val skippedSteps: Int,

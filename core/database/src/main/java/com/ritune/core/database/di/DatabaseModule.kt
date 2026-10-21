@@ -16,7 +16,7 @@ class DatabaseModule {
 
     @Provides
     @Singleton
-    fun providesNiaDatabase(
+    fun providesRituneDatabase(
         @ApplicationContext context: Context,
     ): RituneDatabase = databaseBuilder(
         context,

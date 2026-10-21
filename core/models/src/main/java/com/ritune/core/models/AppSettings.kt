@@ -1,8 +1,6 @@
 package com.ritune.core.models
 
 data class AppSettings(
-    val notificationsEnabled: Boolean = true,
-    val darkModeEnabled: Boolean = false,
     val hapticsEnabled: Boolean = true,
     val speechEnabled: Boolean = false,
     val soundEnabled: Boolean = true,

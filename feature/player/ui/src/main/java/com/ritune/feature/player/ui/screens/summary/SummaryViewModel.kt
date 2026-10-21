@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.ritune.core.domain.usecases.history.ObserveRunSummary
 import com.ritune.core.domain.usecases.player.DismissRun
+import com.ritune.core.domain.usecases.routine.ObserveRoutine
 import com.ritune.core.models.RunId
 import com.ritune.core.models.RunOutcome
 import com.ritune.feature.player.ui.navigation.SummaryRoute
@@ -15,6 +16,9 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -28,20 +32,25 @@ import kotlin.time.Duration.Companion.milliseconds
 class SummaryViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     observeRunSummary: ObserveRunSummary,
+    observeRoutine: ObserveRoutine,
     private val dismissRun: DismissRun,
 ) : ViewModel() {
 
     private val runId = RunId(savedStateHandle.toRoute<SummaryRoute>().runId)
 
     val state: StateFlow<SummaryUiState> = observeRunSummary(runId)
-        .transformLatest { summary ->
+        .flatMapLatest { summary ->
+            if (summary == null) flowOf(null to null)
+            else observeRoutine(summary.routineId).map { routine -> summary to routine?.name }
+        }
+        .transformLatest { (summary, routineName) ->
             if (summary == null) {
                 delay(NOT_FOUND_AFTER_MS.milliseconds)
                 emit(SummaryUiState.NotFound)
             } else {
                 emit(
                     SummaryUiState.Content(
-                        routineName = summary.routineId.value,
+                        routineName = routineName,
                         completed = summary.outcome == RunOutcome.COMPLETED,
                         completedSteps = summary.completedSteps,
                         skippedSteps = summary.skippedSteps,

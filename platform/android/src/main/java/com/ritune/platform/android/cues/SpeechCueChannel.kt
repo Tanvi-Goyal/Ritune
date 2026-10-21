@@ -4,11 +4,9 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
-import android.os.Build
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.util.Log
-import androidx.annotation.RequiresApi
 import com.ritune.core.models.Cue
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Locale
@@ -16,8 +14,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Reads step names aloud. TextToSpeech binds to the system engine asynchronously, and the first step's
- * name is requested right after [prepare], so the latest request is held until the engine is ready.
+ * Reads step names aloud. TextToSpeech binds to the system engine asynchronously on the first request,
+ * so the latest request is held until the engine is ready.
  * While speaking it holds transient, may-duck audio focus so the user's music dips instead of stopping.
  */
 @Singleton
@@ -37,19 +35,25 @@ class SpeechCueChannel @Inject constructor(
         .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
         .build()
 
-    private val focusListener = AudioManager.OnAudioFocusChangeListener { }
-
-    @get:RequiresApi(Build.VERSION_CODES.O)
-    private val focusRequest: AudioFocusRequest by lazy {
-        AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
-            .setAudioAttributes(attributes)
-            .setOnAudioFocusChangeListener(focusListener)
-            .build()
-    }
+    private val focusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
+        .setAudioAttributes(attributes)
+        .setOnAudioFocusChangeListener { }
+        .build()
 
     override fun handles(cue: Cue) = cue is Cue.Speech
 
-    override fun prepare() {
+    override fun play(cue: Cue) {
+        if (cue !is Cue.Speech) return
+        if (ready) {
+            speak(cue.text)
+        } else {
+            pending = cue.text
+            bindEngine()
+        }
+    }
+
+    // Bound on first use rather than in prepare(), so nothing starts while speech is turned off.
+    private fun bindEngine() {
         if (tts != null) return
         lateinit var engine: TextToSpeech
         engine = TextToSpeech(context) { status ->
@@ -57,11 +61,6 @@ class SpeechCueChannel @Inject constructor(
             if (engine === tts) onInit(engine, status)
         }
         tts = engine
-    }
-
-    override fun play(cue: Cue) {
-        if (cue !is Cue.Speech) return
-        if (ready) speak(cue.text) else if (tts != null) pending = cue.text
     }
 
     override fun release() {
@@ -105,25 +104,11 @@ class SpeechCueChannel @Inject constructor(
     }
 
     private fun requestFocus() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            audioManager.requestAudioFocus(focusRequest)
-        } else {
-            @Suppress("DEPRECATION")
-            audioManager.requestAudioFocus(
-                focusListener,
-                AudioManager.STREAM_MUSIC,
-                AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK,
-            )
-        }
+        audioManager.requestAudioFocus(focusRequest)
     }
 
     private fun abandonFocus() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            audioManager.abandonAudioFocusRequest(focusRequest)
-        } else {
-            @Suppress("DEPRECATION")
-            audioManager.abandonAudioFocus(focusListener)
-        }
+        audioManager.abandonAudioFocusRequest(focusRequest)
     }
 
     private companion object {

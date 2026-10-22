@@ -8,6 +8,7 @@ Built as a portfolio project to practise production Android: a modular Clean Arc
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4?logo=jetpackcompose&logoColor=white)
 ![Min SDK](https://img.shields.io/badge/minSdk-26-3DDC84?logo=android&logoColor=white)
 ![Architecture](https://img.shields.io/badge/architecture-Clean%20%2B%20MVI-informational)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 | Today | Rhythm | Rhythm (dark) | Routines |
 |:---:|:---:|:---:|:---:|
@@ -216,7 +217,7 @@ docs/screenshots/       Images used in this README
 Requirements: Android Studio (recent stable), JDK 17, an Android SDK with API 37.
 
 ```bash
-git clone <repo-url> && cd Ritune
+git clone https://github.com/Tanvi-Goyal/Ritune.git && cd Ritune
 ./gradlew :app:installDebug
 ```
 
@@ -230,3 +231,7 @@ Cues are best checked on a physical device, since emulators don't vibrate. The s
 - [ ] Home-screen widget for one-tap anchor logging (`EventSource.WIDGET` is already modelled)
 - [ ] Health Connect import (`EventSource.HEALTH_IMPORT`)
 - [ ] CI with GitHub Actions (build, lint, tests)
+
+## License
+
+Released under the [MIT License](LICENSE).

@@ -57,7 +57,6 @@ android {
         release {
             optimization {
                 enable = true
-                packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
             }
             signingConfig = signingConfigs.getByName("release").takeIf { it.storeFile != null }
         }

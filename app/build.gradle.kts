@@ -12,14 +12,45 @@ android {
         version = release(37)
     }
 
+    val versionNameProp = providers.gradleProperty("versionName").orNull
+
+    fun versionCodeOf(name: String): Int {
+        val parts = name.split(".").map { it.toIntOrNull() }
+        require(parts.size == 3 && parts.all { it != null && it in 0..99 }) {
+            "versionName must be MAJOR.MINOR.PATCH with each part 0-99, was '$name'"
+        }
+        val (major, minor, patch) = parts.map { it!! }
+        return major * 10000 + minor * 100 + patch
+    }
+
     defaultConfig {
         applicationId = "com.ritune"
         minSdk = 26
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0"
+        versionName = versionNameProp ?: "1.0-dev"
+        versionCode = versionNameProp?.let(::versionCodeOf) ?: 1
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        create("release") {
+            val storePath = providers.environmentVariable(
+                "RITUNE_KEYSTORE_PATH"
+            ).orNull
+            if (storePath != null) {
+                storeFile = file(storePath)
+                storePassword = providers.environmentVariable(
+                    "RITUNE_KEYSTORE_PASSWORD"
+                ).get()
+                keyAlias = providers.environmentVariable(
+                    "RITUNE_KEY_ALIAS"
+                ).get()
+                keyPassword = providers.environmentVariable(
+                    "RITUNE_KEY_PASSWORD"
+                ).get()
+            }
+        }
     }
 
     buildTypes {
@@ -28,14 +59,21 @@ android {
                 enable = true
                 packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
             }
+            signingConfig = signingConfigs.getByName("release").takeIf { it.storeFile != null }
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     buildFeatures {
         compose = true
+    }
+
+    lint {
+        checkDependencies = true
     }
 }
 

@@ -13,3 +13,7 @@ local.properties
 
 # Kotlin compiler caches
 .kotlin/
+
+*.jks
+*.keystore
+keystore.properties

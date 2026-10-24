@@ -30,8 +30,8 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v6
 
-      - name: Lint, unit tests, debug build
-        run: ./gradlew :app:lintDebug testDebugUnitTest :app:assembleDebug
+      - name: Lint, unit tests, debug and release builds
+        run: ./gradlew :app:lintDebug testDebugUnitTest :app:assembleDebug :app:assembleRelease
 
       - name: Upload reports
         if: always()

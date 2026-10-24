@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -413,15 +414,13 @@ internal fun StepEditorContent(
     }
     if (durationError) {
         val message = if (sheet.error == StepError.TOO_SHORT) {
-            stringResource(
-                R.string.editor_step_error_short,
-                RoutineValidator.MIN_STEP.inWholeSeconds.toInt()
-            )
+            RoutineValidator.MIN_STEP.inWholeSeconds.toInt().let {
+                pluralStringResource(R.plurals.editor_step_error_short, it, it)
+            }
         } else {
-            stringResource(
-                R.string.editor_step_error_long,
-                RoutineValidator.MAX_STEP.inWholeMinutes.toInt()
-            )
+            RoutineValidator.MAX_STEP.inWholeMinutes.toInt().let {
+                pluralStringResource(R.plurals.editor_step_error_long, it, it)
+            }
         }
         Text(message, style = MaterialTheme.typography.bodySmall, color = colors.error)
     }
@@ -453,21 +452,22 @@ internal fun StepEditorContent(
 @Composable
 private fun RoutineIssue.message(): String = when (this) {
     RoutineIssue.NAME_BLANK -> stringResource(R.string.editor_issue_name_blank)
-    RoutineIssue.NAME_TOO_LONG -> stringResource(
-        R.string.editor_issue_name_too_long,
+    RoutineIssue.NAME_TOO_LONG -> pluralStringResource(
+        R.plurals.editor_issue_name_too_long,
+        RoutineValidator.MAX_NAME_LENGTH,
         RoutineValidator.MAX_NAME_LENGTH
     )
 
     RoutineIssue.NO_STEPS -> stringResource(R.string.editor_issue_no_steps)
-    RoutineIssue.TOO_MANY_STEPS -> stringResource(
-        R.string.editor_issue_too_many_steps,
+    RoutineIssue.TOO_MANY_STEPS -> pluralStringResource(
+        R.plurals.editor_issue_too_many_steps,
+        RoutineValidator.MAX_STEPS,
         RoutineValidator.MAX_STEPS
     )
 
-    RoutineIssue.TOTAL_TOO_LONG -> stringResource(
-        R.string.editor_issue_total_too_long,
-        RoutineValidator.MAX_TOTAL.inWholeHours.toInt()
-    )
+    RoutineIssue.TOTAL_TOO_LONG -> RoutineValidator.MAX_TOTAL.inWholeHours.toInt().let {
+        pluralStringResource(R.plurals.editor_issue_total_too_long, it, it)
+    }
 
     RoutineIssue.STEP_TITLE_BLANK, RoutineIssue.STEP_TOO_SHORT, RoutineIssue.STEP_TOO_LONG ->
         stringResource(R.string.editor_issue_steps_invalid)

@@ -188,8 +188,9 @@ private fun ConsistencyCard(percent: Int, days: List<DayBar>) {
                 color = colors.primary
             )
             Text(
-                stringResource(
-                    R.string.rhythm_consistency_caption,
+                pluralStringResource(
+                    R.plurals.rhythm_consistency_caption,
+                    ConsistencyCalculator.TOLERANCE_MINUTES,
                     ConsistencyCalculator.TOLERANCE_MINUTES
                 ),
                 style = MaterialTheme.typography.bodySmall,

@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
@@ -217,8 +218,9 @@ private fun SummaryCard(logged: Int, total: Int) {
             ConsistencyRing(
                 done = logged,
                 total = total,
-                description = stringResource(
-                    R.string.today_ring_description,
+                description = pluralStringResource(
+                    R.plurals.today_ring_description,
+                    total,
                     logged, total
                 )
             )

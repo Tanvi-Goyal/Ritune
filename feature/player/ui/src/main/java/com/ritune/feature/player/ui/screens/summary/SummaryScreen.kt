@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextAlign
@@ -109,22 +110,25 @@ private fun ContentBody(state: SummaryUiState.Content) {
         state.routineName ?: stringResource(R.string.summary_routine_fallback),
     )
     val steps = when {
-        !state.completed -> stringResource(
-            R.string.summary_steps_stopped,
+        !state.completed -> pluralStringResource(
+            R.plurals.summary_steps_stopped,
+            state.totalSteps,
             state.completedSteps,
             state.totalSteps
         )
 
         state.skippedSteps > 0 ->
-            stringResource(
-                R.string.summary_steps_skipped,
+            pluralStringResource(
+                R.plurals.summary_steps_skipped,
+                state.totalSteps,
                 state.completedSteps,
                 state.totalSteps,
                 state.skippedSteps
             )
 
-        else -> stringResource(
-            R.string.summary_steps,
+        else -> pluralStringResource(
+            R.plurals.summary_steps,
+            state.totalSteps,
             state.completedSteps, state.totalSteps
         )
     }

@@ -8,3 +8,28 @@ jobs:
       - run: echo "Building ${{ github.sha }} on ${{ runner.os }}"
       - run: echo "Building ${{ toJSON(github) }}"
       - run: ls -la
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Create a file
+        run: echo "lint passed" > lint-report.txt && cat lint-report.txt
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v7
+      - name: Try to read lint's file
+        run: cat lint-report.txt
+        continue-on-error: true
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [ lint, test ]
+    steps:
+      - uses: actions/checkout@v7
+      - name: Try to read test's file
+        run: ls -la test-*.txt
+        continue-on-error: true

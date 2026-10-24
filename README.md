@@ -4,6 +4,8 @@
 
 Built as a portfolio project to practise production Android: a modular Clean Architecture codebase, a pure state-machine player, a foreground service, and Android media APIs, all in Kotlin and Jetpack Compose.
 
+[![CI](https://github.com/Tanvi-Goyal/Ritune/actions/workflows/ci.yml/badge.svg)](https://github.com/Tanvi-Goyal/Ritune/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/Tanvi-Goyal/Ritune)](https://github.com/Tanvi-Goyal/Ritune/releases/latest)
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.4-7F52FF?logo=kotlin&logoColor=white)
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4?logo=jetpackcompose&logoColor=white)
 ![Min SDK](https://img.shields.io/badge/minSdk-26-3DDC84?logo=android&logoColor=white)
@@ -40,6 +42,7 @@ Built as a portfolio project to practise production Android: a modular Clean Arc
 | Navigation | Navigation Compose with type-safe `@Serializable` routes, nested graphs and deep links |
 | Platform | Foreground service (`specialUse`), wake lock, notifications with a chronometer, `Vibrator`, `SoundPool`, `TextToSpeech`, audio focus |
 | Time | `kotlinx-datetime`, `kotlin.time`, and monotonic time (`elapsedRealtime`) for timers |
+| CI/CD | GitHub Actions: lint, unit tests and a debug build on every PR. A `v*` tag builds a signed, R8-optimized APK and AAB and publishes them as a GitHub Release. Dependabot keeps dependencies current |
 
 ---
 
@@ -214,7 +217,9 @@ docs/screenshots/       Images used in this README
 
 ## Build and run
 
-Requirements: Android Studio (recent stable), JDK 17, an Android SDK with API 37.
+**Just want to try it?** Download `app-release.apk` from the [latest release](https://github.com/Tanvi-Goyal/Ritune/releases/latest) and install it on an Android 8.0+ device.
+
+To build from source, you need: Android Studio (recent stable), JDK 17, an Android SDK with API 37.
 
 ```bash
 git clone https://github.com/Tanvi-Goyal/Ritune.git && cd Ritune
@@ -230,7 +235,7 @@ Cues are best checked on a physical device, since emulators don't vibrate. The s
 - [ ] Unit tests for the reducer, the consistency calculator and the engine's virtual-time countdown; UI tests for the main flows
 - [ ] Home-screen widget for one-tap anchor logging (`EventSource.WIDGET` is already modelled)
 - [ ] Health Connect import (`EventSource.HEALTH_IMPORT`)
-- [ ] CI with GitHub Actions (build, lint, tests)
+- [x] CI/CD with GitHub Actions (build, lint, tests, signed releases)
 
 ## License
 

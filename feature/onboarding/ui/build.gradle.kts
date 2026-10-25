@@ -1,25 +1,11 @@
 plugins {
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.ritune.android.library)
+    alias(libs.plugins.ritune.android.compose)
     alias(libs.plugins.kotlin.serialization)
-    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
     namespace = "com.ritune.feature.onboarding.ui"
-    compileSdk {
-        version = release(37)
-    }
-
-    defaultConfig {
-        minSdk = 26
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
 }
 
 dependencies {

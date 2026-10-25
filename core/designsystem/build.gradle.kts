@@ -1,24 +1,10 @@
 plugins {
-    alias(libs.plugins.android.library)
-    id("org.jetbrains.kotlin.plugin.compose")
+    alias(libs.plugins.ritune.android.library)
+    alias(libs.plugins.ritune.android.compose)
 }
 
 android {
     namespace = "com.ritune.core.designsystem"
-    compileSdk {
-        version = release(37)
-    }
-
-    defaultConfig {
-        minSdk = 26
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
 }
 
 dependencies {
@@ -33,5 +19,4 @@ dependencies {
     api(libs.androidx.compose.foundation)
     api(libs.androidx.compose.foundation.layout)
     debugImplementation(libs.androidx.compose.ui.tooling)
-
 }

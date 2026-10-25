@@ -1,5 +1,6 @@
 import com.android.build.api.dsl.LibraryExtension
 import com.ritune.buildlogic.configureAndroid
+import com.ritune.buildlogic.configureAndroidTestingModule
 import com.ritune.buildlogic.configureInstrumentedTestDependencies
 import com.ritune.buildlogic.configureKover
 import com.ritune.buildlogic.configureUnitTestDependencies
@@ -16,6 +17,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         }
         configureUnitTestDependencies()
         configureInstrumentedTestDependencies()
+        configureAndroidTestingModule()
         configureKover("debug")
     }
 }

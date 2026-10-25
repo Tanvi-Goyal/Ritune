@@ -16,7 +16,7 @@ internal fun CommonExtension.configureAndroid() {
         version = release(RituneSdk.COMPILE)
     }
     defaultConfig.minSdk = RituneSdk.MIN
-    defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    defaultConfig.testInstrumentationRunner = "com.ritune.core.testing.HiltTestRunner"
     compileOptions.sourceCompatibility = JavaVersion.VERSION_11
     compileOptions.targetCompatibility = JavaVersion.VERSION_11
 

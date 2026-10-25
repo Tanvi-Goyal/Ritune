@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
@@ -22,11 +21,9 @@ class ObserveCurrentDay @Inject constructor(
     private val timekeeper: Timekeeper,
 ) {
     operator fun invoke(): Flow<LocalDate> = flow {
-        val timeZone: () -> TimeZone = { TimeZone.currentSystemDefault() }
-
         while (true) {
             val now = timekeeper.now().wall
-            val zone = timeZone()
+            val zone = timekeeper.timeZone()
             val today = now.toLocalDateTime(zone).date
             emit(today)
             val nextMidnight = today.plus(1, DateTimeUnit.DAY).atStartOfDayIn(zone)

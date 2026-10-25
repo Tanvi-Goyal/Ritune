@@ -41,7 +41,7 @@ fun NavGraphBuilder.playerGraph(
     }
     composable<SummaryRoute>(
         deepLinks = listOf(
-            navDeepLink<SummaryRoute>(basePath = DeepLinks.SUMMARY_PATTERN)
+            navDeepLink<SummaryRoute>(basePath = DeepLinks.SUMMARY)
         )
     ) {
         val viewModel: SummaryViewModel = hiltViewModel()

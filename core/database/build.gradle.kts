@@ -17,4 +17,6 @@ dependencies {
 
     api(libs.androidx.room3)
     ksp(libs.androidx.room.compiler)
+
+    androidTestImplementation(libs.androidx.room3.testing)
 }

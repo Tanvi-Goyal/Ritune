@@ -1,17 +1,12 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ritune.android.application)
+    alias(libs.plugins.ritune.android.compose)
+    alias(libs.plugins.ritune.hilt)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.devtools.ksp)
-    alias(libs.plugins.hilt)
 }
 
 android {
     namespace = "com.ritune"
-    compileSdk {
-        version = release(37)
-    }
-
     val versionNameProp = providers.gradleProperty("versionName").orNull
 
     fun versionCodeOf(name: String): Int {
@@ -25,12 +20,8 @@ android {
 
     defaultConfig {
         applicationId = "com.ritune"
-        minSdk = 26
-        targetSdk = 37
         versionName = versionNameProp ?: "1.0-dev"
         versionCode = versionNameProp?.let(::versionCodeOf) ?: 1
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -60,11 +51,6 @@ android {
             }
             signingConfig = signingConfigs.getByName("release").takeIf { it.storeFile != null }
         }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
     }
 
     buildFeatures {
@@ -109,8 +95,4 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
-
-    // hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
 }

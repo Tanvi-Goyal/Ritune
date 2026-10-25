@@ -42,7 +42,7 @@ Built as a portfolio project to practise production Android: a modular Clean Arc
 | Navigation | Navigation Compose with type-safe `@Serializable` routes, nested graphs and deep links |
 | Platform | Foreground service (`specialUse`), wake lock, notifications with a chronometer, `Vibrator`, `SoundPool`, `TextToSpeech`, audio focus |
 | Time | `kotlinx-datetime`, `kotlin.time`, and monotonic time (`elapsedRealtime`) for timers |
-| CI/CD | GitHub Actions: lint, unit tests and a debug build on every PR. A `v*` tag builds a signed, R8-optimized APK and AAB and publishes them as a GitHub Release. Dependabot keeps dependencies current |
+| CI/CD | GitHub Actions: lint, unit tests and a debug build on every PR. Running the Release workflow with a version builds a signed, R8-optimized APK and AAB, uploads the AAB to Play internal testing as a draft, and publishes a tagged GitHub Release. Dependabot keeps dependencies current |
 
 ---
 

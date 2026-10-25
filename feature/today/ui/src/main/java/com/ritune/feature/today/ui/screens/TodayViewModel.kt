@@ -33,7 +33,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
@@ -52,8 +51,6 @@ class TodayViewModel @Inject constructor(
     private val startRoutine: StartRoutine,
 ) : ViewModel() {
 
-    private val timeZone: () -> TimeZone = { TimeZone.currentSystemDefault() }
-
     val state: StateFlow<TodayUiState> = currentDay()
         .flatMapLatest<LocalDate, TodayUiState> { day ->
             combine(
@@ -66,7 +63,7 @@ class TodayViewModel @Inject constructor(
                     statuses,
                     allRoutines,
                     playerState,
-                    timeZone()
+                    timekeeper.timeZone()
                 )
             }
         }
@@ -100,7 +97,7 @@ class TodayViewModel @Inject constructor(
                 is LogResult.Logged -> sendEffect(
                     TodayEffect.Logged(
                         anchorName = anchorName(anchorId),
-                        loggedAt = result.event.occurredAt.toLocalTime(timeZone()),
+                        loggedAt = result.event.occurredAt.toLocalTime(timekeeper.timeZone()),
                         eventId = result.event.id.value,
                     ),
                 )
@@ -134,7 +131,7 @@ class TodayViewModel @Inject constructor(
     private fun currentDay(): Flow<LocalDate> = flow {
         while (true) {
             val now = timekeeper.now().wall
-            val zone = timeZone()
+            val zone = timekeeper.timeZone()
             val today = now.toLocalDateTime(zone).date
             emit(today)
             val nextMidnight = today.plus(1, DateTimeUnit.DAY)

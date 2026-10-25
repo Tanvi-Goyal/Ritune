@@ -13,7 +13,7 @@ plugins {
 
 dependencies {
     subprojects
-        .filter { it.buildFile.exists() && it.path != ":core:testing" }
+        .filter { it.buildFile.exists() && it.path !in setOf(":core:testing", ":core:screenshot-testing") }
         .forEach { kover(it) }
 }
 

@@ -8,6 +8,8 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
 
+private const val SCREENSHOT_TESTING_MODULE = ":core:screenshot-testing"
+
 class AndroidComposeConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
         pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
@@ -24,6 +26,9 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
         }
 
         dependencies {
+            if (path != SCREENSHOT_TESTING_MODULE) {
+                add("testImplementation", project(SCREENSHOT_TESTING_MODULE))
+            }
             val bom = platform(libs.library("androidx-compose-bom"))
             add("testImplementation", bom)
             add("testImplementation", libs.library("androidx-compose-ui-test-junit4"))

@@ -1,6 +1,5 @@
 package com.ritune.platform.android.cues
 
-import android.util.Log
 import com.ritune.core.domain.ports.CuePlayer
 import com.ritune.core.domain.usecases.settings.ObserveSettings
 import com.ritune.core.domain.usecases.settings.allows
@@ -8,6 +7,7 @@ import com.ritune.core.models.AppSettings
 import com.ritune.core.models.Cue
 import com.ritune.core.models.HapticPattern
 import com.ritune.core.models.SoundCue
+import com.ritune.platform.android.Logger
 import com.ritune.platform.android.di.Dispatcher
 import com.ritune.platform.android.di.PlayerEngineScope
 import com.ritune.platform.android.di.RituneDispatchers
@@ -37,6 +37,7 @@ class ChannelCueDispatcher @Inject constructor(
     observeSettings: ObserveSettings,
     @PlayerEngineScope private val scope: CoroutineScope,
     @Dispatcher(RituneDispatchers.Main) private val mainDispatcher: CoroutineDispatcher,
+    private val logger: Logger,
 ) : CuePlayer {
 
     private val settings = observeSettings()
@@ -70,7 +71,7 @@ class ChannelCueDispatcher @Inject constructor(
 
     private fun route(cue: Cue) {
         val channel = channels.firstOrNull { it.handles(cue) }
-        if (channel == null) Log.w(TAG, "No channel for $cue") else channel.safely { play(cue) }
+        if (channel == null) logger.warn(TAG, "No channel for $cue") else channel.safely { play(cue) }
     }
 
     private fun onMain(block: () -> Unit) {
@@ -81,7 +82,7 @@ class ChannelCueDispatcher @Inject constructor(
         try {
             action()
         } catch (e: Exception) {
-            Log.e(TAG, "${this::class.simpleName} failed", e)
+            logger.error(TAG, "${this::class.simpleName} failed", e)
         }
     }
 

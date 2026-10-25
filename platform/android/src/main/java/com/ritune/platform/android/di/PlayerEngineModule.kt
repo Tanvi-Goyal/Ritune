@@ -7,7 +7,9 @@ import com.ritune.core.domain.usecases.anchor.LogAnchor
 import com.ritune.core.domain.usecases.player.DomainRunRecorder
 import com.ritune.core.models.IdGenerator
 import com.ritune.core.models.Timekeeper
+import com.ritune.platform.android.AndroidLogger
 import com.ritune.platform.android.EnginePlayerController
+import com.ritune.platform.android.Logger
 import com.ritune.platform.android.PlayerEngine
 import com.ritune.platform.android.SystemTimekeeper
 import com.ritune.platform.android.UuidGenerator
@@ -40,6 +42,10 @@ abstract class PlayerEngineBindings {
     @Binds
     @Singleton
     abstract fun bindsIdGenerator(impl: UuidGenerator): IdGenerator
+
+    @Binds
+    @Singleton
+    abstract fun bindsLogger(impl: AndroidLogger): Logger
 }
 
 @Module

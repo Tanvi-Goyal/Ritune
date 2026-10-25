@@ -1,3 +1,5 @@
+import com.ritune.buildlogic.configureKover
+import com.ritune.buildlogic.configureUnitTestDependencies
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -18,5 +20,7 @@ class JvmLibraryConventionPlugin : Plugin<Project> {
         extensions.configure<KotlinJvmProjectExtension> {
             compilerOptions.jvmTarget.set(JvmTarget.JVM_11)
         }
+        configureUnitTestDependencies()
+        configureKover("jvm")
     }
 }

@@ -9,6 +9,8 @@ object RituneSdk {
     const val TARGET = 37
 }
 
+const val MANAGED_DEVICE = "pixel6Api34"
+
 internal fun CommonExtension.configureAndroid() {
     compileSdk {
         version = release(RituneSdk.COMPILE)
@@ -17,4 +19,10 @@ internal fun CommonExtension.configureAndroid() {
     defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     compileOptions.sourceCompatibility = JavaVersion.VERSION_11
     compileOptions.targetCompatibility = JavaVersion.VERSION_11
+
+    testOptions.managedDevices.localDevices.create(MANAGED_DEVICE) {
+        device = "Pixel 6"
+        sdkVersion = 34
+        systemImageSource = "aosp-atd"
+    }
 }

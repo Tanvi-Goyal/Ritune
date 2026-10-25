@@ -17,3 +17,7 @@ local.properties
 *.jks
 *.keystore
 keystore.properties
+
+# Android Studio APK exports
+/app/debug/
+/app/release/

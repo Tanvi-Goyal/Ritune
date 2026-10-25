@@ -16,15 +16,18 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
         extensions.configure<CommonExtension> {
             testOptions.unitTests.isIncludeAndroidResources = true
         }
-        // Android resources add a generated test R class, which Gradle mistakes for test sources.
         tasks.withType<Test>().configureEach {
+            // Android resources add a generated test R class, which Gradle mistakes for test sources.
             failOnNoDiscoveredTests.set(false)
+            // Robolectric reads raw FileDescriptor fields through this JDK-internal package.
+            jvmArgs("--add-exports=java.base/jdk.internal.access=ALL-UNNAMED")
         }
 
         dependencies {
             val bom = platform(libs.library("androidx-compose-bom"))
             add("testImplementation", bom)
             add("testImplementation", libs.library("androidx-compose-ui-test-junit4"))
+            add("testImplementation", libs.library("androidx-junit"))
             add("testImplementation", libs.library("robolectric"))
             add("testImplementation", libs.library("roborazzi"))
             add("testImplementation", libs.library("roborazzi-compose"))

@@ -9,6 +9,7 @@ import com.ritune.core.domain.usecases.anchor.ObserveToday
 import com.ritune.core.domain.usecases.anchor.UndoLogAnchor
 import com.ritune.core.domain.usecases.player.ObservePlayerState
 import com.ritune.core.domain.usecases.player.StartRoutine
+import com.ritune.core.domain.usecases.rhythm.ObserveCurrentDay
 import com.ritune.core.domain.usecases.routine.ObserveRoutines
 import com.ritune.core.models.AnchorId
 import com.ritune.core.models.EventId
@@ -20,30 +21,22 @@ import com.ritune.feature.today.ui.mapper.toLocalTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
-import kotlinx.datetime.plus
-import kotlinx.datetime.toLocalDateTime
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class TodayViewModel @Inject constructor(
     observeToday: ObserveToday,
+    observeCurrentDay: ObserveCurrentDay,
     observePlayerState: ObservePlayerState,
     private val observeRoutines: ObserveRoutines,
     private val logAnchor: LogAnchor,
@@ -52,9 +45,7 @@ class TodayViewModel @Inject constructor(
     private val startRoutine: StartRoutine,
 ) : ViewModel() {
 
-    private val timeZone: () -> TimeZone = { TimeZone.currentSystemDefault() }
-
-    val state: StateFlow<TodayUiState> = currentDay()
+    val state: StateFlow<TodayUiState> = observeCurrentDay()
         .flatMapLatest<LocalDate, TodayUiState> { day ->
             combine(
                 observeToday(day),
@@ -66,7 +57,7 @@ class TodayViewModel @Inject constructor(
                     statuses,
                     allRoutines,
                     playerState,
-                    timeZone()
+                    timekeeper.timeZone()
                 )
             }
         }
@@ -100,7 +91,7 @@ class TodayViewModel @Inject constructor(
                 is LogResult.Logged -> sendEffect(
                     TodayEffect.Logged(
                         anchorName = anchorName(anchorId),
-                        loggedAt = result.event.occurredAt.toLocalTime(timeZone()),
+                        loggedAt = result.event.occurredAt.toLocalTime(timekeeper.timeZone()),
                         eventId = result.event.id.value,
                     ),
                 )
@@ -130,16 +121,4 @@ class TodayViewModel @Inject constructor(
         (state.value as? TodayUiState.Content)?.anchors?.firstOrNull {
             it.id == id
         }?.name.orEmpty()
-
-    private fun currentDay(): Flow<LocalDate> = flow {
-        while (true) {
-            val now = timekeeper.now().wall
-            val zone = timeZone()
-            val today = now.toLocalDateTime(zone).date
-            emit(today)
-            val nextMidnight = today.plus(1, DateTimeUnit.DAY)
-                .atStartOfDayIn(zone)
-            delay((nextMidnight - now).coerceAtLeast(1.seconds))
-        }
-    }.distinctUntilChanged()
 }

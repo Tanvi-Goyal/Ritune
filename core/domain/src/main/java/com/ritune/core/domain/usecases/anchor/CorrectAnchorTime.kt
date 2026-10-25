@@ -10,7 +10,6 @@ import com.ritune.core.models.IdGenerator
 import com.ritune.core.models.Timekeeper
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
 import kotlinx.datetime.offsetAt
 import kotlinx.datetime.toInstant
@@ -27,7 +26,7 @@ class CorrectAnchorTime @Inject constructor(
         day: LocalDate,
         time: LocalTime
     ): CorrectResult {
-        val zone = TimeZone.currentSystemDefault()
+        val zone = timekeeper.timeZone()
         val at = day.atTime(time).toInstant(zone)
         if (at > timekeeper.now().wall) return CorrectResult.InFuture
 

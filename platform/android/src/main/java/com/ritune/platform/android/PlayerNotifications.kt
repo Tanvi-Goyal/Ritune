@@ -6,12 +6,12 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.SystemClock
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import com.ritune.core.models.player.PlayerState
 import com.ritune.core.models.RunSummary
 import com.ritune.core.models.Session
+import com.ritune.core.models.Timekeeper
 import com.ritune.core.navigation.DeepLinks
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -21,7 +21,8 @@ import kotlin.time.Duration
 /** Builds the ongoing routine notification and the "done" notification. */
 @Singleton
 class PlayerNotifications @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val timekeeper: Timekeeper,
 ) {
 
     private val manager = context.getSystemService(
@@ -50,8 +51,9 @@ class PlayerNotifications @Inject constructor(
         )
         when (state) {
             is PlayerState.Running -> {
+                val now = timekeeper.now()
                 val remainingMs =
-                    (state.stepEndsAtMono - SystemClock.elapsedRealtime())
+                    (state.stepEndsAtMono - now.monoMillis)
                         .coerceAtLeast(0)
                 builder
                     .setContentTitle(state.session.currentStep.title)
@@ -59,7 +61,7 @@ class PlayerNotifications @Inject constructor(
                     .setShowWhen(true)
                     .setUsesChronometer(true)
                     .setChronometerCountDown(true)
-                    .setWhen(System.currentTimeMillis() + remainingMs)
+                    .setWhen(now.wall.toEpochMilliseconds() + remainingMs)
                     .addAction(
                         0,
                         context.getString(R.string.notif_action_pause),

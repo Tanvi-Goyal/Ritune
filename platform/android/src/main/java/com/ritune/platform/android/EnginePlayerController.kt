@@ -17,6 +17,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,7 +37,10 @@ class EnginePlayerController @Inject constructor(
 
     override val state: StateFlow<PlayerState> get() = engine.state
 
-    init {
+    private val handlingEffects = AtomicBoolean(false)
+
+    fun startHandlingEffects() {
+        if (!handlingEffects.compareAndSet(false, true)) return
         scope.launch {
             engine.effects.collect { effect ->
                 try {
@@ -69,6 +73,7 @@ class EnginePlayerController @Inject constructor(
     }
 
     override suspend fun start(routine: Routine): StartResult {
+        startHandlingEffects()
         if (!engine.start(routine)) return StartResult.AlreadyRunning
         ContextCompat.startForegroundService(
             context,

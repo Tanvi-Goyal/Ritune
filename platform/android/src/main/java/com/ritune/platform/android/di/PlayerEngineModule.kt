@@ -7,7 +7,9 @@ import com.ritune.core.domain.usecases.anchor.LogAnchor
 import com.ritune.core.domain.usecases.player.DomainRunRecorder
 import com.ritune.core.models.IdGenerator
 import com.ritune.core.models.Timekeeper
+import com.ritune.platform.android.AndroidLogger
 import com.ritune.platform.android.EnginePlayerController
+import com.ritune.platform.android.Logger
 import com.ritune.platform.android.PlayerEngine
 import com.ritune.platform.android.SystemTimekeeper
 import com.ritune.platform.android.UuidGenerator
@@ -16,8 +18,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import javax.inject.Qualifier
 import javax.inject.Singleton
@@ -40,6 +42,10 @@ abstract class PlayerEngineBindings {
     @Binds
     @Singleton
     abstract fun bindsIdGenerator(impl: UuidGenerator): IdGenerator
+
+    @Binds
+    @Singleton
+    abstract fun bindsLogger(impl: AndroidLogger): Logger
 }
 
 @Module
@@ -48,8 +54,9 @@ object PlayerEngineProviders {
     @Provides
     @Singleton
     @PlayerEngineScope
-    fun providePlayerEngineScope(): CoroutineScope =
-        CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    fun providePlayerEngineScope(
+        @Dispatcher(RituneDispatchers.Default) dispatcher: CoroutineDispatcher,
+    ): CoroutineScope = CoroutineScope(SupervisorJob() + dispatcher)
 
     @Provides
     @Singleton

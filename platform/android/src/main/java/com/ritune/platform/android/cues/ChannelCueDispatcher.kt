@@ -1,6 +1,5 @@
 package com.ritune.platform.android.cues
 
-import android.util.Log
 import com.ritune.core.domain.ports.CuePlayer
 import com.ritune.core.domain.usecases.settings.ObserveSettings
 import com.ritune.core.domain.usecases.settings.allows
@@ -8,9 +7,12 @@ import com.ritune.core.models.AppSettings
 import com.ritune.core.models.Cue
 import com.ritune.core.models.HapticPattern
 import com.ritune.core.models.SoundCue
+import com.ritune.platform.android.Logger
+import com.ritune.platform.android.di.Dispatcher
 import com.ritune.platform.android.di.PlayerEngineScope
+import com.ritune.platform.android.di.RituneDispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
@@ -34,6 +36,8 @@ class ChannelCueDispatcher @Inject constructor(
     private val channels: Set<@JvmSuppressWildcards CueChannel>,
     observeSettings: ObserveSettings,
     @PlayerEngineScope private val scope: CoroutineScope,
+    @Dispatcher(RituneDispatchers.Main) private val mainDispatcher: CoroutineDispatcher,
+    private val logger: Logger,
 ) : CuePlayer {
 
     private val settings = observeSettings()
@@ -59,7 +63,7 @@ class ChannelCueDispatcher @Inject constructor(
 
     override fun release() = onMain {
         releaseJob?.cancel()
-        releaseJob = scope.launch(Dispatchers.Main.immediate) {
+        releaseJob = scope.launch(mainDispatcher) {
             delay(RELEASE_GRACE)
             channels.forEach { it.safely { release() } }
         }
@@ -67,18 +71,18 @@ class ChannelCueDispatcher @Inject constructor(
 
     private fun route(cue: Cue) {
         val channel = channels.firstOrNull { it.handles(cue) }
-        if (channel == null) Log.w(TAG, "No channel for $cue") else channel.safely { play(cue) }
+        if (channel == null) logger.warn(TAG, "No channel for $cue") else channel.safely { play(cue) }
     }
 
     private fun onMain(block: () -> Unit) {
-        scope.launch(Dispatchers.Main.immediate) { block() }
+        scope.launch(mainDispatcher) { block() }
     }
 
     private inline fun CueChannel.safely(action: CueChannel.() -> Unit) {
         try {
             action()
         } catch (e: Exception) {
-            Log.e(TAG, "${this::class.simpleName} failed", e)
+            logger.error(TAG, "${this::class.simpleName} failed", e)
         }
     }
 

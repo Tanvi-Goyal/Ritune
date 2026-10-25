@@ -8,7 +8,6 @@ import com.ritune.core.models.EventId
 import com.ritune.core.models.EventSource
 import com.ritune.core.models.IdGenerator
 import com.ritune.core.models.Timekeeper
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.offsetAt
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
@@ -32,7 +31,7 @@ class LogAnchor @Inject constructor(
             id = EventId(ids.newId()),
             anchorId = anchorId,
             occurredAt = now,
-            utcOffsetSeconds = TimeZone.currentSystemDefault().offsetAt(now).totalSeconds,
+            utcOffsetSeconds = timekeeper.timeZone().offsetAt(now).totalSeconds,
             source = source,
         )
         anchorEventRepository.append(event)

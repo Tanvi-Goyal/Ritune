@@ -13,9 +13,11 @@ import androidx.core.app.ServiceCompat
 import com.ritune.core.domain.ports.PlayerController
 import com.ritune.core.models.player.PlayerState
 import com.ritune.core.models.RunOutcome
+import com.ritune.platform.android.di.Dispatcher
+import com.ritune.platform.android.di.RituneDispatchers
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -37,7 +39,11 @@ class PlayerService : Service() {
     @Inject
     lateinit var notifications: PlayerNotifications
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    @Inject
+    @Dispatcher(RituneDispatchers.Main)
+    lateinit var mainDispatcher: CoroutineDispatcher
+
+    private lateinit var scope: CoroutineScope
     private val manager by lazy { getSystemService(NotificationManager::class.java) }
     private var observing: Job? = null
     private var wakeLock: PowerManager.WakeLock? = null
@@ -46,6 +52,7 @@ class PlayerService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        scope = CoroutineScope(SupervisorJob() + mainDispatcher)
         notifications.ensureChannel()
     }
 

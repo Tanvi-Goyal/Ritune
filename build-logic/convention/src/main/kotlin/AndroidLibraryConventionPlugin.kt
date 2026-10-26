@@ -13,7 +13,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         pluginManager.apply("com.android.library")
 
         extensions.configure<LibraryExtension> {
-            configureAndroid()
+            configureAndroid(hasDeviceTests = file("src/androidTest").exists())
         }
         configureUnitTestDependencies()
         configureInstrumentedTestDependencies()

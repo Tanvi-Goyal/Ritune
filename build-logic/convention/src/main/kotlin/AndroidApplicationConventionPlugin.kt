@@ -1,6 +1,7 @@
 import com.android.build.api.dsl.ApplicationExtension
 import com.ritune.buildlogic.RituneSdk
 import com.ritune.buildlogic.configureAndroid
+import com.ritune.buildlogic.configureAndroidTestingModule
 import com.ritune.buildlogic.configureInstrumentedTestDependencies
 import com.ritune.buildlogic.configureKover
 import com.ritune.buildlogic.configureUnitTestDependencies
@@ -18,6 +19,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
         }
         configureUnitTestDependencies()
         configureInstrumentedTestDependencies()
+        configureAndroidTestingModule()
         configureKover("debug")
     }
 }

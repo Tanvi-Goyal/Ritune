@@ -6,6 +6,7 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 
 const val COVERAGE_VARIANT = "coverage"
+private const val TESTING_MODULE = ":core:testing"
 
 internal fun Project.configureUnitTestDependencies() {
     dependencies {
@@ -13,6 +14,14 @@ internal fun Project.configureUnitTestDependencies() {
         add("testImplementation", libs.library("kotlin-test"))
         add("testImplementation", libs.library("kotlinx-coroutines-test"))
         add("testImplementation", libs.library("turbine"))
+    }
+}
+
+internal fun Project.configureAndroidTestingModule() {
+    if (path == TESTING_MODULE) return
+    dependencies {
+        add("testImplementation", project(TESTING_MODULE))
+        add("androidTestImplementation", project(TESTING_MODULE))
     }
 }
 

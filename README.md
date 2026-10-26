@@ -42,7 +42,8 @@ Built as a portfolio project to practise production Android: a modular Clean Arc
 | Navigation | Navigation Compose with type-safe `@Serializable` routes, nested graphs and deep links |
 | Platform | Foreground service (`specialUse`), wake lock, notifications with a chronometer, `Vibrator`, `SoundPool`, `TextToSpeech`, audio focus |
 | Time | `kotlinx-datetime`, `kotlin.time`, and monotonic time (`elapsedRealtime`) for timers |
-| CI/CD | GitHub Actions: lint, unit tests and a debug build on every PR. Running the Release workflow with a version builds a signed, R8-optimized APK and AAB, uploads the AAB to Play internal testing as a draft, and publishes a tagged GitHub Release. Dependabot keeps dependencies current |
+| Testing | JUnit, coroutines-test and Turbine with shared fakes; Robolectric Compose tests; Roborazzi screenshot tests; Room, navigation, service and end-to-end tests on a Gradle Managed Device; Kover coverage. See [docs/testing.md](docs/testing.md) |
+| CI/CD | GitHub Actions: lint, unit, screenshot and device tests, coverage and a debug build on every PR. Running the Release workflow with a version builds a signed, R8-optimized APK and AAB, uploads the AAB to Play internal testing as a draft, and publishes a tagged GitHub Release. Dependabot keeps dependencies current |
 
 ---
 
@@ -210,8 +211,12 @@ core/
   datastore/            DataStore instances
   designsystem/         Theme, typography, motion, shared components
   navigation/           Deep-link constants shared by the app and the platform
+  testing/              Shared fakes, rules and test data for every module's tests
+  screenshot-testing/   Roborazzi capture helpers for Compose screenshot tests
 platform/android/       PlayerEngine, PlayerService, notifications, cues/
 feature/<name>/ui/      today · rhythm · routine · player · settings · onboarding
+build-logic/            Gradle convention plugins shared by every module
+journeys/               Release journeys run on an emulator before each release
 docs/screenshots/       Images used in this README
 ```
 
@@ -232,7 +237,8 @@ Cues are best checked on a physical device, since emulators don't vibrate. The s
 
 - [ ] Onboarding flow (module and DataStore flag exist; not wired into the start destination yet)
 - [ ] Anchor reminders (notifications at target times)
-- [ ] Unit tests for the reducer, the consistency calculator and the engine's virtual-time countdown; UI tests for the main flows
+- [x] Test suite and CI for every layer: unit, Compose, screenshot, device and end-to-end tests, plus release journeys ([docs/testing.md](docs/testing.md))
+- [ ] Tests for the remaining features (rhythm, routines, player, settings), following the reference tests
 - [ ] Home-screen widget for one-tap anchor logging (`EventSource.WIDGET` is already modelled)
 - [ ] Health Connect import (`EventSource.HEALTH_IMPORT`)
 - [x] CI/CD with GitHub Actions (build, lint, tests, signed releases)

@@ -1,0 +1,19 @@
+<journey name="Log an anchor">
+  <description>
+    A user logs their wake time from Today, undoes it, logs it again, and sees it counted on Today.
+  </description>
+  <actions>
+    <action>Launch Ritune</action>
+    <action>Verify the Today screen is shown with the headline "Ready when you are"</action>
+    <action>Tap the "Wake" row</action>
+    <action>Verify a message saying Wake was logged is shown with an "Undo" button</action>
+    <action>Verify the text "1 of 6 logged today." is shown</action>
+    <action>Tap "Undo"</action>
+    <action>Verify the headline "Ready when you are" is shown again</action>
+    <action>Tap the "Wake" row</action>
+    <action>Tap "Rhythm" in the bottom bar</action>
+    <action>Verify the Rhythm screen is shown</action>
+    <action>Tap "Today" in the bottom bar</action>
+    <action>Verify the text "1 of 6 logged today." is shown</action>
+  </actions>
+</journey>

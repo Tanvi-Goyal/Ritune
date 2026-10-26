@@ -14,7 +14,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
         pluginManager.apply("com.android.application")
 
         extensions.configure<ApplicationExtension> {
-            configureAndroid()
+            configureAndroid(hasDeviceTests = file("src/androidTest").exists())
             defaultConfig.targetSdk = RituneSdk.TARGET
         }
         configureUnitTestDependencies()

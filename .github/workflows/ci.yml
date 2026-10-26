@@ -115,6 +115,7 @@ jobs:
         run: >-
           ./gradlew pixel6Api34DebugAndroidTest
           -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect
+          -Pandroid.experimental.testOptions.managedDevices.maxConcurrentDevices=1
 
       - name: Upload instrumented test results
         if: always()

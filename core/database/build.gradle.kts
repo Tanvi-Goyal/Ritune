@@ -1,15 +1,16 @@
 plugins {
     alias(libs.plugins.ritune.android.library)
     alias(libs.plugins.ritune.hilt)
+    alias(libs.plugins.room)
 }
 
 android {
     namespace = "com.ritune.core.database"
 }
 
-// Committed schema JSON per version; needed to write and test migrations once v1 ships.
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
+// Committed schema JSON per version; migration tests read it from androidTest assets.
+room3 {
+    schemaDirectory("$projectDir/schemas")
 }
 
 dependencies {

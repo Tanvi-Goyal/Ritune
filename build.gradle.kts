@@ -8,12 +8,13 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.roborazzi) apply false
+    alias(libs.plugins.room) apply false
     alias(libs.plugins.kover)
 }
 
 dependencies {
     subprojects
-        .filter { it.buildFile.exists() && it.path != ":core:testing" }
+        .filter { it.buildFile.exists() && it.path !in setOf(":core:testing", ":core:screenshot-testing") }
         .forEach { kover(it) }
 }
 

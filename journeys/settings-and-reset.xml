@@ -1,0 +1,21 @@
+<journey name="Change settings and delete all data">
+  <description>
+    A user switches to the dark theme, logs an anchor, deletes all data, and gets a fresh start.
+  </description>
+  <actions>
+    <action>Launch Ritune</action>
+    <action>Tap "Settings" on the Today screen</action>
+    <action>Tap "Dark" under "Theme"</action>
+    <action>Verify the app is shown with a dark background</action>
+    <action>Go back</action>
+    <action>Tap the "Wake" row</action>
+    <action>Verify the text "1 of 6 logged today." is shown</action>
+    <action>Tap "Settings"</action>
+    <action>Tap "Delete all data"</action>
+    <action>Confirm the deletion</action>
+    <action>Go back to the Today screen</action>
+    <action>Verify the headline "Ready when you are" is shown</action>
+    <action>Tap "Routines" in the bottom bar</action>
+    <action>Verify the "Morning start" routine is listed</action>
+  </actions>
+</journey>

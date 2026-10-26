@@ -1,0 +1,24 @@
+<journey name="Run a routine">
+  <description>
+    A user starts a built-in routine, pauses and resumes it, skips through every step, and reaches the summary.
+  </description>
+  <actions>
+    <action>Launch Ritune</action>
+    <action>Tap "Routines" in the bottom bar</action>
+    <action>Tap "Start" on the "Morning start" routine</action>
+    <action>Verify the player shows "Step 1 of 4" and a running timer</action>
+    <action>Tap "Pause"</action>
+    <action>Verify the player shows "Paused" and a "Resume" button</action>
+    <action>Tap "Resume"</action>
+    <action>Verify the "Pause" button is shown again</action>
+    <action>Tap "Skip"</action>
+    <action>Verify the player shows "Step 2 of 4"</action>
+    <action>Tap "Skip"</action>
+    <action>Tap "Skip"</action>
+    <action>Verify the player shows "Step 4 of 4"</action>
+    <action>Tap the button that ends the last step</action>
+    <action>Verify a summary screen for "Morning start" is shown</action>
+    <action>Tap "Done"</action>
+    <action>Verify the Routines screen is shown</action>
+  </actions>
+</journey>

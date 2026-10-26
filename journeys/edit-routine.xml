@@ -1,0 +1,22 @@
+<journey name="Create and edit a routine">
+  <description>
+    A user creates a routine with two steps, reorders them, saves it, and finds it in the routines list.
+  </description>
+  <actions>
+    <action>Launch Ritune</action>
+    <action>Tap "Routines" in the bottom bar</action>
+    <action>Tap "New routine"</action>
+    <action>Type "Desk reset" into the "Name" field</action>
+    <action>Tap "Add step"</action>
+    <action>Type "Stand up" into the "Step name" field and tap "Done"</action>
+    <action>Tap "Add step"</action>
+    <action>Type "Drink water" into the "Step name" field and tap "Done"</action>
+    <action>Verify the steps are listed in the order "Stand up", "Drink water"</action>
+    <action>Tap the button that moves "Drink water" up</action>
+    <action>Verify the steps are listed in the order "Drink water", "Stand up"</action>
+    <action>Tap "Save"</action>
+    <action>Verify the Routines screen lists "Desk reset"</action>
+    <action>Tap "Desk reset"</action>
+    <action>Verify the routine shows the steps "Drink water" and "Stand up" in that order</action>
+  </actions>
+</journey>

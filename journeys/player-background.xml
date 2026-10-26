@@ -1,0 +1,21 @@
+<journey name="Control a routine from the notification">
+  <description>
+    A user starts a routine, leaves the app, and pauses, resumes and skips it from the notification.
+    Needs an emulator with System UI, not an ATD image.
+  </description>
+  <actions>
+    <action>Launch Ritune</action>
+    <action>Tap "Routines" in the bottom bar</action>
+    <action>Tap "Start" on the "Morning start" routine</action>
+    <action>Press the Home button</action>
+    <action>Open the notification shade</action>
+    <action>Verify a Ritune notification shows the current step with "Pause" and "Skip" buttons</action>
+    <action>Tap "Pause" in the Ritune notification</action>
+    <action>Verify the Ritune notification shows "Paused" and a "Resume" button</action>
+    <action>Tap "Resume" in the Ritune notification</action>
+    <action>Tap "Skip" in the Ritune notification</action>
+    <action>Verify the Ritune notification shows step 2 of 4</action>
+    <action>Tap the body of the Ritune notification</action>
+    <action>Verify the Ritune player is shown on step 2 of 4</action>
+  </actions>
+</journey>

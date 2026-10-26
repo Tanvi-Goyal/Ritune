@@ -1,6 +1,7 @@
 name: Record screenshots
 
-# Goldens must be rendered on the same OS as CI, since fonts rasterize differently on macOS.
+# Records goldens on the CI OS. Robolectric renders them identically on macOS today, so local
+# recordRoborazziDebug works too; use this without a local setup or if the two ever diverge.
 # Run from the Actions tab or add the "record-screenshots" label to a PR, then commit the result:
 #   gh run download <run-id> --name screenshots
 on:

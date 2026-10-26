@@ -66,10 +66,12 @@ fun RituneSnackbarHost(
     }
 }
 
+const val UNDO_TIMEOUT_MS = 10_000L
+
 suspend fun SnackbarHostState.showUndo(
     message: String,
     actionLabel: String,
-    timeoutMs: Long = 5_000L,
+    timeoutMs: Long = UNDO_TIMEOUT_MS,
 ): Boolean = coroutineScope {
     val dismisser = launch {
         delay(timeoutMs.milliseconds)

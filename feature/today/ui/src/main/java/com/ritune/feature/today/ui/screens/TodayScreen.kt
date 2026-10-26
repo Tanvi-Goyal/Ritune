@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalAccessibilityManager
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -35,6 +36,7 @@ import com.ritune.core.designsystem.components.ConsistencyRing
 import com.ritune.core.designsystem.components.RituneCard
 import com.ritune.core.designsystem.components.RituneDivider
 import com.ritune.core.designsystem.components.RituneSnackbarHost
+import com.ritune.core.designsystem.components.UNDO_TIMEOUT_MS
 import com.ritune.core.designsystem.components.showUndo
 import com.ritune.core.designsystem.theme.Ritune
 import com.ritune.core.designsystem.theme.RituneShapes
@@ -54,6 +56,7 @@ fun TodayScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val formatTime = rememberTimeFormatter()
     val resources = LocalResources.current
+    val accessibilityManager = LocalAccessibilityManager.current
 
     LaunchedEffect(viewModel) {
         viewModel.effects.collect { effect ->
@@ -68,7 +71,12 @@ fun TodayScreen(
                         )
                         val undone = snackbarHostState.showUndo(
                             message,
-                            resources.getString(R.string.today_snackbar_undo)
+                            resources.getString(R.string.today_snackbar_undo),
+                            timeoutMs = accessibilityManager?.calculateRecommendedTimeoutMillis(
+                                originalTimeoutMillis = UNDO_TIMEOUT_MS,
+                                containsText = true,
+                                containsControls = true,
+                            ) ?: UNDO_TIMEOUT_MS,
                         )
 
                         if (undone) viewModel.onEvent(TodayEvent.UndoLog(effect.eventId))

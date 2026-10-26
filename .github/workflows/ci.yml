@@ -99,18 +99,6 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Locate Android SDK
-        id: sdk
-        run: echo "path=$ANDROID_HOME" >> "$GITHUB_OUTPUT"
-
-      - name: Cache managed device system image
-        uses: actions/cache@v6
-        with:
-          path: |
-            ~/.android/gradle/avd
-            ${{ steps.sdk.outputs.path }}/system-images/android-34/aosp_atd
-          key: gmd-pixel6Api34-aosp-atd-${{ runner.os }}
-
       - name: Instrumented tests on a Gradle Managed Device
         run: >-
           ./gradlew pixel6Api34DebugAndroidTest

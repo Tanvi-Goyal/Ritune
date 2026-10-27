@@ -5,6 +5,7 @@ import kotlin.time.Instant
 data class RunSummary(
     val runId: RunId,
     val routineId: RoutineId,
+    val routineName: String,
     val startedAt: Instant,
     val finishedAt: Instant,
     val outcome: RunOutcome,

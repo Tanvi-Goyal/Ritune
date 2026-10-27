@@ -147,6 +147,7 @@ class RoutinePlayerReducerTest {
         val finished = assertIs<PlayerState.Finished>(transition.state)
         assertEquals(RunOutcome.STOPPED, finished.summary.outcome)
         assertEquals(testInstant + 3.seconds, finished.summary.finishedAt)
+        assertEquals(routine.name, finished.summary.routineName)
         assertEquals(
             listOf(PlayerEffect.CancelStepEnd, PlayerEffect.RunFinished(finished.summary)),
             transition.effects,

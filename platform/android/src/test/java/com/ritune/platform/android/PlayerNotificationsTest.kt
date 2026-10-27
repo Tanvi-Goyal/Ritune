@@ -83,9 +83,10 @@ class PlayerNotificationsTest {
     }
 
     @Test
-    fun completed_opensRunSummary() {
+    fun completed_namesRoutineAndOpensRunSummary() {
         val notification = notifications.completed(aRunSummary(routine, runId = "run-7"))
 
+        assertEquals("Morning done", notification.title)
         assertEquals("Tap to see the summary.", notification.text)
         assertEquals("${DeepLinks.SUMMARY}/run-7", notification.openedUri)
     }

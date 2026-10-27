@@ -90,7 +90,22 @@ class ConsistencyCalculatorTest {
 
         val rhythm = compute(events)
 
-        assertEquals(23 * 60 + 50, rhythm.anchors.first { it.anchor == lightsOut }.medianMinutes)
+        assertEquals(23 * 60 + 55, rhythm.anchors.first { it.anchor == lightsOut }.medianMinutes)
+        assertEquals(1f, rhythm.consistency)
+    }
+
+    @Test
+    fun compute_evenLogsAcrossMidnight_medianStaysAtMidnight() {
+        val events = listOf(
+            log(lightsOut, weekStart, 23, 50),
+            log(lightsOut, weekStart.plusDays(1), 23, 50),
+            log(lightsOut, weekStart.plusDays(3), 0, 10),
+            log(lightsOut, weekStart.plusDays(4), 0, 10),
+        )
+
+        val rhythm = compute(events)
+
+        assertEquals(0, rhythm.anchors.first { it.anchor == lightsOut }.medianMinutes)
         assertEquals(1f, rhythm.consistency)
     }
 

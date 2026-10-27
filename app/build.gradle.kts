@@ -87,6 +87,8 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
 
+    testImplementation(libs.androidx.navigation.testing)
+
     androidTestImplementation(project(":core:navigation"))
     androidTestImplementation(libs.androidx.navigation.testing)
     androidTestImplementation(libs.androidx.test.uiautomator)

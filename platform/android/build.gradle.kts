@@ -3,14 +3,13 @@
 // settings, and the system clock. Depends on the domain; never on features or :core:data.
 plugins {
     alias(libs.plugins.ritune.android.library)
+    alias(libs.plugins.ritune.android.robolectric)
     alias(libs.plugins.ritune.hilt)
 }
 
 android {
     namespace = "com.ritune.platform.android"
 }
-
-kotlin { jvmToolchain(17) }
 
 dependencies {
     implementation(project(":core:domain")) // model, player, and ports come with it

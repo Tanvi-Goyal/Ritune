@@ -48,7 +48,7 @@ class PlayerStateTest {
     @Test
     fun remainingAt_idleOrFinished_isZero() {
         val summary = RunSummary(
-            RunId("run"), RoutineId("routine"), Instant.DISTANT_PAST, Instant.DISTANT_PAST,
+            RunId("run"), RoutineId("routine"), "Routine", Instant.DISTANT_PAST, Instant.DISTANT_PAST,
             RunOutcome.STOPPED, completedSteps = 0, skippedSteps = 0, totalSteps = 1,
         )
 

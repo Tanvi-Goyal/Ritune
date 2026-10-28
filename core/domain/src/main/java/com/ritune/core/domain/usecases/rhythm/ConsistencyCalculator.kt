@@ -100,10 +100,17 @@ object ConsistencyCalculator {
         )
     }
 
+    // Cut the clock at the widest gap between logs, so 23:50 and 00:10 don't average to midday.
     private fun median(values: List<Int>): Int {
         val sorted = values.sorted()
-        val n = sorted.size
-        return if (n % 2 == 1) sorted[n / 2] else (sorted[n / 2 - 1] + sorted[n / 2]) / 2
+        val start = sorted.indices.maxBy { i ->
+            val previous = if (i == 0) sorted.last() - DAY_MINUTES else sorted[i - 1]
+            sorted[i] - previous
+        }.let { sorted[it] }
+        val unwrapped = sorted.map { (it - start).mod(DAY_MINUTES) }.sorted()
+        val n = unwrapped.size
+        val median = if (n % 2 == 1) unwrapped[n / 2] else (unwrapped[n / 2 - 1] + unwrapped[n / 2]) / 2
+        return (median + start).mod(DAY_MINUTES)
     }
 
     private fun distance(a: Int, b: Int): Int {

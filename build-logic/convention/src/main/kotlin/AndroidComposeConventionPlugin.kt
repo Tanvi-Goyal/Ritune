@@ -1,12 +1,9 @@
-import com.android.build.api.dsl.CommonExtension
+import com.ritune.buildlogic.configureRobolectric
 import com.ritune.buildlogic.libs
 import com.ritune.buildlogic.library
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.tasks.testing.Test
-import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.withType
 
 private const val SCREENSHOT_TESTING_MODULE = ":core:screenshot-testing"
 
@@ -14,16 +11,7 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
         pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
         pluginManager.apply("io.github.takahirom.roborazzi")
-
-        extensions.configure<CommonExtension> {
-            testOptions.unitTests.isIncludeAndroidResources = true
-        }
-        tasks.withType<Test>().configureEach {
-            // Android resources add a generated test R class, which Gradle mistakes for test sources.
-            failOnNoDiscoveredTests.set(false)
-            // Robolectric reads raw FileDescriptor fields through this JDK-internal package.
-            jvmArgs("--add-exports=java.base/jdk.internal.access=ALL-UNNAMED")
-        }
+        configureRobolectric()
 
         dependencies {
             if (path != SCREENSHOT_TESTING_MODULE) {
@@ -32,8 +20,6 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
             val bom = platform(libs.library("androidx-compose-bom"))
             add("testImplementation", bom)
             add("testImplementation", libs.library("androidx-compose-ui-test-junit4"))
-            add("testImplementation", libs.library("androidx-junit"))
-            add("testImplementation", libs.library("robolectric"))
             add("testImplementation", libs.library("roborazzi"))
             add("testImplementation", libs.library("roborazzi-compose"))
             add("testImplementation", libs.library("roborazzi-junit-rule"))

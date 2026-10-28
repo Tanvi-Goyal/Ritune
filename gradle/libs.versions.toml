@@ -53,6 +53,7 @@ room = { id = "androidx.room3", version.ref = "room" }
 ritune-android-application = { id = "ritune.android.application" }
 ritune-android-library = { id = "ritune.android.library" }
 ritune-android-compose = { id = "ritune.android.compose" }
+ritune-android-robolectric = { id = "ritune.android.robolectric" }
 ritune-android-feature = { id = "ritune.android.feature" }
 ritune-hilt = { id = "ritune.hilt" }
 ritune-jvm-library = { id = "ritune.jvm.library" }

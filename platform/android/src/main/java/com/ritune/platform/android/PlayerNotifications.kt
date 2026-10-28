@@ -103,7 +103,7 @@ class PlayerNotifications @Inject constructor(
             .setContentTitle(
                 context.getString(
                     R.string.notif_done_title,
-                    summary.routineId
+                    summary.routineName
                 )
             )
             .setContentText(context.getString(R.string.notif_done_text))

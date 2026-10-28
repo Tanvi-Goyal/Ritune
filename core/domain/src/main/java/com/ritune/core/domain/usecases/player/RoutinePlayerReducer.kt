@@ -166,6 +166,7 @@ object RoutinePlayerReducer {
         val summary = RunSummary(
             runId = session.runId,
             routineId = session.routine.id,
+            routineName = session.routine.name,
             startedAt = session.startedAt,
             finishedAt = at.wall,
             outcome = outcome,

@@ -22,9 +22,6 @@ abstract class RoutineDao {
     @Query("SELECT * FROM routines WHERE id = :id")
     abstract suspend fun get(id: String): RoutineWithSteps?
 
-    @Query("SELECT name FROM routines WHERE id = :id")
-    abstract suspend fun nameOf(id: String): String?
-
     @Query("SELECT COUNT(*) FROM routines")
     abstract suspend fun count(): Int
 

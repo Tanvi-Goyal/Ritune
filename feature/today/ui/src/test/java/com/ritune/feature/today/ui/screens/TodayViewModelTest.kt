@@ -1,6 +1,7 @@
 package com.ritune.feature.today.ui.screens
 
 import app.cash.turbine.test
+import com.ritune.core.domain.ports.StartResult
 import com.ritune.core.domain.usecases.anchor.LogAnchor
 import com.ritune.core.domain.usecases.anchor.ObserveToday
 import com.ritune.core.domain.usecases.anchor.UndoLogAnchor
@@ -106,6 +107,22 @@ class TodayViewModelTest {
     }
 
     @Test
+    fun logAnchor_twiceWithinDedupeWindow_logsOnce() = runTest {
+        val viewModel = newViewModel()
+        collectState(viewModel)
+
+        viewModel.effects.test {
+            viewModel.onEvent(TodayEvent.LogAnchor(DefaultCatalog.wake.id.value))
+            assertIs<TodayEffect.Logged>(awaitItem())
+            viewModel.onEvent(TodayEvent.LogAnchor(DefaultCatalog.wake.id.value))
+
+            expectNoEvents()
+        }
+        assertEquals(1, events.events.value.size)
+        assertEquals(1, viewModel.content().loggedCount)
+    }
+
+    @Test
     fun undoLog_clearsTheLoggedTime() = runTest {
         val viewModel = newViewModel()
         collectState(viewModel)
@@ -138,6 +155,29 @@ class TodayViewModelTest {
             assertEquals(TodayEffect.OpenPlayer, awaitItem())
         }
         assertEquals(listOf(DefaultCatalog.morningStart), player.startedRoutines)
+    }
+
+    @Test
+    fun startRoutine_anotherAlreadyRunning_opensPlayer() = runTest {
+        player.startResult = StartResult.AlreadyRunning
+        val viewModel = newViewModel()
+
+        viewModel.effects.test {
+            viewModel.onEvent(TodayEvent.StartRoutine(DefaultCatalog.morningStart.id.value))
+
+            assertEquals(TodayEffect.OpenPlayer, awaitItem())
+        }
+    }
+
+    @Test
+    fun openRunningRoutine_opensPlayer() = runTest {
+        val viewModel = newViewModel()
+
+        viewModel.effects.test {
+            viewModel.onEvent(TodayEvent.OpenRunningRoutine)
+
+            assertEquals(TodayEffect.OpenPlayer, awaitItem())
+        }
     }
 
     @Test

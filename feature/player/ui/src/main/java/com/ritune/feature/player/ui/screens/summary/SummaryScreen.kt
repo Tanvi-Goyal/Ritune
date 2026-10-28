@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,6 +31,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ritune.core.designsystem.R
@@ -133,47 +135,53 @@ private fun ContentBody(state: SummaryUiState.Content) {
         )
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = Ritune.spacing.xl),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        OutcomeBadge(
-            completed = state.completed,
-            modifier = Modifier.padding(top = Ritune.spacing.xxl * 3)
-        )
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineLarge,
-            color = colors.onBackground,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = Ritune.spacing.xxl),
-        )
-        Text(
-            text = steps,
-            style = MaterialTheme.typography.bodyLarge,
-            color = colors.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = Ritune.spacing.xs),
-        )
-        Row(
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        val compact = maxHeight < COMPACT_HEIGHT
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = Ritune.spacing.xxl * 2),
-            horizontalArrangement = Arrangement.spacedBy(Ritune.spacing.md),
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = Ritune.spacing.xl),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            StatCard(
-                stringResource(R.string.summary_duration),
-                formatTimer(state.duration),
-                Modifier.weight(1f)
+            OutcomeBadge(
+                completed = state.completed,
+                diameter = if (compact) 64.dp else 96.dp,
+                modifier = Modifier.padding(
+                    top = if (compact) Ritune.spacing.xl else Ritune.spacing.xxl * 3
+                ),
             )
-            StatCard(
-                stringResource(R.string.summary_started),
-                formatTime(state.startedAt),
-                Modifier.weight(1f)
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineLarge,
+                color = colors.onBackground,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = if (compact) Ritune.spacing.lg else Ritune.spacing.xxl),
             )
+            Text(
+                text = steps,
+                style = MaterialTheme.typography.bodyLarge,
+                color = colors.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = Ritune.spacing.xs),
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = if (compact) Ritune.spacing.xl else Ritune.spacing.xxl * 2),
+                horizontalArrangement = Arrangement.spacedBy(Ritune.spacing.md),
+            ) {
+                StatCard(
+                    stringResource(R.string.summary_duration),
+                    formatTimer(state.duration),
+                    Modifier.weight(1f)
+                )
+                StatCard(
+                    stringResource(R.string.summary_started),
+                    formatTime(state.startedAt),
+                    Modifier.weight(1f)
+                )
+            }
         }
     }
 }
@@ -221,13 +229,13 @@ private fun StatCard(label: String, value: String, modifier: Modifier = Modifier
 }
 
 @Composable
-private fun OutcomeBadge(completed: Boolean, modifier: Modifier = Modifier) {
+private fun OutcomeBadge(completed: Boolean, diameter: Dp, modifier: Modifier = Modifier) {
     val colors = MaterialTheme.colorScheme
     val circle = if (completed) colors.primaryContainer else colors.surfaceVariant
     val mark = if (completed) colors.primary else colors.onSurfaceVariant
     Canvas(
         modifier
-            .size(96.dp)
+            .size(diameter)
             .clearAndSetSemantics { }) {
         drawCircle(color = circle)
         if (completed) {
@@ -259,3 +267,5 @@ private fun OutcomeBadge(completed: Boolean, modifier: Modifier = Modifier) {
         }
     }
 }
+
+private val COMPACT_HEIGHT = 480.dp

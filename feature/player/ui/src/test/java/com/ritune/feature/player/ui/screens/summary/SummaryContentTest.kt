@@ -8,9 +8,11 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ritune.core.designsystem.R
 import com.ritune.core.designsystem.theme.RituneTheme
+import com.ritune.feature.player.ui.screens.assertFullyVisible
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -89,6 +91,14 @@ class SummaryContentTest {
         composeTestRule.onNodeWithText(string(R.string.summary_done)).performClick()
 
         assertEquals(listOf<SummaryUiEvent>(SummaryUiEvent.Done), events)
+    }
+
+    @Test
+    @Config(qualifiers = "w900dp-h400dp")
+    fun shortWindow_showsWholeStats() {
+        setContent(done)
+
+        assertFullyVisible(composeTestRule.onNodeWithText("8:02"))
     }
 
     @Test

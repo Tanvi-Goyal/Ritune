@@ -10,9 +10,11 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ritune.core.designsystem.R
 import com.ritune.core.designsystem.theme.RituneTheme
+import com.ritune.feature.player.ui.screens.assertFullyVisible
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.seconds
 
@@ -93,6 +95,14 @@ class PlayerContentTest {
         composeTestRule.onAllNodesWithText(string(R.string.player_stop_confirm)).onLast().performClick()
 
         assertEquals(listOf(PlayerUiEvent.DismissStop, PlayerUiEvent.ConfirmStop), events)
+    }
+
+    @Test
+    @Config(qualifiers = "w900dp-h400dp")
+    fun shortWindow_showsWholeTimer() {
+        setContent(running.copy(instruction = "Reach up slowly, then let your arms drop."))
+
+        assertFullyVisible(composeTestRule.onNodeWithText("2:14"))
     }
 
     @Test

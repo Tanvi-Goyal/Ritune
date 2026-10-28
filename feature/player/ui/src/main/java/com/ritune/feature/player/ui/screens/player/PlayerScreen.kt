@@ -7,6 +7,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ritune.core.designsystem.R
 import com.ritune.core.designsystem.components.PrimaryButton
@@ -144,54 +146,69 @@ private fun ActiveBody(
             modifier = Modifier.padding(top = Ritune.spacing.md),
         )
 
-        Column(
-            modifier = Modifier
+        BoxWithConstraints(
+            Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
         ) {
-            Text(
-                text = stringResource(
-                    if (state.isPaused)
-                        R.string.player_paused
-                    else R.string.player_now
-                ),
-                style = MaterialTheme.typography.bodySmall,
-                color = colors.onSurfaceVariant,
-            )
-            Text(
-                text = state.stepTitle,
-                style = MaterialTheme.typography.headlineLarge,
-                color = colors.onBackground,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = Ritune.spacing.xs),
-            )
-            if (state.instruction != null) {
+            val compact = maxHeight < COMPACT_HEIGHT
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f, fill = false)
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(
+                        text = stringResource(
+                            if (state.isPaused)
+                                R.string.player_paused
+                            else R.string.player_now
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = colors.onSurfaceVariant,
+                    )
+                    Text(
+                        text = state.stepTitle,
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = colors.onBackground,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = Ritune.spacing.xs),
+                    )
+                    if (state.instruction != null) {
+                        Text(
+                            text = state.instruction,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = colors.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(top = Ritune.spacing.sm),
+                        )
+                    }
+                }
+                TimerText(
+                    remaining = state.remaining,
+                    color = if (state.isPaused) colors.onSurfaceVariant else colors.primary,
+                    style = if (compact) MaterialTheme.typography.displayMedium
+                    else MaterialTheme.typography.displayLarge,
+                    modifier = Modifier.padding(
+                        vertical = if (compact) Ritune.spacing.sm else Ritune.spacing.xl
+                    ),
+                )
                 Text(
-                    text = state.instruction,
-                    style = MaterialTheme.typography.bodyLarge,
+                    text = state.nextStepTitle?.let {
+                        stringResource(
+                            R.string.player_next,
+                            it
+                        )
+                    } ?: stringResource(R.string.player_last_step),
+                    style = MaterialTheme.typography.bodySmall,
                     color = colors.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(top = Ritune.spacing.sm),
                 )
             }
-            TimerText(
-                remaining = state.remaining,
-                color = if (state.isPaused) colors.onSurfaceVariant else colors.primary,
-                modifier = Modifier.padding(vertical = Ritune.spacing.xl),
-            )
-            Text(
-                text = state.nextStepTitle?.let {
-                    stringResource(
-                        R.string.player_next,
-                        it
-                    )
-                } ?: stringResource(R.string.player_last_step),
-                style = MaterialTheme.typography.bodySmall,
-                color = colors.onSurfaceVariant,
-            )
         }
 
         Row(
@@ -231,3 +248,5 @@ private fun ActiveBody(
         )
     }
 }
+
+private val COMPACT_HEIGHT = 400.dp

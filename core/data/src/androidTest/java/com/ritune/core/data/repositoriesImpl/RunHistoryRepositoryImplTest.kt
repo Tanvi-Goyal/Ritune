@@ -26,7 +26,7 @@ class RunHistoryRepositoryImplTest {
             ApplicationProvider.getApplicationContext(),
             RituneDatabase::class.java,
         ).build()
-        repository = RunHistoryRepositoryImpl(database.runDao(), database.routineDao())
+        repository = RunHistoryRepositoryImpl(database.runDao())
     }
 
     @After
@@ -35,23 +35,12 @@ class RunHistoryRepositoryImplTest {
     }
 
     @Test
-    fun save_storesSummaryWithRoutineName() = runTest {
-        val routine = aRoutine(name = "Morning")
-        RoutineRepositoryImpl(database.routineDao()).save(routine)
-        val summary = aRunSummary(routine)
+    fun save_routineNeverStored_keepsTheSummarysRoutineName() = runTest {
+        val summary = aRunSummary(aRoutine(name = "Morning"))
 
         repository.save(summary)
 
         assertEquals(summary, repository.observe(summary.runId).first())
         assertEquals("Morning", database.runDao().observe(summary.runId.value).first()?.routineName)
-    }
-
-    @Test
-    fun save_routineAlreadyDeleted_storesEmptyName() = runTest {
-        val summary = aRunSummary()
-
-        repository.save(summary)
-
-        assertEquals("", database.runDao().observe(summary.runId.value).first()?.routineName)
     }
 }

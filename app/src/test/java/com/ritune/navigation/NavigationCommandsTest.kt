@@ -88,6 +88,18 @@ class NavigationCommandsTest {
     }
 
     @Test
+    fun navigateToTopLevel_returningToRoutines_restoresItsState() {
+        setUpGraph()
+        navigate { navigateToTopLevel(TopLevelDestination.ROUTINES) }
+        val routines = navController.currentBackStackEntry!!.id
+
+        navigate { navigateToTopLevel(TopLevelDestination.TODAY) }
+        navigate { navigateToTopLevel(TopLevelDestination.ROUTINES) }
+
+        assertEquals(routines, navController.currentBackStackEntry!!.id)
+    }
+
+    @Test
     fun navigateToTopLevel_currentTab_doesNotStackACopy() {
         setUpGraph()
 

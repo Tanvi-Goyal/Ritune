@@ -141,6 +141,67 @@ class RoutinePlayerReducerTest {
     }
 
     @Test
+    fun skipStep_whenRunning_startsNextStepNow() {
+        val transition = RoutinePlayerReducer.reduce(started(), PlayerEvent.SkipStep(at(4_000)))
+
+        val running = assertIs<PlayerState.Running>(transition.state)
+        assertEquals(1, running.session.stepIndex)
+        assertEquals(1, running.session.skippedSteps)
+        assertEquals(0, running.session.completedSteps)
+        assertEquals(24_000, running.stepEndsAtMono)
+        assertEquals(
+            listOf(
+                PlayerEffect.StepStarted(running.session),
+                PlayerEffect.PlayCues(routine.steps[1].cues),
+                PlayerEffect.ScheduleStepEnd(24_000),
+            ),
+            transition.effects,
+        )
+    }
+
+    @Test
+    fun skipStep_onLastStep_finishesAsCompleted() {
+        val onLastStep = RoutinePlayerReducer.reduce(started(), PlayerEvent.SkipStep(at(1_000))).state
+
+        val transition = RoutinePlayerReducer.reduce(onLastStep, PlayerEvent.SkipStep(at(2_000)))
+
+        val finished = assertIs<PlayerState.Finished>(transition.state)
+        assertEquals(RunOutcome.COMPLETED, finished.summary.outcome)
+        assertEquals(2, finished.summary.skippedSteps)
+    }
+
+    @Test
+    fun stop_whenPaused_finishesAsStopped() {
+        val paused = RoutinePlayerReducer.reduce(started(), PlayerEvent.Pause(at(4_000))).state
+
+        val transition = RoutinePlayerReducer.reduce(paused, PlayerEvent.Stop(at(9_000)))
+
+        val finished = assertIs<PlayerState.Finished>(transition.state)
+        assertEquals(RunOutcome.STOPPED, finished.summary.outcome)
+        assertEquals(testInstant + 9.seconds, finished.summary.finishedAt)
+    }
+
+    @Test
+    fun commands_inWrongState_areIgnored() {
+        val running = started()
+        val paused = RoutinePlayerReducer.reduce(running, PlayerEvent.Pause(at(4_000))).state
+        val ignored = listOf(
+            running to PlayerEvent.Resume(at(5_000)),
+            paused to PlayerEvent.Pause(at(5_000)),
+            paused to PlayerEvent.StepElapsed(at(10_000)),
+            PlayerState.Idle to PlayerEvent.Pause(at(5_000)),
+            PlayerState.Idle to PlayerEvent.SkipStep(at(5_000)),
+            PlayerState.Idle to PlayerEvent.Stop(at(5_000)),
+        )
+
+        ignored.forEach { (state, event) ->
+            val transition = RoutinePlayerReducer.reduce(state, event)
+            assertSame(state, transition.state, "$event in $state")
+            assertEquals(emptyList(), transition.effects, "$event in $state")
+        }
+    }
+
+    @Test
     fun stop_whenRunning_finishesAsStoppedWithoutCompletionCues() {
         val transition = RoutinePlayerReducer.reduce(started(), PlayerEvent.Stop(at(3_000)))
 

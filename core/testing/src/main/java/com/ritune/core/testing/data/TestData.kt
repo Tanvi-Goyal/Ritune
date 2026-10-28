@@ -62,6 +62,7 @@ fun aRunSummary(
 ) = RunSummary(
     runId = RunId(runId),
     routineId = routine.id,
+    routineName = routine.name,
     startedAt = startedAt,
     finishedAt = finishedAt,
     outcome = outcome,

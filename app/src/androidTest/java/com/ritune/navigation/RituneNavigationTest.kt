@@ -41,7 +41,8 @@ class RituneNavigationTest {
 
     private fun waitForScreen(title: Int) {
         composeTestRule.waitUntil(5_000) {
-            composeTestRule.onAllNodes(screenText(string(title))).fetchSemanticsNodes().isNotEmpty()
+            composeTestRule.onAllNodes(screenText(string(title)))
+                .fetchSemanticsNodes().isNotEmpty()
         }
     }
 

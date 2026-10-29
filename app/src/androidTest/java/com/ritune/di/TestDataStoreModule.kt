@@ -38,6 +38,11 @@ object TestDataStoreModule {
     private fun freshDataStore(context: Context, name: String): DataStore<Preferences> =
         PreferenceDataStoreFactory.create(
             scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
-            produceFile = { File(context.cacheDir, "test-$name-${UUID.randomUUID()}.preferences_pb") },
+            produceFile = {
+                File(
+                    context.cacheDir,
+                    "test-$name-${UUID.randomUUID()}.preferences_pb"
+                )
+            },
         )
 }

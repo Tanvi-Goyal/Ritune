@@ -46,6 +46,10 @@ gradlePlugin {
             id = libs.plugins.ritune.android.compose.get().pluginId
             implementationClass = "AndroidComposeConventionPlugin"
         }
+        register("androidRobolectric") {
+            id = libs.plugins.ritune.android.robolectric.get().pluginId
+            implementationClass = "AndroidRobolectricConventionPlugin"
+        }
         register("androidFeature") {
             id = libs.plugins.ritune.android.feature.get().pluginId
             implementationClass = "AndroidFeatureConventionPlugin"

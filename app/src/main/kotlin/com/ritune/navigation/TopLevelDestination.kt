@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.ritune.core.designsystem.R
 import com.ritune.feature.rhythm.ui.navigation.RhythmRoute
+import com.ritune.feature.routine.ui.navigation.RoutinesGraph
 import com.ritune.feature.routine.ui.navigation.RoutinesRoute
 import com.ritune.feature.today.ui.navigation.TodayRoute
 import kotlin.reflect.KClass
@@ -27,7 +28,7 @@ enum class TopLevelDestination(
         iconRes = R.drawable.ic_nav_rhythm,
     ),
     ROUTINES(
-        RoutinesRoute,
+        RoutinesGraph,
         RoutinesRoute::class,
         labelRes = R.string.nav_routines,
         iconRes = R.drawable.ic_nav_routines,

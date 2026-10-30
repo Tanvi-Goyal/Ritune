@@ -1,5 +1,6 @@
 package com.ritune.feature.today.ui.screens
 
+import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -57,6 +58,8 @@ fun TodayScreen(
     val formatTime = rememberTimeFormatter()
     val resources = LocalResources.current
     val accessibilityManager = LocalAccessibilityManager.current
+
+    ReportDrawnWhen { state !is TodayUiState.Loading }
 
     LaunchedEffect(viewModel) {
         viewModel.effects.collect { effect ->

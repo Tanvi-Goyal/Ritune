@@ -79,10 +79,52 @@ adb shell dumpsys package dexopt | grep -A2 "\[com.ritune\]" | grep -o "status=[
 | Metric | Meaning | Source |
 |---|---|---|
 | TTID | Time until `MainActivity` draws its first frame. Includes everything the splash waits for (`InitializeApp` → `DatabaseSeeder`, and the theme DataStore read). | `TotalTime` from `am start -W`, or `timeToInitialDisplayMs` |
-| TTFD | Time until Today has loaded its data. Exists only once Today reports it with `ReportDrawnWhen` (Phase 1). | `timeToFullDisplayMs` |
+| TTFD | Time until Today leaves its `Loading` state, reported by `ReportDrawnWhen` in `TodayScreen` | The `reportFullyDrawn()` slice in a trace, or `timeToFullDisplayMs` (Phase 2) |
 | Frame overrun | How far each frame finished past its deadline (negative means early) | `FrameTimingMetric` (Phase 2) |
 
+### Trace sections
+
+Ritune writes these sections into system traces. Their names are stable, because queries and benchmarks look them up by name.
+
+| Section | Where | Type | Measures |
+|---|---|---|---|
+| `InitializeApp` | `MainViewModel` | Async | Startup initialization, which the splash waits on |
+| `ThemeRead` | `AppThemeViewModel` | Async, ends at the first value | The first theme read, which the splash also waits on |
+| `Seed.anchors`, `Seed.routines` | `DatabaseSeeder`, inside the write transaction | Async | Counting, and seeding when empty |
+| `Player.notify` | `PlayerService` | Sync | Each ongoing-notification rebuild during a run |
+
+Sections around `suspend` calls must be async: a sync section would be closed by whichever thread the coroutine resumes on.
+
 ## Results
+
+### Phase 1: cold-start trace
+
+One cold start per phone, recorded with [`perf/cold-start.pftxt`](perf/cold-start.pftxt) and summarised with [`perf/cold-start.sql`](perf/cold-start.sql). Release build, 2026-10-30. Compilation state: Redmi `speed-profile` (MIUI compiled it after the install), Pixel `verify`, so compare structure across phones, not absolute times.
+
+| Milestone (ms from launch) | Redmi Note 10 Pro | Pixel 9 Pro |
+|---|---|---|
+| `bindApplication` starts | 144.4 | 72.0 |
+| `activityStart` starts | 189.8 | 85.7 |
+| `activityResume` ends | 237.9 | 107.4 |
+| `ThemeRead` | 250.5 → 284.2 (33.7) | 115.6 → 124.0 (8.4) |
+| `InitializeApp` | 252.5 → 286.4 (33.9) | 116.5 → 127.9 (11.4) |
+| `Seed.anchors` starts | 279.5 | 127.1 |
+| TTID | 356.7 | 151.8 |
+| TTFD | 440.0 | 198.9 |
+| TTID frame | 64.2 ms (3 missed at 60 Hz) | 20.3 ms (2 missed at 120 Hz) |
+
+![Redmi cold start: startup, main thread and Ritune's sections](perf/phase1-redmi-startup.png)
+
+![Redmi InitializeApp: Room opening before the seeding sections](perf/phase1-redmi-initializeapp.png)
+
+Findings:
+
+- **Opening the Room database is most of `InitializeApp`:** 27 of 34 ms on the Redmi, 10.6 of 11.4 ms on the Pixel. Seeding an already-seeded database takes under 1 ms.
+- **The startup work begins late.** Both ViewModels are created during the first `Choreographer#doFrame`, 61 ms (Redmi) and 30 ms (Pixel) after `activityStart` begins, because `by viewModels()` is lazy.
+- **`ThemeRead` and `InitializeApp` take about the same time**, so shortening only one saves at most the 2–4 ms between them.
+- **Today adds 83 ms (Redmi) and 47 ms (Pixel) between TTID and TTFD.** Its queries only start once Today is composed, after the splash ends.
+- **The TTID frame is the most expensive frame:** 64 ms on the Redmi, half of it in `measure`, for the first composition of the app shell and Today.
+- **40% of the Redmi's TTID passes before `bindApplication`**, while the system creates the process.
 
 ### Phase 0: manual cold start
 
@@ -94,8 +136,6 @@ The first number before any instrumentation exists. TTID only; TTFD comes in Pha
 | 2026-10-30 | `21a33c7` | Redmi Note 10 Pro | Speed profile (`bg-dexopt`) | 10 | 321 ms | 306–497 ms |
 | 2026-10-29 | `4c50885` | Pixel 9 Pro | None (day one) | 10 | 133 ms | 125–151 ms |
 | 2026-10-29 | `4c50885` | Pixel 9 Pro | Speed profile | 10 | 115.5 ms | 106–130 ms |
-
-Notes: _anything unusual, such as a first run after reboot or thermal warnings_.
 
 ## Commands
 
@@ -148,11 +188,11 @@ adb shell cmd package compile -m speed-profile -f com.ritune
 
 ### Both phones at once
 
-With more than one phone connected, adb needs a serial (`-s`) on every command. Get the serials from `adb devices`. A phone on wireless debugging shows `ip:port`, and the port changes each time you reconnect.
+With more than one phone connected, adb needs a serial (`-s`) on every command. A phone on wireless debugging shows `ip:port`, and the port changes each time you reconnect, so look phones up by codename:
 
 ```bash
-REDMI=de0a757d
-PIXEL=192.168.31.8:39461   # wireless; check adb devices each session
+REDMI=$(adb devices -l | awk '/sweetin/{print $1}')
+PIXEL=$(adb devices -l | awk '/caiman/{print $1}')
 
 for s in $REDMI $PIXEL; do
   adb -s $s install -r $APK
@@ -170,3 +210,41 @@ coldstart $REDMI redmi & coldstart $PIXEL pixel & wait
 ```
 
 Running both phones in parallel is safe: `TotalTime` is measured on each phone, so the shared Mac and USB connection don't affect it. `TotalTime` is TTID in milliseconds.
+
+### Cold-start trace (Phase 1)
+
+Records one cold start into a Perfetto trace, on one phone or both at once. It uses Perfetto's official [`record_android_trace`](https://perfetto.dev/docs/quickstart/android-tracing) script; download it once:
+
+```bash
+mkdir -p ~/.local/share/perfetto-tools
+curl -o ~/.local/share/perfetto-tools/record_android_trace \
+  https://raw.githubusercontent.com/google/perfetto/main/tools/record_android_trace
+chmod +x ~/.local/share/perfetto-tools/record_android_trace
+```
+
+Record, after installing the release APK (see above):
+
+```bash
+REC=~/.local/share/perfetto-tools/record_android_trace
+CFG=docs/perf/cold-start.pftxt
+OUT=~/perfetto-traces/ritune; mkdir -p $OUT
+
+coldtrace() {   # usage: coldtrace <serial> <name>
+  adb -s $1 shell dumpsys package dexopt | grep -A2 "\[com.ritune\]" | grep -o "status=[a-z-]*" | sed "s/^/$2 /"
+  adb -s $1 shell am force-stop com.ritune
+  $REC -c $CFG --serial $1 -n -o $OUT/$2-cold-start.perfetto-trace &
+  sleep 3   # give tracing time to start
+  adb -s $1 shell am start -W -n com.ritune/.MainActivity | grep TotalTime | sed "s/^/$2 /"
+  wait
+}
+
+coldtrace $REDMI redmi & coldtrace $PIXEL pixel & wait
+```
+
+Open a trace in the [Perfetto UI](https://ui.perfetto.dev) (Open trace file), or summarise it with `trace_processor`:
+
+```bash
+trace_processor query -f docs/perf/cold-start.sql ~/perfetto-traces/ritune/redmi-cold-start.perfetto-trace
+```
+
+The summary lists the lifecycle, Ritune's sections, TTID and TTFD in ms from launch, then every main-thread frame up to TTFD with its missed 60 Hz and 120 Hz deadlines.

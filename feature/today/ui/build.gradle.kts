@@ -5,3 +5,7 @@ plugins {
 android {
     namespace = "com.ritune.feature.today.ui"
 }
+
+dependencies {
+    implementation(libs.androidx.activity.compose)
+}

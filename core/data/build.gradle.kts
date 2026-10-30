@@ -12,4 +12,5 @@ dependencies {
     api(project(":core:database"))
     api(project(":core:datastore"))
     implementation(project(":core:domain"))
+    implementation(libs.androidx.tracing)
 }

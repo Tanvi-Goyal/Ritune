@@ -48,6 +48,19 @@ Startup speed depends heavily on how much of the app is compiled to machine code
 
 `CompilationMode.Full()` compiles everything. No real user's phone is in that state, so it is never published as a result.
 
+Always check the state before a run, and record it with the result:
+
+```bash
+adb shell dumpsys package dexopt | grep -A2 "\[com.ritune\]" | grep -o "status=[a-z-]*\] \[reason=[a-z-]*"
+```
+
+**Xiaomi (MIUI) ignores `cmd package compile` from adb.** It prints `Success`, but logcat shows `Skipped dexOpt for start by shell` and the state doesn't change. On the Redmi, set the state the way a real phone gets it:
+
+| State | How to set it on MIUI | Expected `dumpsys` state |
+|---|---|---|
+| None (day one) | `adb uninstall com.ritune`, then install the APK again | `status=verify [reason=install]` |
+| Speed profile | Use the app for 1–2 minutes, then `adb shell cmd package bg-dexopt-job com.ritune` (the same background job that compiles apps overnight) | `status=speed-profile [reason=bg-dexopt]` |
+
 ### Conditions
 
 - Phone on charge and cool to the touch. Rest it between suites to avoid thermal throttling.
@@ -77,8 +90,8 @@ The first number before any instrumentation exists. TTID only; TTFD comes in Pha
 
 | Date | Commit | Device | Compilation state | Runs | TTID median | TTID range |
 |---|---|---|---|---|---|---|
-| _fill in_ | _fill in_ | Redmi Note 10 Pro | None (day one) | 10 | _ms_ | _ms–ms_ |
-| _fill in_ | _fill in_ | Redmi Note 10 Pro | Speed profile | 10 | _ms_ | _ms–ms_ |
+| 2026-10-30 | `21a33c7` | Redmi Note 10 Pro | None (day one) | 10 | 377 ms | 349–607 ms |
+| 2026-10-30 | `21a33c7` | Redmi Note 10 Pro | Speed profile (`bg-dexopt`) | 10 | 321 ms | 306–497 ms |
 | 2026-10-29 | `4c50885` | Pixel 9 Pro | None (day one) | 10 | 133 ms | 125–151 ms |
 | 2026-10-29 | `4c50885` | Pixel 9 Pro | Speed profile | 10 | 115.5 ms | 106–130 ms |
 

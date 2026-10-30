@@ -15,12 +15,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.core.util.Consumer
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.ritune.core.designsystem.TestTags
 import com.ritune.core.designsystem.components.RituneNavItem
 import com.ritune.core.designsystem.components.RituneNavigationBar
 import com.ritune.feature.rhythm.ui.navigation.RhythmRoute
@@ -61,10 +64,12 @@ fun RituneApp(
     }
 
     Scaffold(
+        modifier = Modifier
+            .semantics { testTagsAsResourceId = true },
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             if (showBottomBar) {
-                Box(Modifier.testTag("bottomBar")) {
+                Box(Modifier.testTag(TestTags.BOTTOM_BAR)) {
                     RituneNavigationBar(
                         items = items,
                         selectedIndex = selectedIndex,

@@ -4,8 +4,9 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
+import com.ritune.core.designsystem.TestTags
 
-private val inBottomBar = hasAnyAncestor(hasTestTag("bottomBar"))
+private val inBottomBar = hasAnyAncestor(hasTestTag(TestTags.BOTTOM_BAR))
 
 fun bottomBarItem(label: String): SemanticsMatcher = hasText(label) and inBottomBar
 

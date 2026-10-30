@@ -51,6 +51,12 @@ android {
             }
             signingConfig = signingConfigs.getByName("release").takeIf { it.storeFile != null }
         }
+
+        create("benchmark") {
+            initWith(getByName("release"))          // same R8 and non-debuggable setup as release
+            signingConfig = signingConfigs.getByName("release")
+            matchingFallbacks += listOf("release")  // libraries without a benchmark variant use their release one
+        }
     }
 
     buildFeatures {

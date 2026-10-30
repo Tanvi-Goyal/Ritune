@@ -21,6 +21,7 @@ import androidx.test.uiautomator.UiDevice
 import com.ritune.MainActivity
 import com.ritune.bottomBarItem
 import com.ritune.core.designsystem.R
+import com.ritune.core.designsystem.TestTags
 import com.ritune.core.navigation.DeepLinks
 import com.ritune.screenText
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -55,12 +56,12 @@ class RoutineNavigationTest {
 
         composeTestRule.onNode(screenText("Morning start") and hasClickAction()).performScrollTo().performClick()
         waitFor(screenText(string(R.string.detail_edit)))
-        composeTestRule.onNodeWithTag("bottomBar").assertDoesNotExist()
+        composeTestRule.onNodeWithTag(TestTags.BOTTOM_BAR).assertDoesNotExist()
 
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).pressBack()
 
         waitFor(screenText(string(R.string.routines_title)))
-        composeTestRule.onNodeWithTag("bottomBar").assertIsDisplayed()
+        composeTestRule.onNodeWithTag(TestTags.BOTTOM_BAR).assertIsDisplayed()
     }
 }
 
@@ -88,7 +89,7 @@ class PlayerDeepLinkTest {
                 composeTestRule.onAllNodes(today).fetchSemanticsNodes().isNotEmpty()
             }
 
-            composeTestRule.onNodeWithTag("bottomBar").assertIsDisplayed()
+            composeTestRule.onNodeWithTag(TestTags.BOTTOM_BAR).assertIsDisplayed()
             composeTestRule.onNode(screenText(context.getString(R.string.today_running_open))).assertDoesNotExist()
         }
     }

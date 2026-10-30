@@ -15,6 +15,7 @@ import androidx.test.uiautomator.UiDevice
 import com.ritune.MainActivity
 import com.ritune.bottomBarItem
 import com.ritune.core.designsystem.R
+import com.ritune.core.designsystem.TestTags
 import com.ritune.core.navigation.DeepLinks
 import com.ritune.screenText
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -50,7 +51,7 @@ class RituneNavigationTest {
     fun launch_opensTodayWithBottomBar() {
         waitForScreen(R.string.today_title)
 
-        composeTestRule.onNodeWithTag("bottomBar").assertIsDisplayed()
+        composeTestRule.onNodeWithTag(TestTags.BOTTOM_BAR).assertIsDisplayed()
     }
 
     @Test
@@ -84,12 +85,12 @@ class RituneNavigationTest {
 
         composeTestRule.onNode(screenText(string(R.string.today_settings))).performClick()
         waitForScreen(R.string.settings_title)
-        composeTestRule.onNodeWithTag("bottomBar").assertDoesNotExist()
+        composeTestRule.onNodeWithTag(TestTags.BOTTOM_BAR).assertDoesNotExist()
 
         pressBack()
 
         waitForScreen(R.string.today_title)
-        composeTestRule.onNodeWithTag("bottomBar").assertIsDisplayed()
+        composeTestRule.onNodeWithTag(TestTags.BOTTOM_BAR).assertIsDisplayed()
     }
 }
 

@@ -1,0 +1,51 @@
+# Perfetto config for a Ritune cold start. Used by docs/performance.md.
+# Records 10 s: start this, then launch the app within the first ~2 s.
+
+buffers {
+  size_kb: 65536
+  fill_policy: RING_BUFFER
+}
+duration_ms: 10000
+
+data_sources {
+  config {
+    name: "linux.ftrace"
+    ftrace_config {
+      # Which thread ran on which CPU, and why threads woke up.
+      ftrace_events: "sched/sched_switch"
+      ftrace_events: "sched/sched_wakeup"
+      ftrace_events: "sched/sched_waking"
+      ftrace_events: "power/cpu_frequency"
+      ftrace_events: "power/cpu_idle"
+
+      # Framework sections: activity lifecycle (am), windows (wm), drawing (gfx, view),
+      # ART work such as class loading, JIT and GC (dalvik), and storage (disk).
+      atrace_categories: "am"
+      atrace_categories: "wm"
+      atrace_categories: "gfx"
+      atrace_categories: "view"
+      atrace_categories: "dalvik"
+      atrace_categories: "disk"
+
+      # Ritune's own sections (InitializeApp, ThemeRead, Seed.*, Player.notify).
+      atrace_apps: "com.ritune"
+    }
+  }
+}
+
+# Each frame's deadline vs when it actually reached the screen.
+data_sources {
+  config {
+    name: "android.surfaceflinger.frametimeline"
+  }
+}
+
+# Process and thread names, so tracks are labelled.
+data_sources {
+  config {
+    name: "linux.process_stats"
+    process_stats_config {
+      scan_all_processes_on_start: true
+    }
+  }
+}

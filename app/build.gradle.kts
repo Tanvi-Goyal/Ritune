@@ -60,6 +60,10 @@ android {
     lint {
         checkDependencies = true
     }
+
+    // The ViewModels emit androidx.tracing sections, which call android.os.Trace and
+    // android.util.Log. JVM tests have no Android, so let those calls return defaults.
+    testOptions.unitTests.isReturnDefaultValues = true
 }
 
 dependencies {
@@ -77,6 +81,7 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.tracing)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)

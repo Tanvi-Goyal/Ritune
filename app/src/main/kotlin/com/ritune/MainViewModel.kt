@@ -2,6 +2,7 @@ package com.ritune
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.tracing.traceAsync
 import com.ritune.core.domain.usecases.InitializeApp
 import com.ritune.feature.today.ui.navigation.TodayRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +21,7 @@ class MainViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            initializeApp()
+            traceAsync("InitializeApp", cookie = 0) { initializeApp() }
             _startDestination.value = TodayRoute
         }
     }

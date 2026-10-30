@@ -18,4 +18,5 @@ dependencies {
     implementation(libs.androidx.core.ktx)               // NotificationCompat, ServiceCompat, ContextCompat
     implementation(libs.kotlinx.coroutines.android)      // Dispatchers.Main
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.tracing)
 }

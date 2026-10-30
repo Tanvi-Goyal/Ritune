@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 import androidx.core.app.ServiceCompat
+import androidx.tracing.trace
 import com.ritune.core.domain.ports.PlayerController
 import com.ritune.core.models.player.PlayerState
 import com.ritune.core.models.RunOutcome
@@ -79,12 +80,12 @@ class PlayerService : Service() {
         when (state) {
             is PlayerState.Running -> {
                 holdWakeLock() // timers must fire on time with the screen off
-                manager.notify(PlayerNotifications.ONGOING_ID, notifications.ongoing(state))
+                notifyOngoing(state)
             }
 
             is PlayerState.Paused -> {
                 releaseWakeLock() // nothing is counting down
-                manager.notify(PlayerNotifications.ONGOING_ID, notifications.ongoing(state))
+                notifyOngoing(state)
             }
 
             is PlayerState.Finished -> {
@@ -105,6 +106,10 @@ class PlayerService : Service() {
                 stopSelf()
             }
         }
+    }
+
+    private fun notifyOngoing(state: PlayerState) = trace("Player.notify") {
+        manager.notify(PlayerNotifications.ONGOING_ID, notifications.ongoing(state))
     }
 
     private fun startForegroundCompat(notification: Notification) {

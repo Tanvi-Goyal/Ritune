@@ -1,6 +1,7 @@
 package com.ritune.core.data
 
 import androidx.room3.withWriteTransaction
+import androidx.tracing.traceAsync
 import com.ritune.core.data.mapper.toDrafts
 import com.ritune.core.data.mapper.toEntity
 import com.ritune.core.database.RituneDatabase
@@ -17,17 +18,21 @@ class DatabaseSeeder @Inject constructor(
 
     suspend fun seedIfEmpty() {
         db.withWriteTransaction {
-            if (db.anchorDao().count() == 0) {
-                db.anchorDao().insertAll(DefaultCatalog.anchors.mapIndexed { i, anchor ->
-                    anchor.toEntity(i)
-                })
+            traceAsync("Seed.anchors", cookie = 0) {
+                if (db.anchorDao().count() == 0) {
+                    db.anchorDao().insertAll(DefaultCatalog.anchors.mapIndexed { i, anchor ->
+                        anchor.toEntity(i)
+                    })
+                }
             }
-            if (db.routineDao().count() == 0) {
-                DefaultCatalog.routines.forEachIndexed { i, routine ->
-                    db.routineDao().replace(
-                        routine.toEntity(sortOrder = i, builtIn = true),
-                        routine.toDrafts()
-                    )
+            traceAsync("Seed.routines", cookie = 0) {
+                if (db.routineDao().count() == 0) {
+                    DefaultCatalog.routines.forEachIndexed { i, routine ->
+                        db.routineDao().replace(
+                            routine.toEntity(sortOrder = i, builtIn = true),
+                            routine.toDrafts()
+                        )
+                    }
                 }
             }
         }

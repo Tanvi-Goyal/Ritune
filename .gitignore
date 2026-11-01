@@ -14,6 +14,9 @@ local.properties
 # Kotlin compiler caches
 .kotlin/
 
+# Benchmark traces are 1–2 MB each; rerun the benchmark at the recorded commit to recreate them
+docs/perf/results/**/*.perfetto-trace
+
 *.jks
 *.keystore
 keystore.properties

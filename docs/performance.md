@@ -137,6 +137,28 @@ The first number before any instrumentation exists. TTID only; TTFD comes in Pha
 | 2026-10-29 | `4c50885` | Pixel 9 Pro | None (day one) | 10 | 133 ms | 125–151 ms |
 | 2026-10-29 | `4c50885` | Pixel 9 Pro | Speed profile | 10 | 115.5 ms | 106–130 ms |
 
+### Phase 2: Macrobenchmark cold start
+
+`StartupBenchmark.coldStartup`: `StartupMode.COLD`, `CompilationMode.Ignore()`, 15 iterations. The database is seeded once before the run with 21 days of anchor events and 30 routines. TTFD is when Today first shows loaded data.
+
+These numbers are not comparable with Phase 0: the method is different, and the database holds far more data.
+
+| Date | Commit | Device | Compilation state | TTID median (P90) | TTFD median (P90) | Results |
+|---|---|---|---|---|---|---|
+| 2026-11-01 | `277e6a2` | Redmi Note 10 Pro, 60 Hz | None (day one) | 453 ms (494) | 735 ms (764) | [results](perf/results/2026-11-01-redmi-startup-day-one/) |
+| 2026-11-01 | `277e6a2` | Pixel 9 Pro, adaptive | None (day one) | 162 ms (174) | 245 ms (271) | [results](perf/results/2026-11-01-pixel-startup-day-one/) |
+
+**Loading Today's data costs much more on the Redmi.** The time from first frame to fully drawn is 282 ms on the Redmi and 83 ms on the Pixel. With an empty database (Phase 1) it was 83 ms and 47 ms. Seeding added about 200 ms on the Redmi and about 36 ms on the Pixel, so the Redmi slows down far more than the Pixel as the data grows.
+
+**Noise.** Each phone ran the same build twice at the same state (an A/A test):
+
+| Medians, run 1 → run 2 | TTID | TTFD | Change must exceed |
+|---|---|---|---|
+| Redmi | 467 → 453 ms | 771 → 735 ms | ~15 ms TTID, ~40 ms TTFD |
+| Pixel ([second run](perf/results/2026-11-01-pixel-startup-day-one-aa/)) | 162.5 → 162.4 ms | 245 → 240 ms | ~5 ms TTID, ~10 ms TTFD |
+
+The Redmi is far noisier than the Pixel. To prove smaller changes, alternate builds A, B, A, B with 30+ iterations per run.
+
 ## Commands
 
 ### Manual cold start (Phase 0)

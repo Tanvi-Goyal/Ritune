@@ -29,11 +29,16 @@ class StartupBenchmark {
 
     private lateinit var dexoptBefore: String
 
+    // Seed size comes from the run arguments, so data experiments don't need code changes.
+    private val args = InstrumentationRegistry.getArguments()
+    private val seedDays = args.getString("seedDays")?.toInt() ?: 21
+    private val seedRoutines = args.getString("seedRoutines")?.toInt() ?: 30
+
     @Before
     fun seed() {
         dexoptBefore = dexoptState()
         device.executeShellCommand(
-            "am start -W -n $PACKAGE/.SeedActivity --ei days 21 --ei routines 30"
+            "am start -W -n $PACKAGE/.SeedActivity --ei days $seedDays --ei routines $seedRoutines"
         )
     }
 
@@ -44,6 +49,7 @@ class StartupBenchmark {
             ?: return
         File(dir, "dexopt-before.txt").writeText(dexoptBefore)
         File(dir, "dexopt-after.txt").writeText(dexoptState())
+        File(dir, "seed.txt").writeText("days=$seedDays routines=$seedRoutines\n")
     }
 
     // CompilationMode.Ignore is experimental; needed because MIUI ignores shell compile commands.

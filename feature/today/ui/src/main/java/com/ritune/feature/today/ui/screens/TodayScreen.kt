@@ -26,12 +26,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalAccessibilityManager
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ritune.core.designsystem.R
+import com.ritune.core.designsystem.TestTags
 import com.ritune.core.designsystem.components.AnchorRow
 import com.ritune.core.designsystem.components.ConsistencyRing
 import com.ritune.core.designsystem.components.RituneCard
@@ -114,7 +116,15 @@ fun TodayContent(
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier.fillMaxSize()) {
+    Box(
+        modifier
+            .fillMaxSize()
+            .then(
+                if (state !is TodayUiState.Loading) {
+                    Modifier.testTag(TestTags.TODAY_CONTENT)
+                } else Modifier
+            )
+    ) {
         when (state) {
             TodayUiState.Loading -> Unit
             is TodayUiState.Content -> TodayUi(state, onEvent, onOpenSettings)

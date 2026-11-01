@@ -7,4 +7,5 @@ package com.ritune.core.designsystem
  */
 object TestTags {
     const val BOTTOM_BAR = "bottomBar"
+    const val TODAY_CONTENT = "todayContent"
 }

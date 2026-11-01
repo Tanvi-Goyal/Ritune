@@ -10,7 +10,14 @@ object TestTags {
     const val TODAY_CONTENT = "todayContent"
     const val ROUTINES_LIST = "routinesList"
     const val RHYTHM_CONTENT = "rhythmContent"
+    const val ROUTINE_DETAIL_CONTENT = "routineDetailContent"
+    const val ROUTINE_EDIT = "routineEdit"
+    const val ROUTINE_EDITOR_CONTENT = "routineEditorContent"
     const val NAV_TODAY = "navToday"
     const val NAV_RHYTHM = "navRhythm"
     const val NAV_ROUTINES = "navRoutines"
+
+    /** Seed data, not a tag: the routine the benchmark seeds and opens, found by its name. */
+    const val LONG_ROUTINE_NAME = "Benchmark long routine"
+    const val LONG_ROUTINE_STEPS = 15
 }

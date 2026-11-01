@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -32,6 +33,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ritune.core.designsystem.R
+import com.ritune.core.designsystem.TestTags
+import com.ritune.core.designsystem.TraceSections
 import com.ritune.core.designsystem.components.PrimaryButton
 import com.ritune.core.designsystem.components.RituneAlertDialog
 import com.ritune.core.designsystem.components.RituneBottomSheet
@@ -39,6 +42,7 @@ import com.ritune.core.designsystem.components.RituneCard
 import com.ritune.core.designsystem.components.RituneDivider
 import com.ritune.core.designsystem.components.RituneTextField
 import com.ritune.core.designsystem.components.SecondaryButton
+import com.ritune.core.designsystem.endTraceOnFirstDraw
 import com.ritune.core.designsystem.theme.Ritune
 import com.ritune.core.domain.usecases.routine.RoutineIssue
 import com.ritune.core.domain.usecases.routine.RoutineValidator
@@ -134,6 +138,8 @@ private fun EditorBody(
         Column(
             modifier = Modifier
                 .weight(1f)
+                .testTag(TestTags.ROUTINE_EDITOR_CONTENT)
+                .endTraceOnFirstDraw(TraceSections.ROUTINE_EDITOR_OPEN)
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = Ritune.spacing.xl)
                 .padding(bottom = Ritune.spacing.xl),

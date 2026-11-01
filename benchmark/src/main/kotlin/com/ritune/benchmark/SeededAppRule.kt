@@ -15,8 +15,9 @@ internal const val PACKAGE = "com.ritune"
  * Seeds the app once per test, and saves the dexopt state from before and after it.
  * If the two differ, the phone recompiled the app mid-run and the results are discarded.
  * Seed size comes from the `seedDays` and `seedRoutines` run arguments.
+ * [withLongRoutine] also adds the 15-step routine the open-detail and open-editor journeys use.
  */
-class SeededAppRule : TestRule {
+class SeededAppRule(private val withLongRoutine: Boolean = false) : TestRule {
     private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private val args = InstrumentationRegistry.getArguments()
     private val seedDays = args.getString("seedDays")?.toInt() ?: 21
@@ -26,7 +27,8 @@ class SeededAppRule : TestRule {
         override fun evaluate() {
             val before = dexoptState()
             device.executeShellCommand(
-                "am start -W -n $PACKAGE/.SeedActivity --ei days $seedDays --ei routines $seedRoutines"
+                "am start -W -n $PACKAGE/.SeedActivity --ei days $seedDays " +
+                    "--ei routines $seedRoutines --ez longRoutine $withLongRoutine"
             )
             try {
                 base.evaluate()
@@ -42,7 +44,8 @@ class SeededAppRule : TestRule {
         val dir = args.getString("additionalTestOutputDir") ?: return
         File(dir, "$test-dexopt-before.txt").writeText(before)
         File(dir, "$test-dexopt-after.txt").writeText(dexoptState())
-        File(dir, "$test-seed.txt").writeText("days=$seedDays routines=$seedRoutines\n")
+        File(dir, "$test-seed.txt")
+            .writeText("days=$seedDays routines=$seedRoutines longRoutine=$withLongRoutine\n")
     }
 
     private fun dexoptState(): String =

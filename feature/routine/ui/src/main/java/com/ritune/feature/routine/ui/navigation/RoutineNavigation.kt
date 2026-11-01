@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.ritune.core.designsystem.TraceSections
 import com.ritune.feature.routine.ui.screens.routinedetail.RoutineDetailScreen
 import com.ritune.feature.routine.ui.screens.routinedetail.RoutineDetailViewModel
 import com.ritune.feature.routine.ui.screens.routineeditor.RoutineEditorScreen
@@ -37,6 +38,7 @@ fun NavGraphBuilder.routinesGraph(
             RoutinesListScreen(
                 viewModel = viewModel,
                 onOpenRoutine = { id ->
+                    TraceSections.beginScreenOpen(TraceSections.ROUTINE_DETAIL_OPEN)
                     navController.navigate(RoutineDetailRoute(id))
                 },
                 onNewRoutine = {
@@ -53,6 +55,7 @@ fun NavGraphBuilder.routinesGraph(
                 viewModel = viewModel,
                 onBack = { navController.popBackStack() },
                 onEdit = { id ->
+                    TraceSections.beginScreenOpen(TraceSections.ROUTINE_EDITOR_OPEN)
                     navController.navigate(RoutineEditorRoute(id))
                 },
                 onOpenPlayer = onOpenPlayer,

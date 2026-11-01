@@ -1,5 +1,6 @@
 package com.ritune.benchmark
 
+import android.os.Build
 import androidx.benchmark.macro.CompilationMode
 import androidx.benchmark.macro.ExperimentalMacrobenchmarkApi
 import androidx.benchmark.macro.ExperimentalMetricApi
@@ -16,8 +17,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Opening the detail and the editor of the seeded 15-step routine. Both screens build every
- * step up front, so the routine is fixed to keep runs comparable.
+ * Opening the detail, the editor and the player of the seeded 15-step routine. Detail and editor
+ * build every step up front, so the routine is fixed to keep runs comparable.
  */
 @RunWith(AndroidJUnit4::class)
 class OpenRoutineBenchmark {
@@ -40,14 +41,28 @@ class OpenRoutineBenchmark {
     @Test
     fun openEditor() = measure(
         section = TraceSections.ROUTINE_EDITOR_OPEN,
-        setup = {
-            showLongRoutineInList()
-            device.findObject(By.text(TestTags.LONG_ROUTINE_NAME)).click()
-            device.waitForTag(TestTags.ROUTINE_DETAIL_CONTENT)
-        },
+        setup = { showLongRoutineDetail() },
     ) {
         device.findObject(By.res(TestTags.ROUTINE_EDIT)).click()
         device.waitForTag(TestTags.ROUTINE_EDITOR_CONTENT)
+        device.waitForIdle()
+    }
+
+    // The player lives in memory, so killing the app in setup ends the previous iteration's run
+    // and every tap starts a new one.
+    @Test
+    fun openPlayer() = measure(
+        section = TraceSections.PLAYER_OPEN,
+        setup = {
+            // Android 13+ would otherwise cover the player with the permission dialog.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                device.executeShellCommand("pm grant $PACKAGE android.permission.POST_NOTIFICATIONS")
+            }
+            showLongRoutineDetail()
+        },
+    ) {
+        device.findObject(By.res(TestTags.ROUTINE_START)).click()
+        device.waitForTag(TestTags.PLAYER_CONTENT)
         device.waitForIdle()
     }
 
@@ -87,6 +102,12 @@ class OpenRoutineBenchmark {
             list.scroll(Direction.DOWN, 0.8f)
         }
         device.waitForIdle()
+    }
+
+    private fun MacrobenchmarkScope.showLongRoutineDetail() {
+        showLongRoutineInList()
+        device.findObject(By.text(TestTags.LONG_ROUTINE_NAME)).click()
+        device.waitForTag(TestTags.ROUTINE_DETAIL_CONTENT)
     }
 
     private companion object {

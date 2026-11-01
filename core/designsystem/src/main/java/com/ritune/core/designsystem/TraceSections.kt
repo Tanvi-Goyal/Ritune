@@ -17,6 +17,7 @@ object TraceSections {
     const val RHYTHM_OPEN = "Rhythm.open"
     const val ROUTINE_DETAIL_OPEN = "RoutineDetail.open"
     const val ROUTINE_EDITOR_OPEN = "RoutineEditor.open"
+    const val PLAYER_OPEN = "Player.open"
 
     // One screen opens at a time, so a fixed cookie pairs each begin with its end.
     internal const val COOKIE = 0

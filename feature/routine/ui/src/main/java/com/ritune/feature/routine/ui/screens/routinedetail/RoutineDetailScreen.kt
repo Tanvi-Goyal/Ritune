@@ -212,8 +212,15 @@ private fun DetailBody(
         ) {
             PrimaryButton(
                 text = stringResource(R.string.detail_start),
-                onClick = { onEvent(RoutineDetailEvent.Start) },
-                modifier = Modifier.weight(2f),
+                onClick = {
+                    // Begins at the tap: the start itself (loading the routine, starting the
+                    // service) happens before navigation, so it's part of the wait.
+                    TraceSections.beginScreenOpen(TraceSections.PLAYER_OPEN)
+                    onEvent(RoutineDetailEvent.Start)
+                },
+                modifier = Modifier
+                    .weight(2f)
+                    .testTag(TestTags.ROUTINE_START),
             )
             SecondaryButton(
                 text = stringResource(R.string.detail_edit),

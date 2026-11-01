@@ -247,6 +247,29 @@ So the cost is the fixed price of running Compose and navigation code at `verify
 
 So the two journeys point at different fixes. Editor's cost is per row, so building fewer rows up front (a lazy list) is the lever. Detail's is mostly first-use work, which a Baseline Profile targets; shader compilation is outside a Baseline Profile's reach.
 
+### Phase 2: starting a routine
+
+`OpenRoutineBenchmark.openPlayer`: the `Player.open` async section, from the tap on Detail's Start button to the first draw of the player's content. Same seed and setup as opening the Editor; only the Start tap is measured. The section begins in the button, not in navigation, because loading the routine and starting the service happen before the app navigates. On Android 13+ the test grants `POST_NOTIFICATIONS` first, so the permission dialog doesn't cover the player.
+
+| Date | Device | Compilation state | Median | P90 | Range | Results |
+|---|---|---|---|---|---|---|
+| 2026-11-01 | Redmi Note 10 Pro, 60 Hz | None (day one) | 151 ms | 168 ms | 115–179 ms | [results](perf/results/2026-11-01-redmi-open-player-day-one/) |
+
+**Starting a routine is faster than opening Detail (171 ms), even though it also starts a service.** Medians across the 15 iterations:
+
+| | Start → player | Open Detail |
+|---|---|---|
+| Content frame | ~30 ms | ~60 ms |
+| RenderThread `shader_compile` | 0 | ~29 ms |
+| JIT-compiled methods | ~15 | ~72 |
+| Main thread starting the service (`serviceCreate` + `serviceStart`) | ~19 ms, of which `Player.notify` ~4 ms | n/a |
+| Main-thread binder calls (`startForegroundService` and others) | ~9 ms | n/a |
+
+- **The service costs about 28 ms of main-thread time.** That is real, but smaller than what the player saves elsewhere.
+- **The player screen is light and starts warm.** It has no list; setup has already opened Detail, so the shaders and shared code are ready.
+- **The player draws an empty frame first.** `PlayerViewModel` starts its `stateIn` at `Loading`, and the first composition draws an empty `Box`. The content comes one frame later, about 30 ms after. That first frame also pays for `keepScreenOn` (`relayoutWindow`, ~8 ms). The engine's state is already a `StateFlow`, so the ViewModel could start from its current value and skip the empty frame.
+- Cue sounds are decoded at the same time on `SoundDecoder` and `MediaCodec` threads, off the main thread.
+
 ## Commands
 
 ### Manual cold start (Phase 0)

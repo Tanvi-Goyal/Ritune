@@ -14,6 +14,7 @@ import androidx.tracing.Trace
  */
 object TraceSections {
     const val ROUTINES_OPEN = "Routines.open"
+    const val RHYTHM_OPEN = "Rhythm.open"
 
     // One screen opens at a time, so a fixed cookie pairs each begin with its end.
     internal const val COOKIE = 0

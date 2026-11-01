@@ -32,6 +32,7 @@ enum class TopLevelDestination(
         labelRes = R.string.nav_rhythm,
         iconRes = R.drawable.ic_nav_rhythm,
         testTag = TestTags.NAV_RHYTHM,
+        openTraceSection = TraceSections.RHYTHM_OPEN,
     ),
     ROUTINES(
         RoutinesGraph,

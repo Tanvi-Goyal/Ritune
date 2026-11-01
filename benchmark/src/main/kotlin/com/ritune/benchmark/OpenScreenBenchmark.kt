@@ -33,6 +33,13 @@ class OpenScreenBenchmark {
         section = TraceSections.ROUTINES_OPEN,
     )
 
+    @Test
+    fun openRhythm() = open(
+        tab = TestTags.NAV_RHYTHM,
+        content = TestTags.RHYTHM_CONTENT,
+        section = TraceSections.RHYTHM_OPEN,
+    )
+
     @OptIn(ExperimentalMacrobenchmarkApi::class, ExperimentalMetricApi::class)
     private fun open(tab: String, content: String, section: String) = rule.measureRepeated(
         packageName = PACKAGE,

@@ -8,7 +8,7 @@ Each folder holds:
 |---|---|
 | `com.ritune.benchmark-benchmarkData.json` | Every metric and iteration, plus the phone's build fingerprint |
 | `*dexopt-before.txt`, `*dexopt-after.txt` | The app's compilation state before and after the run. If they differ, the run is invalid. |
-| `*seed.txt` | The seed size used (days of anchor events, number of routines) |
+| `*seed.txt` | The seed size used (days of anchor events, number of routines, and whether the 15-step routine was added) |
 | `additionaltestoutput.benchmark.message_*.txt` | Min, median and max per metric, with the trace file for each |
 
 Perfetto traces are not committed; they are 1–2 MB each. Rebuild them by rerunning the benchmark at the recorded commit.

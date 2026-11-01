@@ -219,6 +219,34 @@ Each extra 30 routines adds about 140 ms (+142, then +133): roughly **4.6 ms per
 
 So the cost is the fixed price of running Compose and navigation code at `verify`, not data. Varying `seedDays` can change at most those 3 ms, below the noise, so that experiment was skipped. A Baseline Profile is the lever here.
 
+### Phase 2: opening a routine and its editor
+
+`OpenRoutineBenchmark`: the `RoutineDetail.open` and `RoutineEditor.open` async sections, from the tap (`RoutineNavigation`) to the first draw of the step column. Seeded with 21 days, 30 routines and one extra 15-step routine (`longRoutine=true`), the worst case, since both screens build every step up front. The extra routine is saved last and without the random generator, so the rest of the data matches earlier runs.
+
+- `openDetail`: setup kills the app, launches it, opens Routines and scrolls to the 15-step routine. Only the tap on the routine is measured.
+- `openEditor`: the same setup, then it also opens the Detail screen. Only the tap on Edit is measured.
+
+| Date | Device | Compilation state | Journey | Median | P90 | Range | Results |
+|---|---|---|---|---|---|---|---|
+| 2026-11-01 | Redmi Note 10 Pro, 60 Hz | None (day one) | Open Detail | 171 ms | 188 ms | 147–195 ms | [results](perf/results/2026-11-01-redmi-open-routine-detail-editor/) |
+| 2026-11-01 | Redmi Note 10 Pro, 60 Hz | None (day one) | Open Editor | 172 ms | 189 ms | 152–196 ms | same folder |
+
+**The totals match, but the costs differ.** The pattern held in all 15 iterations of each test:
+
+| Median across iterations | Detail | Editor |
+|---|---|---|
+| Wait before the content frame | ~115 ms | ~67 ms |
+| Content frame (main thread) | ~60 ms | ~107 ms |
+| … recomposition / measuring | ~11 / ~29 ms | ~32 / ~43 ms |
+| RenderThread `shader_compile` | ~29 ms, every iteration | 0 |
+| JIT-compiled methods | ~72 | ~53 |
+
+- **Editor's content frame is about 47 ms heavier.** Each Editor step row has a clickable column and two `TextButton`s; a Detail row has three `Text`s. For 15 steps that is 45 interactive nodes against none. The Editor also starts with text fields.
+- **Detail pays first-navigation costs that Editor doesn't.** Opening Detail is the first push navigation in the process, so it compiles shaders and JITs code for the first time. Editor's setup has already opened Detail, so that work is done before its section starts. In the user's journey that is true too: you always pass through Detail to reach the Editor.
+- The frame cost hardly changes between iterations. The run-to-run spread comes from the wait before it.
+
+So the two journeys point at different fixes. Editor's cost is per row, so building fewer rows up front (a lazy list) is the lever. Detail's is mostly first-use work, which a Baseline Profile targets; shader compilation is outside a Baseline Profile's reach.
+
 ## Commands
 
 ### Manual cold start (Phase 0)

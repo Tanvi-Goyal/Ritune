@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.ritune.core.designsystem.R
 import com.ritune.core.designsystem.TestTags
+import com.ritune.core.designsystem.TraceSections
 import com.ritune.feature.rhythm.ui.navigation.RhythmRoute
 import com.ritune.feature.routine.ui.navigation.RoutinesGraph
 import com.ritune.feature.routine.ui.navigation.RoutinesRoute
@@ -16,6 +17,7 @@ enum class TopLevelDestination(
     @StringRes val labelRes: Int,
     @DrawableRes val iconRes: Int,
     val testTag: String,
+    val openTraceSection: String? = null,
 ) {
     TODAY(
         TodayRoute,
@@ -37,5 +39,6 @@ enum class TopLevelDestination(
         labelRes = R.string.nav_routines,
         iconRes = R.drawable.ic_nav_routines,
         testTag = TestTags.NAV_ROUTINES,
+        openTraceSection = TraceSections.ROUTINES_OPEN,
     )
 }

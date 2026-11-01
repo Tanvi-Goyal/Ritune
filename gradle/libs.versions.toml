@@ -34,6 +34,7 @@ robolectric = "4.17"
 roborazzi = "1.77.0"
 kover = "0.9.11"
 uiautomator = "2.4.0"
+androidxBenchmark = "1.5.0"
 androidxTestRules = "1.7.0"
 androidxTracing = "2.0.5"
 
@@ -45,6 +46,7 @@ jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrai
 devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+android-test = { id = "com.android.test", version.ref = "agp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
@@ -58,6 +60,7 @@ ritune-android-robolectric = { id = "ritune.android.robolectric" }
 ritune-android-feature = { id = "ritune.android.feature" }
 ritune-hilt = { id = "ritune.hilt" }
 ritune-jvm-library = { id = "ritune.jvm.library" }
+ritune-android-test = { id = "ritune.android.test" }
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -108,6 +111,7 @@ roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi
 roborazzi-junit-rule = { group = "io.github.takahirom.roborazzi", name = "roborazzi-junit-rule", version.ref = "roborazzi" }
 androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
 androidx-test-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
+androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxBenchmark" }
 hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 androidx-room3-testing = { group = "androidx.room3", name = "room3-testing", version.ref = "room" }
 

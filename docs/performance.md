@@ -137,6 +137,42 @@ The first number before any instrumentation exists. TTID only; TTFD comes in Pha
 | 2026-10-29 | `4c50885` | Pixel 9 Pro | None (day one) | 10 | 133 ms | 125–151 ms |
 | 2026-10-29 | `4c50885` | Pixel 9 Pro | Speed profile | 10 | 115.5 ms | 106–130 ms |
 
+### Phase 2: Macrobenchmark cold start
+
+`StartupBenchmark.coldStartup`: `StartupMode.COLD`, `CompilationMode.Ignore()`, 15 iterations. The database is seeded once before the run with 21 days of anchor events and 30 routines. TTFD is when Today first shows loaded data.
+
+These numbers are not comparable with Phase 0: the method is different, and the database holds far more data.
+
+| Date | Commit | Device | Compilation state | TTID median (P90) | TTFD median (P90) | Results |
+|---|---|---|---|---|---|---|
+| 2026-11-01 | `277e6a2` | Redmi Note 10 Pro, 60 Hz | None (day one) | 453 ms (494) | 735 ms (764) | [results](perf/results/2026-11-01-redmi-startup-day-one/) |
+| 2026-11-01 | `277e6a2` | Pixel 9 Pro, adaptive | None (day one) | 162 ms (174) | 245 ms (271) | [results](perf/results/2026-11-01-pixel-startup-day-one/) |
+| 2026-11-01 | `0afdb46` | Redmi Note 10 Pro, 60 Hz | Speed profile (`bg-dexopt`) | 431 ms (460) | 617 ms (652) | [results](perf/results/2026-11-01-redmi-startup-speed-profile/) |
+
+**Compilation state matters more than data.** On the Redmi, speed-profile cuts the TTFD median by 118 ms (735 → 617), three times the noise. TTID drops by only 22 ms. Most of the gain is in loading Today, which runs code for the first time in the process. A Baseline Profile would give day-one installs this compiled state.
+
+**Macrobenchmark clears the shader cache before each cold start** (`MacrobenchmarkScope.dropShaderCache`, through `profileinstaller`). Every iteration therefore compiles its shaders again. In the Redmi speed-profile median trace, the first frame after TTID waits 67 ms on RenderThread `shader_compile`. Real users pay this only after installing or updating the app; later launches reuse the cache.
+
+**Data size is not why Today is slow on the Redmi.** The time from first frame to fully drawn is 282 ms on the Redmi and 83 ms on the Pixel; the Phase 1 trace showed 83 ms on the Redmi. Changing only the seed size, at commit `0afdb46`, moved TTFD by less than the noise:
+
+| Seed (days / routines) | TTID median | TTFD median | TTFD − TTID | Results |
+|---|---|---|---|---|
+| 0 / 0 | 463 ms | 751 ms | 288 ms | [A](perf/results/2026-11-01-redmi-seed-A/) |
+| 21 / 0 | 470 ms | 765 ms | 295 ms | [B](perf/results/2026-11-01-redmi-seed-B/) |
+| 0 / 30 | 482 ms | 781 ms | 298 ms | [C](perf/results/2026-11-01-redmi-seed-C/) |
+| 21 / 30 (baseline) | 453 ms | 735 ms | 282 ms | [baseline](perf/results/2026-11-01-redmi-startup-day-one/) |
+
+All four are within about 45 ms of each other, close to the Redmi's 40 ms noise. Even with an empty database, Today takes about 290 ms to load.
+
+**Noise.** Each phone ran the same build twice at the same state (an A/A test):
+
+| Medians, run 1 → run 2 | TTID | TTFD | Change must exceed |
+|---|---|---|---|
+| Redmi | 467 → 453 ms | 771 → 735 ms | ~15 ms TTID, ~40 ms TTFD |
+| Pixel ([second run](perf/results/2026-11-01-pixel-startup-day-one-aa/)) | 162.5 → 162.4 ms | 245 → 240 ms | ~5 ms TTID, ~10 ms TTFD |
+
+The Redmi is far noisier than the Pixel. To prove smaller changes, alternate builds A, B, A, B with 30+ iterations per run.
+
 ## Commands
 
 ### Manual cold start (Phase 0)

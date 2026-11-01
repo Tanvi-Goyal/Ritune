@@ -58,6 +58,10 @@ gradlePlugin {
             id = libs.plugins.ritune.hilt.get().pluginId
             implementationClass = "HiltConventionPlugin"
         }
+        register("androidTest") {
+            id = libs.plugins.ritune.android.test.get().pluginId
+            implementationClass = "AndroidTestConventionPlugin"
+        }
         register("jvmLibrary") {
             id = libs.plugins.ritune.jvm.library.get().pluginId
             implementationClass = "JvmLibraryConventionPlugin"

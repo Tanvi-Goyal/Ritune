@@ -71,6 +71,7 @@ adb shell dumpsys package dexopt | grep -A2 "\[com.ritune\]" | grep -o "status=[
 
 - Startup: at least 10 runs for a manual check, and 20–30 when claiming an improvement.
 - Report the median (P50) with the min–max range. Frame metrics also report P90 and P99.
+- Only compare runs from the same session. The Redmi's timings can shift between sessions by more than the noise (see Phase 2), so a before and an after run back to back, ideally alternating A, B, A, B, with nothing changed on the phone in between.
 - A change counts as an improvement only if it is larger than the run-to-run spread. To isolate one piece of work, measure its trace section directly as well as the end-to-end number.
 - Report end-to-end changes as the headline, and section changes as the explanation. Only work on the critical path changes what the user feels.
 
@@ -137,6 +138,54 @@ The first number before any instrumentation exists. TTID only; TTFD comes in Pha
 | 2026-10-29 | `4c50885` | Pixel 9 Pro | None (day one) | 10 | 133 ms | 125–151 ms |
 | 2026-10-29 | `4c50885` | Pixel 9 Pro | Speed profile | 10 | 115.5 ms | 106–130 ms |
 
+### Phase 2: summary
+
+All Phase 2 numbers come from Macrobenchmark on the phones, with the JSON for every run in [`perf/results/`](perf/results/).
+
+**Sessions.** On 2026-11-01 the Redmi's timings shifted part-way through the day, so its results are split into two sessions. **Only compare results from the same session.**
+
+| Session (UTC) | What ran | Notes |
+|---|---|---|
+| 1: 06:30–11:30 | Cold startup baseline and A/A, seed experiment, speed-profile, scroll, open Routines (and R0/R30/R60), open Rhythm, open Detail and Editor, start routine | Consistent with itself: the open-Routines rerun landed within 8 ms of the first run |
+| — about 12:20 | MIUI optimization switched off and back on, to test whether `CompilationMode.Full` could work (it can't) | |
+| 2: 12:36–14:30 | Warm and hot startup, a cold rerun, and old-commit vs current-code A/B | Cold is about 60–80 ms slower on TTID and 120–220 ms on TTFD than in session 1, for old and new code alike |
+
+The shift lines up with the MIUI optimization toggle, but that is not proven. What is proven is that the code did not cause it: the old commit `0afdb46` was just as slow in session 2.
+
+**Journeys** (Redmi Note 10 Pro, 60 Hz, None (day one, `verify`), `CompilationMode.Ignore()`, 15 iterations, seed 21 days / 30 routines):
+
+| Journey | Metric | Session | Median | P90 | Results |
+|---|---|---|---|---|---|
+| Cold startup | TTID / TTFD | 1 | 453 / 735 ms | 494 / 764 ms | [results](perf/results/2026-11-01-redmi-startup-day-one/) |
+| Cold startup | TTID / TTFD | 2 | 529 / 952 ms | 569 / 1036 ms | [results](perf/results/2026-11-01-redmi-startup-day-one-rerun/) |
+| Warm startup | TTID / TTFD | 2 | 241 / 371 ms | 275 / 421 ms | [results](perf/results/2026-11-01-redmi-startup-warm-day-one/) |
+| Hot startup | TTID (no TTFD, by design) | 2 | 127 ms | 142 ms | [results](perf/results/2026-11-01-redmi-startup-hot-day-one/) |
+| Scroll Routines | Frame CPU time / overrun | 1 | 7.5 / −2.8 ms | 9.6 / +1.8 ms (P99 14.0 / +5.0) | [results](perf/results/2026-11-01-redmi-scroll-day-one/) |
+| Open Routines | `Routines.open` | 1 | 316 ms | 342 ms | [results](perf/results/2026-11-01-redmi-open-routines-day-one/) |
+| Open Rhythm | `Rhythm.open` | 1 | 140 ms | 162 ms | [results](perf/results/2026-11-01-redmi-open-rhythm-day-one/) |
+| Open Detail (15-step routine) | `RoutineDetail.open` | 1 | 171 ms | 188 ms | [results](perf/results/2026-11-01-redmi-open-routine-detail-editor/) |
+| Open Editor (15-step routine) | `RoutineEditor.open` | 1 | 172 ms | 189 ms | same folder |
+| Start routine | `Player.open` | 1 | 151 ms | 168 ms | [results](perf/results/2026-11-01-redmi-open-player-day-one/) |
+
+The Pixel 9 Pro has one Phase 2 result, cold startup at None: TTID 162 ms (P90 174), TTFD 245 ms (P90 271).
+
+**Compilation modes** (Redmi, cold startup, session 1):
+
+| Mode | How it was set | TTID median (P90) | TTFD median (P90) |
+|---|---|---|---|
+| None (`verify`) | Fresh install | 453 ms (494) | 735 ms (764) |
+| Speed profile | 1–2 minutes of use, then `bg-dexopt-job` | 431 ms (460) | 617 ms (652) |
+| Partial (Baseline Profile) | Phase 3 | — | — |
+| Full (`speed`) | Not reachable on MIUI: shell-started dexopt is skipped (`Skipped dexOpt for start by shell`), with MIUI optimization on or off | — | — |
+
+Phase 3 will measure the Baseline Profile row together with a fresh None row in one session, rather than against these numbers.
+
+**Plan items changed or still open:**
+
+- Scrolling Rhythm was dropped: Rhythm fits on one screen, so a fling draws no frames. Opening Rhythm is measured instead.
+- The benchmark module uses the `ritune.android.test` convention plugin rather than a separate `ritune.android.benchmark` one.
+- Still open: measuring the Phase 1 trace sections (`InitializeApp`, `ThemeRead`, `Seed.*`, `Player.notify`) with `TraceSectionMetric`.
+
 ### Phase 2: Macrobenchmark cold start
 
 `StartupBenchmark.coldStartup`: `StartupMode.COLD`, `CompilationMode.Ignore()`, 15 iterations. The database is seeded once before the run with 21 days of anchor events and 30 routines. TTFD is when Today first shows loaded data.
@@ -152,6 +201,45 @@ These numbers are not comparable with Phase 0: the method is different, and the 
 **Compilation state matters more than data.** On the Redmi, speed-profile cuts the TTFD median by 118 ms (735 → 617), three times the noise. TTID drops by only 22 ms. Most of the gain is in loading Today, which runs code for the first time in the process. A Baseline Profile would give day-one installs this compiled state.
 
 **Macrobenchmark clears the shader cache before each cold start** (`MacrobenchmarkScope.dropShaderCache`, through `profileinstaller`). Every iteration therefore compiles its shaders again. In the Redmi speed-profile median trace, the first frame after TTID waits 67 ms on RenderThread `shader_compile`. Real users pay this only after installing or updating the app; later launches reuse the cache.
+
+**The Redmi drifts between sessions, so only compare runs from the same session.** In session 2, a cold rerun of the current code gave TTID 529 ms and TTFD 952 ms, far above session 1's 453 / 735 ms. To find out whether the code or the phone had changed, the old commit `0afdb46` and the current code ran back to back:
+
+| Session 2, cold, day one, seed 21/30 | TTID median (P90) | TTFD median (P90) | Results |
+|---|---|---|---|
+| Old commit `0afdb46` | 532 ms (599) | 896 ms (1021) | [results](perf/results/2026-11-01-redmi-startup-ab-old-0afdb46/) |
+| Current code (`77d3d11`) | 511 ms (556) | 854 ms (940) | [results](perf/results/2026-11-01-redmi-startup-ab-head/) |
+| Earlier rerun, current code | 529 ms (569) | 952 ms (1036) | [results](perf/results/2026-11-01-redmi-startup-day-one-rerun/) |
+
+The old commit is as slow as the current code, so **the phone changed, not the code**. The phone wasn't hot (thermal status 0, 32 °C), was charging, and had power saver off. The trace puts the extra time in `InitializeApp` and `ThemeRead` (about 86–89 ms each, against about 34 ms in Phase 1), which both read storage. The cause on the phone is not known.
+
+Two consequences:
+
+- Session 1 and session 2 numbers can't be compared. Every comparison, including Phase 3's before and after, must run back to back in one session, ideally alternating A, B, A, B.
+- Two runs of the same code in session 2 differed by about 100 ms on TTFD (952 vs 854 ms), more than the ~40 ms A/A spread in session 1.
+
+**Warm and hot startup** (session 2). `StartupBenchmark.warmStartup` and `hotStartup` use the same setup as cold (`pressHome()`, 15 iterations, seed 21/30, `Ignore()`). Only the `StartupMode` changes.
+
+- **Warm** keeps the process. The launch clears the task, so a new `MainActivity` is created.
+- **Hot** brings back the existing activity.
+
+| Date | Device | Compilation state | Start | TTID median (P90) | TTFD median (P90) | Results |
+|---|---|---|---|---|---|---|
+| 2026-11-01 | Redmi Note 10 Pro, 60 Hz | None (day one) | Cold (session 2) | 529 ms (569) | 952 ms (1036) | [results](perf/results/2026-11-01-redmi-startup-day-one-rerun/) |
+| 2026-11-01 | Redmi Note 10 Pro, 60 Hz | None (day one) | Warm | 241 ms (275) | 371 ms (421) | [results](perf/results/2026-11-01-redmi-startup-warm-day-one/) |
+| 2026-11-01 | Redmi Note 10 Pro, 60 Hz | None (day one) | Hot | 127 ms (142) | none, by design | [results](perf/results/2026-11-01-redmi-startup-hot-day-one/) |
+
+**Hot has no TTFD, and that is correct.** `ReportDrawnWhen` reports through the activity's `FullyDrawnReporter`, which fires once per activity. A hot start reuses the activity whose reporter already fired, so nothing reports for that launch. Today's data is already on screen anyway.
+
+**What the median traces show:**
+
+- **Warm (241 ms)** skips process creation and `Application.onCreate`, but still pays for:
+  - creating the activity (`activityStart` 39 ms, of which `performCreate` 23 ms) and `activityResume` (16 ms)
+  - the splash frame (35 ms, including a 10 ms `relayoutWindow`)
+  - `InitializeApp` and `ThemeRead` (about 24 ms each, in parallel)
+  - Today's first composition in the TTID frame (72 ms: recompose 17, measure 26, `relayoutWindow` 10)
+
+  TTFD then follows two frames later.
+- **Hot (127 ms)** does no Compose work at all. Its one big frame (46 ms) is `relayoutWindow` (15 ms) plus re-recording the whole UI's drawing (`Record View#draw()`, 16 ms), because the window's surface and display lists are released while the app is in the background.
 
 **Data size is not why Today is slow on the Redmi.** The time from first frame to fully drawn is 282 ms on the Redmi and 83 ms on the Pixel; the Phase 1 trace showed 83 ms on the Redmi. Changing only the seed size, at commit `0afdb46`, moved TTFD by less than the noise:
 

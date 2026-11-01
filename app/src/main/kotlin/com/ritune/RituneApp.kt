@@ -60,7 +60,7 @@ fun RituneApp(
     }
 
     val items = TopLevelDestination.entries.map {
-        RituneNavItem(stringResource(it.labelRes), it.iconRes)
+        RituneNavItem(stringResource(it.labelRes), it.iconRes, it.testTag)
     }
 
     Scaffold(

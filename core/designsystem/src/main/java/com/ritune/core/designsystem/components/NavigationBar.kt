@@ -10,10 +10,15 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
-data class RituneNavItem(val label: String, @DrawableRes val iconRes: Int)
+data class RituneNavItem(
+    val label: String,
+    @DrawableRes val iconRes: Int,
+    val testTag: String,
+)
 
 @Composable
 fun RituneNavigationBar(
@@ -33,6 +38,7 @@ fun RituneNavigationBar(
                 NavigationBarItem(
                     selected = index == selectedIndex,
                     onClick = { onSelect(index) },
+                    modifier = Modifier.testTag(item.testTag),
                     icon = {
                         Icon(painterResource(item.iconRes), contentDescription = null)
                     },

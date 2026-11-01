@@ -17,11 +17,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ritune.core.designsystem.R
+import com.ritune.core.designsystem.TestTags
 import com.ritune.core.designsystem.components.RituneCard
 import com.ritune.core.designsystem.components.RituneDivider
 import com.ritune.core.designsystem.components.WeekBars
@@ -70,6 +72,7 @@ private fun RhythmBody(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .testTag(TestTags.RHYTHM_CONTENT)
             .verticalScroll(rememberScrollState())
             .padding(
                 start = Ritune.spacing.xl,

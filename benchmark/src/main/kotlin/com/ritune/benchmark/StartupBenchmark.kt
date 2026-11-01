@@ -19,14 +19,28 @@ class StartupBenchmark {
     @get:Rule(order = 1)
     val rule = MacrobenchmarkRule()
 
-    // CompilationMode.Ignore is experimental; needed because MIUI ignores shell compile commands.
-    @OptIn(ExperimentalMacrobenchmarkApi::class)
     @Test
-    fun coldStartup() = rule.measureRepeated(
+    fun coldStartup() = startup(StartupMode.COLD)
+
+    /** The process stays alive; a new activity is created, so Today reports TTFD again. */
+    @Test
+    fun warmStartup() = startup(StartupMode.WARM)
+
+    /**
+     * The existing activity comes back. Its ReportDrawnWhen already fired on the first launch,
+     * so this reports TTID only.
+     */
+    @Test
+    fun hotStartup() = startup(StartupMode.HOT)
+
+    // CompilationMode.Ignore is experimental; needed because MIUI skips dexopt started from the
+    // shell ("Skipped dexOpt for start by shell"), so the other modes would be silently ignored.
+    @OptIn(ExperimentalMacrobenchmarkApi::class)
+    private fun startup(mode: StartupMode) = rule.measureRepeated(
         packageName = PACKAGE,
         metrics = listOf(StartupTimingMetric()),
         compilationMode = CompilationMode.Ignore(),
-        startupMode = StartupMode.COLD,
+        startupMode = mode,
         iterations = 15,
         setupBlock = { pressHome() },
     ) {

@@ -24,6 +24,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ritune.core.designsystem.TestTags
+import com.ritune.core.designsystem.TraceSections
 import com.ritune.core.designsystem.components.RituneNavItem
 import com.ritune.core.designsystem.components.RituneNavigationBar
 import com.ritune.feature.rhythm.ui.navigation.RhythmRoute
@@ -60,7 +61,7 @@ fun RituneApp(
     }
 
     val items = TopLevelDestination.entries.map {
-        RituneNavItem(stringResource(it.labelRes), it.iconRes)
+        RituneNavItem(stringResource(it.labelRes), it.iconRes, it.testTag)
     }
 
     Scaffold(
@@ -74,7 +75,14 @@ fun RituneApp(
                         items = items,
                         selectedIndex = selectedIndex,
                         onSelect = {
-                            navController.navigateToTopLevel(TopLevelDestination.entries[it])
+                            val destination = TopLevelDestination.entries[it]
+                            // Re-tapping the current tab draws nothing new, so the section would never end.
+                            if (it != selectedIndex) {
+                                destination.openTraceSection?.let(
+                                    TraceSections::beginScreenOpen
+                                )
+                            }
+                            navController.navigateToTopLevel(destination)
                         },
                     )
                 }

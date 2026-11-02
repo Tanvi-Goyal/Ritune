@@ -2,82 +2,65 @@ package com.ritune.benchmark
 
 import androidx.benchmark.macro.CompilationMode
 import androidx.benchmark.macro.ExperimentalMacrobenchmarkApi
+import androidx.benchmark.macro.ExperimentalMetricApi
 import androidx.benchmark.macro.StartupMode
 import androidx.benchmark.macro.StartupTimingMetric
+import androidx.benchmark.macro.TraceSectionMetric
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.By
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.Until
 import com.ritune.core.designsystem.TestTags
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.File
-
-private const val PACKAGE = "com.ritune"
 
 @RunWith(AndroidJUnit4::class)
 class StartupBenchmark {
-    @get:Rule
+    @get:Rule(order = 0)
+    val app = SeededAppRule()
+
+    @get:Rule(order = 1)
     val rule = MacrobenchmarkRule()
 
-    private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-
-    private lateinit var dexoptBefore: String
-
-    // Seed size comes from the run arguments, so data experiments don't need code changes.
-    private val args = InstrumentationRegistry.getArguments()
-    private val seedDays = args.getString("seedDays")?.toInt() ?: 21
-    private val seedRoutines = args.getString("seedRoutines")?.toInt() ?: 30
-
-    @Before
-    fun seed() {
-        dexoptBefore = dexoptState()
-        device.executeShellCommand(
-            "am start -W -n $PACKAGE/.SeedActivity --ei days $seedDays --ei routines $seedRoutines"
-        )
-    }
-
-    // Both files are written here because Macrobenchmark empties the output folder when it starts.
-    @After
-    fun saveDexoptState() {
-        val dir = InstrumentationRegistry.getArguments().getString("additionalTestOutputDir")
-            ?: return
-        File(dir, "dexopt-before.txt").writeText(dexoptBefore)
-        File(dir, "dexopt-after.txt").writeText(dexoptState())
-        File(dir, "seed.txt").writeText("days=$seedDays routines=$seedRoutines\n")
-    }
-
-    // CompilationMode.Ignore is experimental; needed because MIUI ignores shell compile commands.
-    @OptIn(ExperimentalMacrobenchmarkApi::class)
     @Test
-    fun coldStartup() = rule.measureRepeated(
+    fun coldStartup() = startup(StartupMode.COLD, withSections = true)
+
+    /**
+     * The process stays alive; a new activity is created, so Today reports TTFD again and its
+     * activity-scoped ViewModels run the startup sections again.
+     */
+    @Test
+    fun warmStartup() = startup(StartupMode.WARM, withSections = true)
+
+    /**
+     * The existing activity comes back. Its ReportDrawnWhen already fired on the first launch,
+     * so this reports TTID only, and no startup section runs.
+     */
+    @Test
+    fun hotStartup() = startup(StartupMode.HOT, withSections = false)
+
+    // CompilationMode.Ignore is experimental; needed because MIUI skips dexopt started from the
+    // shell ("Skipped dexOpt for start by shell"), so the other modes would be silently ignored.
+    @OptIn(ExperimentalMacrobenchmarkApi::class, ExperimentalMetricApi::class)
+    private fun startup(mode: StartupMode, withSections: Boolean) = rule.measureRepeated(
         packageName = PACKAGE,
-        metrics = listOf(StartupTimingMetric()),
+        metrics = listOf(StartupTimingMetric()) + if (withSections) {
+            STARTUP_SECTIONS.map { TraceSectionMetric(it, mode = TraceSectionMetric.Mode.First) }
+        } else {
+            emptyList()
+        },
         compilationMode = CompilationMode.Ignore(),
-        startupMode = StartupMode.COLD,
+        startupMode = mode,
         iterations = 15,
         setupBlock = { pressHome() },
     ) {
         startActivityAndWait()
         // Keep tracing until reportFullyDrawn fires, otherwise there is no TTFD.
-        val loaded = device.wait(
-            Until.hasObject(
-                By.res(TestTags.TODAY_CONTENT)
-            ),
-            5_000
-        )
-        check(loaded) { "Today screen never finished loading" }
+        device.waitForTag(TestTags.TODAY_CONTENT)
     }
 
-    /** This app's section of `dumpsys package dexopt`. */
-    private fun dexoptState(): String =
-        device.executeShellCommand("dumpsys package dexopt").lineSequence()
-            .dropWhile { it.trim() != "[$PACKAGE]" }
-            .takeWhile { it.trim() == "[$PACKAGE]" || !it.trim().startsWith("[") }
-            .joinToString("\n")
+    private companion object {
+        // The Phase 1 sections, each run once per launch. Seeding finds the rule's data already
+        // there, so Seed.* times the row counts, not the first-launch inserts.
+        val STARTUP_SECTIONS = listOf("InitializeApp", "ThemeRead", "Seed.anchors", "Seed.routines")
+    }
 }

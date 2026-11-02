@@ -21,16 +21,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ritune.core.designsystem.R
+import com.ritune.core.designsystem.TestTags
+import com.ritune.core.designsystem.TraceSections
 import com.ritune.core.designsystem.components.RituneCard
 import com.ritune.core.designsystem.components.RituneDivider
 import com.ritune.core.designsystem.components.RituneSnackbarHost
 import com.ritune.core.designsystem.components.SecondaryButton
+import com.ritune.core.designsystem.endTraceOnFirstDraw
 import com.ritune.core.designsystem.theme.Ritune
 import com.ritune.feature.routine.ui.mapper.routineSummary
 import androidx.compose.ui.platform.LocalResources
@@ -109,6 +113,8 @@ private fun ListBody(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .testTag(TestTags.ROUTINES_LIST)
+            .endTraceOnFirstDraw(TraceSections.ROUTINES_OPEN)
             .verticalScroll(rememberScrollState())
             .padding(
                 start = Ritune.spacing.xl,

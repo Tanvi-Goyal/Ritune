@@ -2,6 +2,7 @@ package com.ritune
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import com.ritune.core.designsystem.TestTags
 import com.ritune.core.domain.ports.DataResetter
 import com.ritune.core.domain.repositories.AnchorEventRepository
 import com.ritune.core.domain.repositories.AnchorRepository
@@ -42,18 +43,29 @@ class SeedActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val days = intent.getIntExtra(EXTRA_DAYS, DEFAULT_DAYS)
         val routineCount = intent.getIntExtra(EXTRA_ROUTINES, DEFAULT_ROUTINES)
+        val withLongRoutine = intent.getBooleanExtra(EXTRA_LONG_ROUTINE, false)
         // Blocking keeps `am start -W` from returning until the data is written.
-        runBlocking { seed(days, routineCount) }
+        runBlocking { seed(days, routineCount, withLongRoutine) }
         finish()
     }
 
-    private suspend fun seed(days: Int, routineCount: Int) {
+    private suspend fun seed(days: Int, routineCount: Int, withLongRoutine: Boolean) {
         // A fixed seed gives every run, on both phones, the same data.
         val random = Random(RANDOM_SEED)
         resetter.resetAll()
         repeat(routineCount) { index -> routines.save(routine(index, random)) }
         logAnchors(days, random)
+        // Last and without `random`, so the data above matches runs that don't ask for it.
+        if (withLongRoutine) routines.save(longRoutine())
     }
+
+    private fun longRoutine() = Routine(
+        id = RoutineId(ids.newId()),
+        name = TestTags.LONG_ROUTINE_NAME,
+        steps = List(TestTags.LONG_ROUTINE_STEPS) { step ->
+            Step(id = StepId(ids.newId()), title = "Step ${step + 1}", duration = 60.seconds)
+        },
+    )
 
     private fun routine(index: Int, random: Random) = Routine(
         id = RoutineId(ids.newId()),
@@ -97,6 +109,7 @@ class SeedActivity : ComponentActivity() {
     private companion object {
         const val EXTRA_DAYS = "days"
         const val EXTRA_ROUTINES = "routines"
+        const val EXTRA_LONG_ROUTINE = "longRoutine"
         const val DEFAULT_DAYS = 21
         const val DEFAULT_ROUTINES = 30
         const val RANDOM_SEED = 42

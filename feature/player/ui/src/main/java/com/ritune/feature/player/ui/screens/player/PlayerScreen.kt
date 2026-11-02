@@ -25,16 +25,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ritune.core.designsystem.R
+import com.ritune.core.designsystem.TestTags
+import com.ritune.core.designsystem.TraceSections
 import com.ritune.core.designsystem.components.PrimaryButton
 import com.ritune.core.designsystem.components.RituneAlertDialog
 import com.ritune.core.designsystem.components.SecondaryButton
 import com.ritune.core.designsystem.components.StepProgress
 import com.ritune.core.designsystem.components.TimerText
+import com.ritune.core.designsystem.endTraceOnFirstDraw
 import com.ritune.core.designsystem.theme.Ritune
 
 @Composable
@@ -112,6 +116,8 @@ private fun ActiveBody(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .testTag(TestTags.PLAYER_CONTENT)
+            .endTraceOnFirstDraw(TraceSections.PLAYER_OPEN)
             .padding(horizontal = Ritune.spacing.xl)
             .padding(top = Ritune.spacing.lg),
     ) {
@@ -232,7 +238,9 @@ private fun ActiveBody(
                     else R.string.player_skip
                 ),
                 onClick = { onEvent(PlayerUiEvent.Skip) },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag(TestTags.PLAYER_SKIP),
             )
         }
     }

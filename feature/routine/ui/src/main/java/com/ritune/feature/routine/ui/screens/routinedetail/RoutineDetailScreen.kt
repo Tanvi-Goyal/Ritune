@@ -22,18 +22,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ritune.core.designsystem.R
+import com.ritune.core.designsystem.TestTags
+import com.ritune.core.designsystem.TraceSections
 import com.ritune.core.designsystem.components.PrimaryButton
 import com.ritune.core.designsystem.components.RituneAlertDialog
 import com.ritune.core.designsystem.components.RituneCard
 import com.ritune.core.designsystem.components.RituneDivider
 import com.ritune.core.designsystem.components.RituneSnackbarHost
 import com.ritune.core.designsystem.components.SecondaryButton
+import com.ritune.core.designsystem.endTraceOnFirstDraw
 import com.ritune.core.designsystem.theme.Ritune
 import com.ritune.feature.routine.ui.mapper.formatDuration
 import com.ritune.feature.routine.ui.mapper.routineSummary
@@ -164,6 +168,8 @@ private fun DetailBody(
         Column(
             modifier = Modifier
                 .weight(1f)
+                .testTag(TestTags.ROUTINE_DETAIL_CONTENT)
+                .endTraceOnFirstDraw(TraceSections.ROUTINE_DETAIL_OPEN)
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = Ritune.spacing.xl)
                 .padding(top = Ritune.spacing.sm),
@@ -206,13 +212,22 @@ private fun DetailBody(
         ) {
             PrimaryButton(
                 text = stringResource(R.string.detail_start),
-                onClick = { onEvent(RoutineDetailEvent.Start) },
-                modifier = Modifier.weight(2f),
+                onClick = {
+                    // Begins at the tap: the start itself (loading the routine, starting the
+                    // service) happens before navigation, so it's part of the wait.
+                    TraceSections.beginScreenOpen(TraceSections.PLAYER_OPEN)
+                    onEvent(RoutineDetailEvent.Start)
+                },
+                modifier = Modifier
+                    .weight(2f)
+                    .testTag(TestTags.ROUTINE_START),
             )
             SecondaryButton(
                 text = stringResource(R.string.detail_edit),
                 onClick = { onEdit(state.id) },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag(TestTags.ROUTINE_EDIT),
             )
         }
     }

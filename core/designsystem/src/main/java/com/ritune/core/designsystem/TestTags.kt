@@ -9,6 +9,7 @@ object TestTags {
     const val BOTTOM_BAR = "bottomBar"
     const val TODAY_CONTENT = "todayContent"
     const val ROUTINES_LIST = "routinesList"
+    const val ROUTINE_ROW = "routineRow"
     const val RHYTHM_CONTENT = "rhythmContent"
     const val ROUTINE_DETAIL_CONTENT = "routineDetailContent"
     const val ROUTINE_START = "routineStart"

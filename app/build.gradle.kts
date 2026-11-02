@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.ritune.android.compose)
     alias(libs.plugins.ritune.hilt)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.androidx.baselineprofile)
 }
 
 android {
@@ -72,6 +73,29 @@ android {
     testOptions.unitTests.isReturnDefaultValues = true
 }
 
+// The baselineprofile plugin copies release into nonMinifiedRelease and turns off the old
+// isMinifyEnabled, but not `optimization`, so R8 still renamed classes and the generated rules
+// named obfuscated classes. Rules must use real names; the release build maps them through R8.
+// finalizeDsl runs after the plugin has set the build type up.
+androidComponents {
+    finalizeDsl { android ->
+        android.buildTypes.findByName("nonMinifiedRelease")?.optimization?.enable = false
+    }
+    // The plugin only adds the generated profile to the build types it manages. The Macrobenchmarks
+    // measure `benchmark`, so it must ship the same profile as release.
+    onVariants(selector().withBuildType("benchmark")) { variant ->
+        variant.sources.baselineProfiles?.addStaticSourceDirectory("src/main/generated/baselineProfiles")
+    }
+}
+
+baselineProfile {
+    // In src/main rather than src/release, so every build type ships it, including the
+    // benchmark build type the Macrobenchmarks measure.
+    mergeIntoMain = true
+    // Uses the startup rules to put startup classes first in the primary dex.
+    dexLayoutOptimization = true
+}
+
 dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
@@ -97,6 +121,9 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
+    // Compiles the bundled profile at install on devices where Play doesn't.
+    implementation(libs.androidx.profileinstaller)
+    baselineProfile(project(":baselineprofile"))
 
     testImplementation(libs.androidx.navigation.testing)
 

@@ -142,13 +142,14 @@ The first number before any instrumentation exists. TTID only; TTFD comes in Pha
 
 All Phase 2 numbers come from Macrobenchmark on the phones, with the JSON for every run in [`perf/results/`](perf/results/).
 
-**Sessions.** On 2026-11-01 the Redmi's timings shifted part-way through the day, so its results are split into two sessions. **Only compare results from the same session.**
+**Sessions.** On 2026-11-01 the Redmi's timings shifted part-way through the day, so its results are split into sessions. Each later day is a new session too. **Only compare results from the same session.**
 
 | Session (UTC) | What ran | Notes |
 |---|---|---|
 | 1: 06:30–11:30 | Cold startup baseline and A/A, seed experiment, speed-profile, scroll, open Routines (and R0/R30/R60), open Rhythm, open Detail and Editor, start routine | Consistent with itself: the open-Routines rerun landed within 8 ms of the first run |
 | — about 12:20 | MIUI optimization switched off and back on, to test whether `CompilationMode.Full` could work (it can't) | |
 | 2: 12:36–14:30 | Warm and hot startup, a cold rerun, and old-commit vs current-code A/B | Cold is about 60–80 ms slower on TTID and 120–220 ms on TTFD than in session 1, for old and new code alike |
+| 3: 2026-11-02, 10:38–11:00 | Skipping player steps, then cold and warm startup with the Phase 1 trace sections | Cold TTID (523 ms) is still at session 2's level, so the shift has lasted overnight |
 
 The shift lines up with the MIUI optimization toggle, but that is not proven. What is proven is that the code did not cause it: the old commit `0afdb46` was just as slow in session 2.
 
@@ -166,6 +167,11 @@ The shift lines up with the MIUI optimization toggle, but that is not proven. Wh
 | Open Detail (15-step routine) | `RoutineDetail.open` | 1 | 171 ms | 188 ms | [results](perf/results/2026-11-01-redmi-open-routine-detail-editor/) |
 | Open Editor (15-step routine) | `RoutineEditor.open` | 1 | 172 ms | 189 ms | same folder |
 | Start routine | `Player.open` | 1 | 151 ms | 168 ms | [results](perf/results/2026-11-01-redmi-open-player-day-one/) |
+| Cold startup, with trace sections | TTID / TTFD | 3 | 523 / 921 ms | 601 / 1130 ms | [results](perf/results/2026-11-02-redmi-startup-sections/) |
+| Warm startup, with trace sections | TTID / TTFD | 3 | 252 / 387 ms | 284 / 451 ms | [results](perf/results/2026-11-02-redmi-startup-sections-warm/) |
+| Skip 5 player steps (15-step routine) | `Player.notify` average / max per call | 3 | 6.0 / 7.5 ms | 6.8 / 11.2 ms | [results](perf/results/2026-11-02-redmi-player-skip-steps/) |
+
+The startup trace sections (`InitializeApp`, `ThemeRead`, `Seed.*`) are broken down in [Phase 2: Phase 1 trace sections](#phase-2-phase-1-trace-sections).
 
 The Pixel 9 Pro has one Phase 2 result, cold startup at None: TTID 162 ms (P90 174), TTFD 245 ms (P90 271).
 
@@ -184,7 +190,8 @@ Phase 3 will measure the Baseline Profile row together with a fresh None row in 
 
 - Scrolling Rhythm was dropped: Rhythm fits on one screen, so a fling draws no frames. Opening Rhythm is measured instead.
 - The benchmark module uses the `ritune.android.test` convention plugin rather than a separate `ritune.android.benchmark` one.
-- Still open: measuring the Phase 1 trace sections (`InitializeApp`, `ThemeRead`, `Seed.*`, `Player.notify`) with `TraceSectionMetric`.
+- The plan calls `Player.notify` the "player tick". It isn't per tick: it runs once per player state change (start, step change, pause, resume), so it's measured with a journey that skips steps.
+- `Seed.*` is measured only on an already-seeded database, because every benchmark seeds before it runs. The first-launch inserts are not measured.
 
 ### Phase 2: Macrobenchmark cold start
 
@@ -469,3 +476,53 @@ trace_processor query -f docs/perf/cold-start.sql ~/perfetto-traces/ritune/redmi
 ```
 
 The summary lists the lifecycle, Ritune's sections, TTID and TTFD in ms from launch, then every main-thread frame up to TTFD with its missed 60 Hz and 120 Hz deadlines.
+
+### Phase 2: Phase 1 trace sections
+
+The trace sections from Phase 1, read with `TraceSectionMetric` in session 3 (2026-11-02, Redmi Note 10 Pro, None (day one), `Ignore()`, 15 iterations, commit `8eecb1c`):
+
+- `StartupBenchmark.coldStartup` and `warmStartup` read `InitializeApp`, `ThemeRead`, `Seed.anchors` and `Seed.routines` with `Mode.First`, since each runs once per launch. `hotStartup` reads none of them: it reuses the activity and its ViewModels, so the sections don't run.
+- `OpenRoutineBenchmark.skipSteps` reads `Player.notify` with `Average`, `Count` and `Max`. Setup starts the 15-step routine. The measured part taps Skip 5 times and waits each time for the next step's title. Steps last 60 s, so no step ends on its own.
+
+| Section, median (P90) | Cold | Warm |
+|---|---|---|
+| TTID | 523 ms (601) | 252 ms (284) |
+| TTFD | 921 ms (1130) | 387 ms (451) |
+| `InitializeApp` | 81.0 ms (95.3) | 28.9 ms (31.4) |
+| `ThemeRead` | 81.5 ms (94.0) | 28.7 ms (32.3) |
+| `Seed.anchors` | 2.4 ms (10.0) | 0.9 ms (1.7) |
+| `Seed.routines` | 1.7 ms (7.7) | 0.5 ms (2.5) |
+
+[Cold results](perf/results/2026-11-02-redmi-startup-sections/), [warm results](perf/results/2026-11-02-redmi-startup-sections-warm/).
+
+**The splash waits for both sections.** `MainActivity` keeps the splash up while `startDestination` or `themeMode` is null. So `InitializeApp` and `ThemeRead` sit on the path to TTID, and the first frame with Today starts within a few milliseconds of `InitializeApp` ending.
+
+**Seeding is a small part of `InitializeApp`.** In a cold trace (iteration 14, TTID 507 ms), the work runs like this:
+
+| Time from `bindApplication` | What happens |
+|---|---|
+| 144–208 ms | The first frame on the main thread, under the splash |
+| 169 / 172 ms | `ThemeRead` and `InitializeApp` start |
+| 210–220 ms | `Seed.anchors` and `Seed.routines` run, about 10 ms in all |
+| 215–249 ms | The main thread sleeps for 34 ms |
+| 251 / 253 ms | `ThemeRead` and `InitializeApp` end |
+| 256–353 ms | The first frame with Today (97 ms); TTID ends at 359 ms |
+
+About 38 ms passes before the seeding starts (opening the Room database, as Phase 1 found) and about 33 ms after it (committing the transaction and resuming the coroutine). Neither has its own section. Between 170 and 250 ms the background threads ran for about 22 ms, waited about 20 ms for a free CPU while the first frames were drawn, and were blocked on disk for about 11 ms.
+
+**Warm start waits on the main thread instead.** In a warm trace (iteration 9), the database is already open and seeding takes 1.5 ms, all done within 7 ms. Both sections start during the first frame (38 ms) and can only finish on the main thread, so they end when that frame does, about 30 ms in. Warm saves about 52 ms per section, roughly the cost of opening the database and reading the settings file for the first time in a new process.
+
+In both modes `ThemeRead` and `InitializeApp` end within 2 ms of each other. In warm start that is because both resume on the main thread after the same frame. In cold start it suggests a shared wait on disk or the background thread pool, but the trace doesn't prove it.
+
+These sections run at about 81 ms in session 3 against about 34 ms in Phase 1. That matches the drift described above (86–89 ms in session 2), not a code change.
+
+**Player notification updates** ([results](perf/results/2026-11-02-redmi-player-skip-steps/)):
+
+| `Player.notify` | Median | P90 | Range |
+|---|---|---|---|
+| Average per call | 6.0 ms | 6.8 ms | 5.3–7.5 ms |
+| Calls per iteration | 5 | 5 | 5 in every iteration |
+| Slowest call | 7.5 ms | 11.2 ms | 5.9–12.6 ms |
+
+- The count is 5 in every iteration, one per Skip, so the averages compare the same work.
+- Each update takes about 6 ms on the main thread, and the slowest reach 12.6 ms. That is a large share of a 16.7 ms frame, and enough to drop a frame if one lands during an animation.

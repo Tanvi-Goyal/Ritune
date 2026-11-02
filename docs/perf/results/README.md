@@ -15,12 +15,13 @@ Perfetto traces are not committed; they are 1–2 MB each. Rebuild them by rerun
 
 ## Sessions
 
-Only compare folders from the same session. The Redmi's timings shifted between these two sessions on 2026-11-01, for old and new code alike (see "Phase 2: summary" in `performance.md`).
+Only compare folders from the same session. The Redmi's timings shifted between sessions 1 and 2 on 2026-11-01, for old and new code alike (see "Phase 2: summary" in `performance.md`). Each later day is a new session.
 
 | Session (UTC, 2026-11-01) | Redmi folders |
 |---|---|
 | 1: 06:30–11:30 | `redmi-startup-day-one`, `redmi-seed-A/B/C`, `redmi-startup-speed-profile`, `redmi-scroll-day-one`, `redmi-open-routines-day-one`, `redmi-open-routines-R0/R30/R60`, `redmi-open-rhythm-day-one`, `redmi-open-routine-detail-editor`, `redmi-open-player-day-one` |
 | 2: 12:36–14:30, after MIUI optimization was switched off and on | `redmi-startup-warm-day-one`, `redmi-startup-hot-day-one`, `redmi-startup-day-one-rerun`, `redmi-startup-ab-old-0afdb46`, `redmi-startup-ab-head` |
+| 3: 2026-11-02, 10:38–11:00 | `2026-11-02-redmi-player-skip-steps`, `2026-11-02-redmi-startup-sections` (cold), `2026-11-02-redmi-startup-sections-warm` |
 
 ## Gaps
 
@@ -29,3 +30,4 @@ Only compare folders from the same session. The Redmi's timings shifted between 
 - Gradle clears `benchmark/build/outputs/connected_android_test_additional_output/` on every run. Copy each result here straight after its run.
 - `2026-11-01-redmi-startup-day-one` kept no traces, so session 1's cold start can't be broken down from its own run.
 - `2026-11-01-redmi-startup-ab-old-0afdb46` ran the old commit, whose `seed.txt` has no `longRoutine` field. That commit had no long routine, so it is the same as `longRoutine=false`.
+- Session 3's first cold run was lost: the warm and `skipSteps` runs started before it was copied, and each run clears the output folder. `2026-11-02-redmi-startup-sections` is the rerun, made after `skipSteps`. The first warm run, if it ran, was lost the same way, and `2026-11-02-redmi-startup-sections-warm` is the run after cold.

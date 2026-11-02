@@ -58,3 +58,6 @@ class SeededAppRule(private val withLongRoutine: Boolean = false) : TestRule {
 /** `device.wait` returns false on timeout instead of failing, so check it. */
 internal fun UiDevice.waitForTag(tag: String, timeoutMs: Long = 5_000) =
     check(wait(Until.hasObject(By.res(tag)), timeoutMs)) { "\"$tag\" never appeared" }
+
+internal fun UiDevice.waitForText(text: String, timeoutMs: Long = 5_000) =
+    check(wait(Until.hasObject(By.text(text)), timeoutMs)) { "\"$text\" never appeared" }

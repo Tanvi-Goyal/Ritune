@@ -15,6 +15,7 @@ object TestTags {
     const val ROUTINE_EDIT = "routineEdit"
     const val ROUTINE_EDITOR_CONTENT = "routineEditorContent"
     const val PLAYER_CONTENT = "playerContent"
+    const val PLAYER_SKIP = "playerSkip"
     const val NAV_TODAY = "navToday"
     const val NAV_RHYTHM = "navRhythm"
     const val NAV_ROUTINES = "navRoutines"

@@ -238,7 +238,9 @@ private fun ActiveBody(
                     else R.string.player_skip
                 ),
                 onClick = { onEvent(PlayerUiEvent.Skip) },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag(TestTags.PLAYER_SKIP),
             )
         }
     }

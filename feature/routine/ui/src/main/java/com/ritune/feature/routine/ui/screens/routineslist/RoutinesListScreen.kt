@@ -203,6 +203,7 @@ private fun RoutineRow(item: RoutineItem, onOpen: () -> Unit, onStart: () -> Uni
             modifier = Modifier
                 .weight(1f)
                 .heightIn(min = 48.dp)
+                .testTag(TestTags.ROUTINE_ROW)
                 .clickable(
                     onClickLabel = stringResource(
                         R.string.routines_open_label,

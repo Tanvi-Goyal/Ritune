@@ -1,0 +1,19 @@
+flowchart TB
+    app[":app<br/><small>Activity · NavHost · Hilt graph</small>"]
+    features[":feature:*:ui<br/><small>today · rhythm · routine · player · settings</small>"]
+    platform[":platform:android<br/><small>player engine · service · cues · notifications</small>"]
+    data[":core:data<br/><small>repositories · mappers · seeding</small>"]
+    domain[":core:domain<br/><small>use cases · player reducer · ports</small>"]
+    storage[":core:database · :core:datastore<br/><small>Room · DataStore</small>"]
+    models[":core:models<br/><small>plain Kotlin, no Android</small>"]
+    app --> features
+    app --> platform
+    app --> data
+    features --> domain
+    platform --> domain
+    data --> domain
+    data --> storage
+    domain --> models
+    storage --> models
+    style domain fill:#DCE8F7,stroke:#2F5D9A,stroke-width:2px
+    style models fill:#DCE8F7,stroke:#2F5D9A,stroke-width:2px

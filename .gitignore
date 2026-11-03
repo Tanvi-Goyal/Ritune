@@ -16,6 +16,8 @@ local.properties
 
 # Benchmark traces are 1–2 MB each; rerun the benchmark at the recorded commit to recreate them
 docs/perf/results/**/*.perfetto-trace
+# Earlier attempts of a rerun benchmark, kept locally for reference
+docs/perf/results/superseded/
 
 *.jks
 *.keystore

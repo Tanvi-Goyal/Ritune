@@ -1,0 +1,3 @@
+  [com.ritune]
+    path: /data/app/~~l3JzZ356zLHnUvOtzH8cyQ==/com.ritune-2-PZjG2v3rNkmfjDew3EmA==/base.apk
+      arm64: [status=verify] [reason=install]

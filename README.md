@@ -44,7 +44,6 @@ Ritune is built around one loop. Log the day, see the pattern, then change it wi
 
 The dependency rule points inward. Features know only the domain, the domain knows only models, and Android-specific code sits behind ports (interfaces) that the outer modules implement.
 
-![Architecture](docs/blog/01-intro/diagrams/architecture.png)
 ```mermaid
 flowchart TD
     app[":app<br/>Activity · NavHost · Hilt root"]
@@ -123,8 +122,6 @@ stateDiagram-v2
 
 ### 2. Starting a routine, end to end
 
-![Player State Machine](docs/blog/01-intro/design/player_state_transitions.png)
-
 ```mermaid
 sequenceDiagram
     participant UI as PlayerViewModel
@@ -163,6 +160,27 @@ sequenceDiagram
 | One module per feature, features never depend on each other | Navigation between features is wired in `:app` through callbacks |
 | `specialUse` foreground service type | The honest category for a user-started guided timer on Android 14+ |
 
+## Project structure
+
+```
+app/                    Activity, NavHost, top-level navigation, theme root
+core/
+  models/               Pure Kotlin domain models (JVM module)
+  domain/               Use cases, RoutinePlayerReducer, ConsistencyCalculator, ports
+  data/                 Repository implementations, mappers, DatabaseSeeder
+  database/             Room entities, DAOs, relations
+  datastore/            DataStore instances
+  designsystem/         Theme, typography, motion, shared components
+  navigation/           Deep-link constants shared by the app and the platform
+  testing/              Shared fakes, rules and test data for every module's tests
+  screenshot-testing/   Roborazzi capture helpers for Compose screenshot tests
+platform/android/       PlayerEngine, PlayerService, notifications, cues/
+feature/<name>/ui/      today · rhythm · routine · player · settings · onboarding
+build-logic/            Gradle convention plugins shared by every module
+journeys/               Release journeys run on an emulator before each release
+docs/screenshots/       Images used in this README
+```
+
 ## Design system
 
 `:core:designsystem` holds the foundations: color, type, shape, spacing, motion and the light and dark themes. Screens never hardcode values, colors, text styles and spacing all come from the theme, and `docs/tokens.json` is the source of truth that `Color.kt` mirrors.
@@ -186,27 +204,6 @@ See [docs/testing.md](docs/testing.md) for the test pyramid, commands, and what 
 Performance is measured before anything changes. Results come from release builds on two physical phones, a mid-range Redmi Note 10 Pro and a flagship Pixel 9 Pro, covering cold start, Macrobenchmark journeys and Baseline Profiles.
 
 See [docs/performance.md](docs/performance.md) for the methodology, results and commands to reproduce them.
-
-## Project structure
-
-```
-app/                    Activity, NavHost, top-level navigation, theme root
-core/
-  models/               Pure Kotlin domain models (JVM module)
-  domain/               Use cases, RoutinePlayerReducer, ConsistencyCalculator, ports
-  data/                 Repository implementations, mappers, DatabaseSeeder
-  database/             Room entities, DAOs, relations
-  datastore/            DataStore instances
-  designsystem/         Theme, typography, motion, shared components
-  navigation/           Deep-link constants shared by the app and the platform
-  testing/              Shared fakes, rules and test data for every module's tests
-  screenshot-testing/   Roborazzi capture helpers for Compose screenshot tests
-platform/android/       PlayerEngine, PlayerService, notifications, cues/
-feature/<name>/ui/      today · rhythm · routine · player · settings · onboarding
-build-logic/            Gradle convention plugins shared by every module
-journeys/               Release journeys run on an emulator before each release
-docs/screenshots/       Images used in this README
-```
 
 ## Release Automation
 Release is automated in GitHub Actions. Every pull request runs lint, unit, screenshot and device tests and builds the R8-optimised release. A manual Release workflow takes a version, builds a signed APK and AAB, uploads the AAB to Play's internal track as a draft and publishes a GitHub Release.

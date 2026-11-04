@@ -2,12 +2,6 @@
 
 **A daily-rhythm app for Android.** Log the anchors of your day (wake, morning light, movement, last meal, screens off, lights out) and run guided routines with haptic, sound and spoken cues that keep working with the screen off.
 
-Built as a portfolio project to practise production Android: a modular Clean Architecture codebase, a pure state-machine player, a foreground service, and Android media APIs, all in Kotlin and Jetpack Compose.
-
-Ritune is a daily-rhythm app for Android, now in closed testing on Google Play. 
-You log the six moments that anchor your day and run short guided routines whose cues keep going with the screen off. This is the map for the project: what the app does, how it is put together, and the decisions made.
-
-
 [![CI](https://github.com/Tanvi-Goyal/Ritune/actions/workflows/ci.yml/badge.svg)](https://github.com/Tanvi-Goyal/Ritune/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/Tanvi-Goyal/Ritune)](https://github.com/Tanvi-Goyal/Ritune/releases/latest)
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.4-7F52FF?logo=kotlin&logoColor=white)
@@ -17,19 +11,6 @@ You log the six moments that anchor your day and run short guided routines whose
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 <img src="docs/blog/01-intro/design/design-screens.png" />
-
-[//]: # ()
-[//]: # (| Today | Rhythm | Rhythm &#40;dark&#41; | Routines |)
-
-[//]: # (|:---:|:---:|:---:|:---:|)
-
-[//]: # (| <img src="docs/screenshots/today.png" width="200"/> | <img src="docs/screenshots/rhythm.png" width="200"/> | <img src="docs/screenshots/rhythm_dark.png" width="200"/> | <img src="docs/screenshots/routines.png" width="200"/> |)
-
-[//]: # (| **Editor** | **Player** | **Player &#40;dark&#41;** | **Settings** |)
-
-[//]: # (| <img src="docs/screenshots/editor.png" width="200"/> | <img src="docs/screenshots/player.png" width="200"/> | <img src="docs/screenshots/player_dark.png" width="200"/> | <img src="docs/screenshots/settings.png" width="200"/> |)
-
----
 
 ## Features
 Ritune is built around one loop. Log the day, see the pattern, then change it with a routine.
@@ -64,78 +45,44 @@ Ritune is built around one loop. Log the day, see the pattern, then change it wi
 The dependency rule points inward. Features know only the domain, the domain knows only models, and Android-specific code sits behind ports (interfaces) that the outer modules implement.
 
 ![Architecture](docs/blog/01-intro/diagrams/architecture.png)
+```mermaid
+flowchart TD
+    app[":app<br/>Activity · NavHost · Hilt root"]
 
-[//]: # (```mermaid)
+    subgraph features[":feature:*:ui"]
+        today[today]
+        rhythm[rhythm]
+        routine[routine]
+        player[player]
+        settings[settings]
+    end
 
-[//]: # (flowchart TD)
+    subgraph core
+        domain[":core:domain<br/>use cases · reducer · ports"]
+        models[":core:models<br/>pure Kotlin/JVM"]
+        data[":core:data<br/>repositories · mappers · seeding"]
+        database[":core:database<br/>Room"]
+        datastore[":core:datastore<br/>DataStore"]
+        designsystem[":core:designsystem<br/>theme · components"]
+        navigation[":core:navigation<br/>deep links"]
+    end
 
-[//]: # (    app[":app<br/>Activity · NavHost · Hilt root"])
+    platform[":platform:android<br/>engine · service · cues · notifications"]
 
-[//]: # ()
-[//]: # (    subgraph features[":feature:*:ui"])
-
-[//]: # (        today[today])
-
-[//]: # (        rhythm[rhythm])
-
-[//]: # (        routine[routine])
-
-[//]: # (        player[player])
-
-[//]: # (        settings[settings])
-
-[//]: # (    end)
-
-[//]: # ()
-[//]: # (    subgraph core)
-
-[//]: # (        domain[":core:domain<br/>use cases · reducer · ports"])
-
-[//]: # (        models[":core:models<br/>pure Kotlin/JVM"])
-
-[//]: # (        data[":core:data<br/>repositories · mappers · seeding"])
-
-[//]: # (        database[":core:database<br/>Room"])
-
-[//]: # (        datastore[":core:datastore<br/>DataStore"])
-
-[//]: # (        designsystem[":core:designsystem<br/>theme · components"])
-
-[//]: # (        navigation[":core:navigation<br/>deep links"])
-
-[//]: # (    end)
-
-[//]: # ()
-[//]: # (    platform[":platform:android<br/>engine · service · cues · notifications"])
-
-[//]: # ()
-[//]: # (    app --> features)
-
-[//]: # (    app --> data)
-
-[//]: # (    app --> platform)
-
-[//]: # (    features --> domain)
-
-[//]: # (    features --> designsystem)
-
-[//]: # (    data --> domain)
-
-[//]: # (    data --> database)
-
-[//]: # (    data --> datastore)
-
-[//]: # (    platform --> domain)
-
-[//]: # (    platform --> navigation)
-
-[//]: # (    domain --> models)
-
-[//]: # (    database --> models)
-
-[//]: # (    datastore --> models)
-
-[//]: # (```)
+    app --> features
+    app --> data
+    app --> platform
+    features --> domain
+    features --> designsystem
+    data --> domain
+    data --> database
+    data --> datastore
+    platform --> domain
+    platform --> navigation
+    domain --> models
+    database --> models
+    datastore --> models
+```
 
 | Layer | Responsibility | Never depends on |
 |---|---|---|
@@ -158,7 +105,7 @@ The player is a state machine with no clocks or Android in it. `RoutinePlayerRed
 (PlayerState, PlayerEvent) -> Transition(newState, effects)
 ```
 
-`PlayerEngine` owns the only mutable copy of the state. Commands are processed one at a time through a channel (an actor), so pause, skip and timer events can never race. Effects describe what should happen; the engine and controller carry them out.
+`PlayerEngine` owns the only mutable copy of the state. Commands are processed one at a time through a channel (an actor), so pause, skip and timer events can never race. Effects describe what should happen, the engine and controller carry them out.
 
 ```mermaid
 stateDiagram-v2
@@ -174,9 +121,9 @@ stateDiagram-v2
     Finished --> Idle: Reset
 ```
 
-Time is stored as an **absolute monotonic deadline** while running and as a **remaining duration** while paused, so nothing ticks every second. The UI computes the remaining time, and the notification uses a system chronometer.
-
 ### 2. Starting a routine, end to end
+
+![Player State Machine](docs/blog/01-intro/design/player_state_transitions.png)
 
 ```mermaid
 sequenceDiagram
@@ -203,39 +150,9 @@ sequenceDiagram
     R-->>E: next step + PlayCues
     Note over E,Rec: last step: PlayCues(completion) → RunFinished → save run, release cues
 ```
-
-### 3. Cue pipeline
-
-```mermaid
-flowchart LR
-    eff["PlayerEffect.PlayCues<br/>CountdownTick"] --> disp["ChannelCueDispatcher<br/>(CuePlayer port)"]
-    settings[("Settings StateFlow<br/>cached, live")] -.->|AppSettings.allows| disp
-    disp -->|main thread, in order| h[HapticCueChannel<br/>Vibrator]
-    disp --> s[SoundCueChannel<br/>SoundPool]
-    disp --> t[SpeechCueChannel<br/>TextToSpeech + audio focus]
-```
-
-- **The domain decides what plays; the platform decides how.** The reducer emits which cues fire, so the rules can be tested without a device.
-- **Gating happens in one place.** `AppSettings.allows(cue)` is checked against a cached `StateFlow`, so changing a toggle mid-run takes effect at the next cue without a disk read.
-- **Channels are a `Set<CueChannel>` built by Hilt multibinding.** A new channel is one class plus one binding.
-- **They handle Android's async startup.** SoundPool and TTS both load asynchronously, so a cue requested before its channel is ready is queued, not dropped. Speech takes transient may-duck audio focus so the user's music dips instead of stopping.
-
-### 4. Data model
-
-```mermaid
-erDiagram
-    ANCHOR ||--o{ ANCHOR_EVENT : "logged as"
-    ANCHOR |o--o{ ROUTINE : "started by"
-    ROUTINE ||--|{ STEP : contains
-    STEP ||--o{ STEP_CUE : has
-    ROUTINE ||--o{ RUN : "history of"
-```
-
-Anchor events store the instant **and** the UTC offset, so a log keeps its local time of day after time-zone travel. Settings and onboarding live in DataStore, not Room.
-
 ---
 
-## Engineering decisions worth a look
+## Engineering decisions
 
 | Decision | Why |
 |---|---|
@@ -245,6 +162,30 @@ Anchor events store the instant **and** the UTC offset, so a log keeps its local
 | Ports in the domain (`PlayerController`, `CuePlayer`, `RunRecorder`) | Features never see Android services, and the platform can be swapped or faked |
 | One module per feature, features never depend on each other | Navigation between features is wired in `:app` through callbacks |
 | `specialUse` foreground service type | The honest category for a user-started guided timer on Android 14+ |
+
+## Design system
+
+`:core:designsystem` holds the foundations: color, type, shape, spacing, motion and the light and dark themes. Screens never hardcode values, colors, text styles and spacing all come from the theme, and `docs/tokens.json` is the source of truth that `Color.kt` mirrors.
+
+See [docs/design_system.md](docs/design_system.md) for the rules, dark theme and computed WCAG contrast.
+
+## Navigation
+
+A single activity with Navigation Compose and type-safe `@Serializable` routes. Features declare their own graphs and never import each other; `:app` wires them together.
+
+See [docs/navigation.md](docs/navigation.md) for the routes, back stack rules, key flows and how to add a screen.
+
+## Testing
+
+Ritune has no QA team, so the tests are the QA. Every pull request runs JVM and Robolectric tests (logic, ViewModels, Compose behavior, Roborazzi screenshots) and device tests (Room, navigation, the foreground service, end-to-end journeys) on a Gradle Managed Device. Release journeys run on an emulator before each release.
+
+See [docs/testing.md](docs/testing.md) for the test pyramid, commands, and what each kind of change needs.
+
+## Performance
+
+Performance is measured before anything changes. Results come from release builds on two physical phones, a mid-range Redmi Note 10 Pro and a flagship Pixel 9 Pro, covering cold start, Macrobenchmark journeys and Baseline Profiles.
+
+See [docs/performance.md](docs/performance.md) for the methodology, results and commands to reproduce them.
 
 ## Project structure
 
@@ -267,6 +208,9 @@ journeys/               Release journeys run on an emulator before each release
 docs/screenshots/       Images used in this README
 ```
 
+## Release Automation
+Release is automated in GitHub Actions. Every pull request runs lint, unit, screenshot and device tests and builds the R8-optimised release. A manual Release workflow takes a version, builds a signed APK and AAB, uploads the AAB to Play's internal track as a draft and publishes a GitHub Release.
+
 ## Build and run
 
 **Just want to try it?** Download `app-release.apk` from the [latest release](https://github.com/Tanvi-Goyal/Ritune/releases/latest) and install it on an Android 8.0+ device.
@@ -279,16 +223,6 @@ git clone https://github.com/Tanvi-Goyal/Ritune.git && cd Ritune
 ```
 
 Cues are best checked on a physical device, since emulators don't vibrate. The sounds in `platform/android/src/main/res/raw` are synthesized placeholders.
-
-## Roadmap
-
-- [ ] Onboarding flow (module and DataStore flag exist; not wired into the start destination yet)
-- [ ] Anchor reminders (notifications at target times)
-- [x] Test suite and CI for every layer: unit, Compose, screenshot, device and end-to-end tests, plus release journeys ([docs/testing.md](docs/testing.md))
-- [ ] Tests for the remaining features (rhythm, routines, player, settings), following the reference tests
-- [ ] Home-screen widget for one-tap anchor logging (`EventSource.WIDGET` is already modelled)
-- [ ] Health Connect import (`EventSource.HEALTH_IMPORT`)
-- [x] CI/CD with GitHub Actions (build, lint, tests, signed releases)
 
 ## License
 

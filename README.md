@@ -4,6 +4,10 @@
 
 Built as a portfolio project to practise production Android: a modular Clean Architecture codebase, a pure state-machine player, a foreground service, and Android media APIs, all in Kotlin and Jetpack Compose.
 
+Ritune is a daily-rhythm app for Android, now in closed testing on Google Play. 
+You log the six moments that anchor your day and run short guided routines whose cues keep going with the screen off. This is the map for the project: what the app does, how it is put together, and the decisions made.
+
+
 [![CI](https://github.com/Tanvi-Goyal/Ritune/actions/workflows/ci.yml/badge.svg)](https://github.com/Tanvi-Goyal/Ritune/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/Tanvi-Goyal/Ritune)](https://github.com/Tanvi-Goyal/Ritune/releases/latest)
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.4-7F52FF?logo=kotlin&logoColor=white)
@@ -12,15 +16,23 @@ Built as a portfolio project to practise production Android: a modular Clean Arc
 ![Architecture](https://img.shields.io/badge/architecture-Clean%20%2B%20MVI-informational)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-| Today | Rhythm | Rhythm (dark) | Routines |
-|:---:|:---:|:---:|:---:|
-| <img src="docs/screenshots/today.png" width="200"/> | <img src="docs/screenshots/rhythm.png" width="200"/> | <img src="docs/screenshots/rhythm_dark.png" width="200"/> | <img src="docs/screenshots/routines.png" width="200"/> |
-| **Editor** | **Player** | **Player (dark)** | **Settings** |
-| <img src="docs/screenshots/editor.png" width="200"/> | <img src="docs/screenshots/player.png" width="200"/> | <img src="docs/screenshots/player_dark.png" width="200"/> | <img src="docs/screenshots/settings.png" width="200"/> |
+<img src="docs/blog/01-intro/design/design-screens.png" />
+
+[//]: # ()
+[//]: # (| Today | Rhythm | Rhythm &#40;dark&#41; | Routines |)
+
+[//]: # (|:---:|:---:|:---:|:---:|)
+
+[//]: # (| <img src="docs/screenshots/today.png" width="200"/> | <img src="docs/screenshots/rhythm.png" width="200"/> | <img src="docs/screenshots/rhythm_dark.png" width="200"/> | <img src="docs/screenshots/routines.png" width="200"/> |)
+
+[//]: # (| **Editor** | **Player** | **Player &#40;dark&#41;** | **Settings** |)
+
+[//]: # (| <img src="docs/screenshots/editor.png" width="200"/> | <img src="docs/screenshots/player.png" width="200"/> | <img src="docs/screenshots/player_dark.png" width="200"/> | <img src="docs/screenshots/settings.png" width="200"/> |)
 
 ---
 
 ## Features
+Ritune is built around one loop. Log the day, see the pattern, then change it with a routine.
 
 - **Today**: one tap logs an anchor, with undo. A ring shows the day's progress.
 - **Rhythm**: weekly consistency per anchor. A log counts as steady when it falls within 30 minutes of that anchor's median time.
@@ -51,44 +63,79 @@ Built as a portfolio project to practise production Android: a modular Clean Arc
 
 The dependency rule points inward. Features know only the domain, the domain knows only models, and Android-specific code sits behind ports (interfaces) that the outer modules implement.
 
-```mermaid
-flowchart TD
-    app[":app<br/>Activity · NavHost · Hilt root"]
+![Architecture](docs/blog/01-intro/diagrams/architecture.png)
 
-    subgraph features[":feature:*:ui"]
-        today[today]
-        rhythm[rhythm]
-        routine[routine]
-        player[player]
-        settings[settings]
-    end
+[//]: # (```mermaid)
 
-    subgraph core
-        domain[":core:domain<br/>use cases · reducer · ports"]
-        models[":core:models<br/>pure Kotlin/JVM"]
-        data[":core:data<br/>repositories · mappers · seeding"]
-        database[":core:database<br/>Room"]
-        datastore[":core:datastore<br/>DataStore"]
-        designsystem[":core:designsystem<br/>theme · components"]
-        navigation[":core:navigation<br/>deep links"]
-    end
+[//]: # (flowchart TD)
 
-    platform[":platform:android<br/>engine · service · cues · notifications"]
+[//]: # (    app[":app<br/>Activity · NavHost · Hilt root"])
 
-    app --> features
-    app --> data
-    app --> platform
-    features --> domain
-    features --> designsystem
-    data --> domain
-    data --> database
-    data --> datastore
-    platform --> domain
-    platform --> navigation
-    domain --> models
-    database --> models
-    datastore --> models
-```
+[//]: # ()
+[//]: # (    subgraph features[":feature:*:ui"])
+
+[//]: # (        today[today])
+
+[//]: # (        rhythm[rhythm])
+
+[//]: # (        routine[routine])
+
+[//]: # (        player[player])
+
+[//]: # (        settings[settings])
+
+[//]: # (    end)
+
+[//]: # ()
+[//]: # (    subgraph core)
+
+[//]: # (        domain[":core:domain<br/>use cases · reducer · ports"])
+
+[//]: # (        models[":core:models<br/>pure Kotlin/JVM"])
+
+[//]: # (        data[":core:data<br/>repositories · mappers · seeding"])
+
+[//]: # (        database[":core:database<br/>Room"])
+
+[//]: # (        datastore[":core:datastore<br/>DataStore"])
+
+[//]: # (        designsystem[":core:designsystem<br/>theme · components"])
+
+[//]: # (        navigation[":core:navigation<br/>deep links"])
+
+[//]: # (    end)
+
+[//]: # ()
+[//]: # (    platform[":platform:android<br/>engine · service · cues · notifications"])
+
+[//]: # ()
+[//]: # (    app --> features)
+
+[//]: # (    app --> data)
+
+[//]: # (    app --> platform)
+
+[//]: # (    features --> domain)
+
+[//]: # (    features --> designsystem)
+
+[//]: # (    data --> domain)
+
+[//]: # (    data --> database)
+
+[//]: # (    data --> datastore)
+
+[//]: # (    platform --> domain)
+
+[//]: # (    platform --> navigation)
+
+[//]: # (    domain --> models)
+
+[//]: # (    database --> models)
+
+[//]: # (    datastore --> models)
+
+[//]: # (```)
 
 | Layer | Responsibility | Never depends on |
 |---|---|---|

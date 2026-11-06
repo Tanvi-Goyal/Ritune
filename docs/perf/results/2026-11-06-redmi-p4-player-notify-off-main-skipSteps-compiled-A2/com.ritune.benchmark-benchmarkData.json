@@ -1,0 +1,185 @@
+{
+    "context": {
+        "build": {
+            "brand": "Redmi",
+            "device": "sweetin",
+            "fingerprint": "Redmi/sweetin/sweetin:12/SKQ1.210908.001/V13.0.10.0.SKFINXM:user/release-keys",
+            "id": "SKQ1.210908.001",
+            "model": "M2101K6P",
+            "type": "user",
+            "version": {
+                "codename": "REL",
+                "sdk": 31
+            }
+        },
+        "cpuCoreCount": 8,
+        "cpuLocked": false,
+        "cpuMaxFreqHz": 2304000000,
+        "memTotalBytes": 5840433152,
+        "sustainedPerformanceModeEnabled": false,
+        "artMainlineVersion": 311310000,
+        "osCodenameAbbreviated": "S",
+        "compilationMode": "run-from-apk",
+        "payload": {}
+    },
+    "benchmarks": [
+        {
+            "name": "skipSteps",
+            "params": {},
+            "className": "com.ritune.benchmark.OpenRoutineBenchmark",
+            "totalRunTimeNs": 334226834039,
+            "metrics": {
+                "Player.notifyAverageMs": {
+                    "minimum": 5.2165104,
+                    "maximum": 8.5565938,
+                    "median": 6.609656200000001,
+                    "coefficientOfVariation": 0.1409975787328428,
+                    "runs": [
+                        7.1116668,
+                        6.7877186,
+                        6.3125104,
+                        6.1407916,
+                        5.3276668,
+                        5.7142602,
+                        8.5565938,
+                        7.855271,
+                        6.609656200000001,
+                        5.974312599999999,
+                        6.952646,
+                        7.189416799999999,
+                        5.2165104,
+                        6.195812399999999,
+                        7.5628024
+                    ]
+                },
+                "Player.notifyCount": {
+                    "minimum": 5.0,
+                    "maximum": 5.0,
+                    "median": 5.0,
+                    "coefficientOfVariation": 0.0,
+                    "runs": [
+                        5.0,
+                        5.0,
+                        5.0,
+                        5.0,
+                        5.0,
+                        5.0,
+                        5.0,
+                        5.0,
+                        5.0,
+                        5.0,
+                        5.0,
+                        5.0,
+                        5.0,
+                        5.0,
+                        5.0
+                    ]
+                },
+                "Player.notifyMaxMs": {
+                    "minimum": 5.691615,
+                    "maximum": 19.871146,
+                    "median": 9.209531,
+                    "coefficientOfVariation": 0.4103626335306784,
+                    "runs": [
+                        11.555678,
+                        8.072396,
+                        9.470052,
+                        7.757552,
+                        5.691615,
+                        7.195468,
+                        19.216875,
+                        19.871146,
+                        9.209531,
+                        8.598125,
+                        14.1675,
+                        13.065833,
+                        5.979271,
+                        8.093802,
+                        13.577136
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 0,
+            "repeatIterations": 15,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 0",
+                    "filename": "OpenRoutineBenchmark_skipSteps_iter000_2026-11-06-09-40-37.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 1",
+                    "filename": "OpenRoutineBenchmark_skipSteps_iter001_2026-11-06-09-41-00.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 2",
+                    "filename": "OpenRoutineBenchmark_skipSteps_iter002_2026-11-06-09-41-22.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 3",
+                    "filename": "OpenRoutineBenchmark_skipSteps_iter003_2026-11-06-09-41-44.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 4",
+                    "filename": "OpenRoutineBenchmark_skipSteps_iter004_2026-11-06-09-42-06.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 5",
+                    "filename": "OpenRoutineBenchmark_skipSteps_iter005_2026-11-06-09-42-28.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 6",
+                    "filename": "OpenRoutineBenchmark_skipSteps_iter006_2026-11-06-09-42-50.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 7",
+                    "filename": "OpenRoutineBenchmark_skipSteps_iter007_2026-11-06-09-43-13.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 8",
+                    "filename": "OpenRoutineBenchmark_skipSteps_iter008_2026-11-06-09-43-35.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 9",
+                    "filename": "OpenRoutineBenchmark_skipSteps_iter009_2026-11-06-09-43-57.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 10",
+                    "filename": "OpenRoutineBenchmark_skipSteps_iter010_2026-11-06-09-44-19.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 11",
+                    "filename": "OpenRoutineBenchmark_skipSteps_iter011_2026-11-06-09-44-41.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 12",
+                    "filename": "OpenRoutineBenchmark_skipSteps_iter012_2026-11-06-09-45-02.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 13",
+                    "filename": "OpenRoutineBenchmark_skipSteps_iter013_2026-11-06-09-45-24.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 14",
+                    "filename": "OpenRoutineBenchmark_skipSteps_iter014_2026-11-06-09-45-47.perfetto-trace"
+                }
+            ]
+        }
+    ]
+}

@@ -46,7 +46,7 @@ class PlayerViewModelTest {
     )
     private val player = FakePlayerController()
 
-    private fun TestScope.newViewModel(): PlayerViewModel {
+    private fun TestScope.newViewModel(collect: Boolean = true): PlayerViewModel {
         val viewModel = PlayerViewModel(
             ObserveRunProgress(player, VirtualTimekeeper(testScheduler)),
             ObservePlayerState(player),
@@ -55,14 +55,24 @@ class PlayerViewModelTest {
             SkipStep(player),
             StopRun(player),
         )
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.state.collect() }
+        if (collect) {
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.state.collect()
+            }
+        }
         return viewModel
     }
 
     private fun PlayerViewModel.active() = assertIs<PlayerUiState.Active>(state.value)
 
     private fun running(stepIndex: Int = 0) =
-        PlayerState.Running(aSession(routine, stepIndex = stepIndex), stepEndsAtMono = 45_000)
+        PlayerState.Running(
+            aSession(
+                routine,
+                stepIndex = stepIndex
+            ),
+            stepEndsAtMono = 45_000
+        )
 
     @Test
     fun nothingRunning_closesPlayer() = runTest {
@@ -95,6 +105,16 @@ class PlayerViewModelTest {
     }
 
     @Test
+    fun running_isActiveBeforeTheScreenCollects() = runTest {
+        player.state.value = running()
+
+        val active = newViewModel(collect = false).active()
+
+        assertEquals("Stretch", active.stepTitle)
+        assertEquals(45.seconds, active.remaining)
+    }
+
+    @Test
     fun lastStep_hasNoNextStep() = runTest {
         player.state.value = running(stepIndex = 1)
 
@@ -103,7 +123,10 @@ class PlayerViewModelTest {
 
     @Test
     fun paused_showsRemainingTime() = runTest {
-        player.state.value = PlayerState.Paused(aSession(routine), remaining = 20.seconds)
+        player.state.value = PlayerState.Paused(
+            aSession(routine),
+            remaining = 20.seconds
+        )
 
         val active = newViewModel().active()
 
@@ -117,10 +140,16 @@ class PlayerViewModelTest {
         val viewModel = newViewModel()
 
         viewModel.onEvent(PlayerUiEvent.TogglePause)
-        player.state.value = PlayerState.Paused(aSession(routine), remaining = 20.seconds)
+        player.state.value = PlayerState.Paused(
+            aSession(routine),
+            remaining = 20.seconds
+        )
         viewModel.onEvent(PlayerUiEvent.TogglePause)
 
-        assertEquals(listOf(Command.PAUSE, Command.RESUME), player.commands)
+        assertEquals(
+            listOf(Command.PAUSE, Command.RESUME),
+            player.commands
+        )
     }
 
     @Test
@@ -157,9 +186,14 @@ class PlayerViewModelTest {
         val viewModel = newViewModel()
 
         viewModel.effects.test {
-            player.state.value = PlayerState.Finished(aRunSummary(routine, runId = "run-9"))
+            player.state.value = PlayerState.Finished(
+                aRunSummary(routine, runId = "run-9")
+            )
 
-            assertEquals(PlayerUiEffect.RunFinished("run-9"), awaitItem())
+            assertEquals(
+                PlayerUiEffect.RunFinished("run-9"),
+                awaitItem()
+            )
         }
     }
 }

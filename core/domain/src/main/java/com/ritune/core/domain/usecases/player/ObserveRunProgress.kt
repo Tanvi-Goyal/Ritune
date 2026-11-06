@@ -2,8 +2,8 @@ package com.ritune.core.domain.usecases.player
 
 import com.ritune.core.domain.models.player.RunProgress
 import com.ritune.core.domain.ports.PlayerController
-import com.ritune.core.models.player.PlayerState
 import com.ritune.core.models.Timekeeper
+import com.ritune.core.models.player.PlayerState
 import com.ritune.core.models.player.remainingAt
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -32,27 +32,27 @@ class ObserveRunProgress @Inject constructor(
             when (state) {
                 is PlayerState.Running -> flow {
                     while (true) {
-                        emit(
-                            RunProgress(
-                                state,
-                                state
-                                    .remainingAt(timekeeper.now().monoMillis)
-                                    .roundUpToSeconds()
-                            )
-                        )
+                        emit(progressOf(state))
                         delay(200.milliseconds)
                     }
                 }
 
-                else -> flowOf(
-                    RunProgress(
-                        state, state
-                            .remainingAt(0)
-                    )
-                )
+                else -> flowOf(progressOf(state))
             }
         }
         .distinctUntilChanged()
+
+    fun runProgress(): RunProgress = progressOf(player.state.value)
+
+    private fun progressOf(state: PlayerState): RunProgress = when (state) {
+        is PlayerState.Running -> RunProgress(
+            state,
+            state.remainingAt(timekeeper.now().monoMillis)
+                .roundUpToSeconds(),
+        )
+
+        else -> RunProgress(state, state.remainingAt(0))
+    }
 
     private fun Duration.roundUpToSeconds(): Duration =
         ((inWholeMilliseconds + 999) / 1000).seconds

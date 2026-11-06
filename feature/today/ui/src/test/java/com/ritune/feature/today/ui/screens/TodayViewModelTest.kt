@@ -48,13 +48,23 @@ class TodayViewModelTest {
     private val routines = FakeRoutineRepository()
     private val player = FakePlayerController()
 
-    private fun TestScope.newViewModel(): TodayViewModel {
+    private fun TestScope.newStateSource(): TodayStateSource {
         val clock = VirtualTimekeeper(testScheduler)
-        return TodayViewModel(
+        return TodayStateSource(
             observeToday = ObserveToday(anchors, events, clock),
             observeCurrentDay = ObserveCurrentDay(clock),
             observePlayerState = ObservePlayerState(player),
             observeRoutines = ObserveRoutines(routines),
+            timekeeper = clock,
+        )
+    }
+
+    private fun TestScope.newViewModel(
+        todayState: TodayStateSource = newStateSource(),
+    ): TodayViewModel {
+        val clock = VirtualTimekeeper(testScheduler)
+        return TodayViewModel(
+            todayState = todayState,
             logAnchor = LogAnchor(events, clock, SequentialIdGenerator("event")),
             undoLogAnchor = UndoLogAnchor(events),
             timekeeper = clock,
@@ -71,6 +81,25 @@ class TodayViewModelTest {
     @Test
     fun state_isLoadingUntilCollected() = runTest {
         assertEquals(TodayUiState.Loading, newViewModel().state.value)
+    }
+
+    @Test
+    fun preloaded_isTheStateBeforeTheScreenCollects() = runTest {
+        val todayState = newStateSource()
+        todayState.preload()
+
+        // The value the first frame draws: content, not Loading.
+        val content = assertIs<TodayUiState.Content>(newViewModel(todayState).state.value)
+        assertEquals(DefaultCatalog.anchors.size, content.totalCount)
+    }
+
+    @Test
+    fun preloaded_isHandedOutOnce() = runTest {
+        val todayState = newStateSource()
+        todayState.preload()
+        newViewModel(todayState)
+
+        assertEquals(TodayUiState.Loading, newViewModel(todayState).state.value)
     }
 
     @Test

@@ -1,0 +1,139 @@
+{
+    "context": {
+        "build": {
+            "brand": "Redmi",
+            "device": "sweetin",
+            "fingerprint": "Redmi/sweetin/sweetin:12/SKQ1.210908.001/V13.0.10.0.SKFINXM:user/release-keys",
+            "id": "SKQ1.210908.001",
+            "model": "M2101K6P",
+            "type": "user",
+            "version": {
+                "codename": "REL",
+                "sdk": 31
+            }
+        },
+        "cpuCoreCount": 8,
+        "cpuLocked": false,
+        "cpuMaxFreqHz": 2304000000,
+        "memTotalBytes": 5840433152,
+        "sustainedPerformanceModeEnabled": false,
+        "artMainlineVersion": 311310000,
+        "osCodenameAbbreviated": "S",
+        "compilationMode": "run-from-apk",
+        "payload": {}
+    },
+    "benchmarks": [
+        {
+            "name": "openPlayer",
+            "params": {},
+            "className": "com.ritune.benchmark.OpenRoutineBenchmark",
+            "totalRunTimeNs": 299019774365,
+            "metrics": {
+                "Player.openFirstMs": {
+                    "minimum": 58.381042,
+                    "maximum": 128.045886,
+                    "median": 90.111302,
+                    "coefficientOfVariation": 0.21594047608579658,
+                    "runs": [
+                        85.399063,
+                        89.131666,
+                        106.659947,
+                        117.116719,
+                        84.971511,
+                        58.381042,
+                        128.045886,
+                        81.008958,
+                        84.225365,
+                        111.32099,
+                        125.817188,
+                        66.329531,
+                        106.332657,
+                        90.111302,
+                        113.223021
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 0,
+            "repeatIterations": 15,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 0",
+                    "filename": "OpenRoutineBenchmark_openPlayer_iter000_2026-11-06-04-26-27.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 1",
+                    "filename": "OpenRoutineBenchmark_openPlayer_iter001_2026-11-06-04-26-47.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 2",
+                    "filename": "OpenRoutineBenchmark_openPlayer_iter002_2026-11-06-04-27-07.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 3",
+                    "filename": "OpenRoutineBenchmark_openPlayer_iter003_2026-11-06-04-27-26.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 4",
+                    "filename": "OpenRoutineBenchmark_openPlayer_iter004_2026-11-06-04-27-46.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 5",
+                    "filename": "OpenRoutineBenchmark_openPlayer_iter005_2026-11-06-04-28-07.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 6",
+                    "filename": "OpenRoutineBenchmark_openPlayer_iter006_2026-11-06-04-28-26.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 7",
+                    "filename": "OpenRoutineBenchmark_openPlayer_iter007_2026-11-06-04-28-45.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 8",
+                    "filename": "OpenRoutineBenchmark_openPlayer_iter008_2026-11-06-04-29-05.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 9",
+                    "filename": "OpenRoutineBenchmark_openPlayer_iter009_2026-11-06-04-29-25.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 10",
+                    "filename": "OpenRoutineBenchmark_openPlayer_iter010_2026-11-06-04-29-45.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 11",
+                    "filename": "OpenRoutineBenchmark_openPlayer_iter011_2026-11-06-04-30-06.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 12",
+                    "filename": "OpenRoutineBenchmark_openPlayer_iter012_2026-11-06-04-30-26.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 13",
+                    "filename": "OpenRoutineBenchmark_openPlayer_iter013_2026-11-06-04-30-46.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 14",
+                    "filename": "OpenRoutineBenchmark_openPlayer_iter014_2026-11-06-04-31-05.perfetto-trace"
+                }
+            ]
+        }
+    ]
+}

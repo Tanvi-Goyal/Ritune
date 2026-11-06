@@ -52,4 +52,28 @@ class ObserveRunProgressTest {
             expectNoEvents()
         }
     }
+
+    @Test
+    fun current_running_matchesTheFirstEmission() = runTest {
+        player.state.value = PlayerState.Running(aSession(), stepEndsAtMono = 2_500)
+        val observe = ObserveRunProgress(player, VirtualTimekeeper(testScheduler))
+
+        val current = observe.runProgress()
+
+        assertEquals(3.seconds, current.remaining)
+        observe().test {
+            assertEquals(current, awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun current_paused_reportsRemaining() = runTest {
+        player.state.value = PlayerState.Paused(aSession(), remaining = 7.seconds)
+
+        val current = ObserveRunProgress(player, VirtualTimekeeper(testScheduler)).runProgress()
+
+        assertEquals(PlayerState.Paused(aSession(), 7.seconds), current.state)
+        assertEquals(7.seconds, current.remaining)
+    }
 }

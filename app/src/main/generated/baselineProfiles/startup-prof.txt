@@ -4831,7 +4831,7 @@ HSPLandroidx/compose/runtime/composer/gapbuffer/changelist/Operations;->isEmpty(
 HSPLandroidx/compose/runtime/composer/gapbuffer/changelist/Operations;->isNotEmpty()Z
 HSPLandroidx/compose/runtime/composer/gapbuffer/changelist/Operations;->popInto(Landroidx/compose/runtime/composer/gapbuffer/changelist/Operations;)V
 HSPLandroidx/compose/runtime/composer/gapbuffer/changelist/Operations;->push(Landroidx/compose/runtime/composer/gapbuffer/changelist/Operation;)V
-HPLandroidx/compose/runtime/composer/gapbuffer/changelist/Operations;->pushOp(Landroidx/compose/runtime/composer/gapbuffer/changelist/Operation;)V
+HSPLandroidx/compose/runtime/composer/gapbuffer/changelist/Operations;->pushOp(Landroidx/compose/runtime/composer/gapbuffer/changelist/Operation;)V
 HSPLandroidx/compose/runtime/composer/gapbuffer/changelist/Operations;->resizeIntArgs(II)V
 HSPLandroidx/compose/runtime/composer/gapbuffer/changelist/Operations;->resizeObjectArgs(II)V
 HSPLandroidx/compose/runtime/composer/gapbuffer/changelist/Operations;->resizeOpCodes()V
@@ -6424,7 +6424,6 @@ HSPLandroidx/compose/ui/graphics/Path;-><clinit>()V
 Landroidx/compose/ui/graphics/Path$Companion;
 HSPLandroidx/compose/ui/graphics/Path$Companion;-><clinit>()V
 HSPLandroidx/compose/ui/graphics/Path$Companion;-><init>()V
-Landroidx/compose/ui/graphics/PathEffect;
 Landroidx/compose/ui/graphics/PathFillType;
 HSPLandroidx/compose/ui/graphics/PathFillType;-><clinit>()V
 HSPLandroidx/compose/ui/graphics/PathFillType;->access$getEvenOdd$cp()I
@@ -6885,10 +6884,10 @@ HSPLandroidx/compose/ui/graphics/drawscope/Stroke;-><init>(FFIILandroidx/compose
 HSPLandroidx/compose/ui/graphics/drawscope/Stroke;-><init>(FFIILandroidx/compose/ui/graphics/PathEffect;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 HSPLandroidx/compose/ui/graphics/drawscope/Stroke;->access$getDefaultCap$cp()I
 HSPLandroidx/compose/ui/graphics/drawscope/Stroke;->equals(Ljava/lang/Object;)Z
-PLandroidx/compose/ui/graphics/drawscope/Stroke;->getCap-KaPHkGw()I
-PLandroidx/compose/ui/graphics/drawscope/Stroke;->getJoin-LxFBmk8()I
-PLandroidx/compose/ui/graphics/drawscope/Stroke;->getMiter()F
-PLandroidx/compose/ui/graphics/drawscope/Stroke;->getPathEffect()Landroidx/compose/ui/graphics/PathEffect;
+HSPLandroidx/compose/ui/graphics/drawscope/Stroke;->getCap-KaPHkGw()I
+HSPLandroidx/compose/ui/graphics/drawscope/Stroke;->getJoin-LxFBmk8()I
+HSPLandroidx/compose/ui/graphics/drawscope/Stroke;->getMiter()F
+HSPLandroidx/compose/ui/graphics/drawscope/Stroke;->getPathEffect()Landroidx/compose/ui/graphics/PathEffect;
 HSPLandroidx/compose/ui/graphics/drawscope/Stroke;->getWidth()F
 Landroidx/compose/ui/graphics/drawscope/Stroke$Companion;
 HSPLandroidx/compose/ui/graphics/drawscope/Stroke$Companion;-><init>()V
@@ -7445,7 +7444,6 @@ HSPLandroidx/compose/ui/input/pointer/SuspendingPointerInputModifierNodeImpl;-><
 HSPLandroidx/compose/ui/input/pointer/SuspendingPointerInputModifierNodeImpl;-><init>(Ljava/lang/Object;Ljava/lang/Object;[Ljava/lang/Object;Landroidx/compose/ui/input/pointer/PointerInputEventHandler;)V
 Landroidx/compose/ui/input/pointer/SuspendingPointerInputModifierNodeImpl$PointerEventHandlerCoroutine;
 Landroidx/compose/ui/input/rotary/RotaryInputModifierNode;
-Landroidx/compose/ui/internal/InlineClassHelperKt;
 Landroidx/compose/ui/internal/PlatformOptimizedCancellationException;
 HSPLandroidx/compose/ui/internal/PlatformOptimizedCancellationException;-><clinit>()V
 HSPLandroidx/compose/ui/internal/PlatformOptimizedCancellationException;-><init>(Ljava/lang/String;)V
@@ -8344,7 +8342,6 @@ HSPLandroidx/compose/ui/node/LookaheadCapablePlaceable$layout$1;->getRulers()Lko
 HSPLandroidx/compose/ui/node/LookaheadCapablePlaceable$layout$1;->getWidth()I
 HSPLandroidx/compose/ui/node/LookaheadCapablePlaceable$layout$1;->placeChildren()V
 Landroidx/compose/ui/node/LookaheadDelegate;
-Landroidx/compose/ui/node/LookaheadPassDelegate;
 Landroidx/compose/ui/node/MeasureAndLayoutDelegate;
 HSPLandroidx/compose/ui/node/MeasureAndLayoutDelegate;-><clinit>()V
 HSPLandroidx/compose/ui/node/MeasureAndLayoutDelegate;-><init>(Landroidx/compose/ui/node/LayoutNode;)V
@@ -10402,9 +10399,9 @@ HSPLandroidx/compose/ui/text/TextLayoutResult;-><clinit>()V
 HSPLandroidx/compose/ui/text/TextLayoutResult;-><init>(Landroidx/compose/ui/text/TextLayoutInput;Landroidx/compose/ui/text/MultiParagraph;J)V
 HSPLandroidx/compose/ui/text/TextLayoutResult;-><init>(Landroidx/compose/ui/text/TextLayoutInput;Landroidx/compose/ui/text/MultiParagraph;JLkotlin/jvm/internal/DefaultConstructorMarker;)V
 HSPLandroidx/compose/ui/text/TextLayoutResult;->getDidOverflowHeight()Z
-PLandroidx/compose/ui/text/TextLayoutResult;->getDidOverflowWidth()Z
+HSPLandroidx/compose/ui/text/TextLayoutResult;->getDidOverflowWidth()Z
 HSPLandroidx/compose/ui/text/TextLayoutResult;->getFirstBaseline()F
-PLandroidx/compose/ui/text/TextLayoutResult;->getHasVisualOverflow()Z
+HSPLandroidx/compose/ui/text/TextLayoutResult;->getHasVisualOverflow()Z
 HSPLandroidx/compose/ui/text/TextLayoutResult;->getLastBaseline()F
 HSPLandroidx/compose/ui/text/TextLayoutResult;->getMultiParagraph()Landroidx/compose/ui/text/MultiParagraph;
 HSPLandroidx/compose/ui/text/TextLayoutResult;->getSize-YbymL2g()J
@@ -11010,9 +11007,11 @@ HSPLandroidx/compose/ui/text/platform/EmojiCompatStatus;-><clinit>()V
 HSPLandroidx/compose/ui/text/platform/EmojiCompatStatus;-><init>()V
 HSPLandroidx/compose/ui/text/platform/EmojiCompatStatus;->getFontLoaded()Landroidx/compose/runtime/State;
 Landroidx/compose/ui/text/platform/EmojiCompatStatusDelegate;
-PLandroidx/compose/ui/text/platform/EmojiCompatStatus_androidKt;-><clinit>()V
-PLandroidx/compose/ui/text/platform/EmojiCompatStatus_androidKt;->access$getFalsey$p()Landroidx/compose/ui/text/platform/ImmutableBool;
-PLandroidx/compose/ui/text/platform/ImmutableBool;-><init>(Z)V
+Landroidx/compose/ui/text/platform/EmojiCompatStatus_androidKt;
+HSPLandroidx/compose/ui/text/platform/EmojiCompatStatus_androidKt;-><clinit>()V
+HSPLandroidx/compose/ui/text/platform/EmojiCompatStatus_androidKt;->access$getFalsey$p()Landroidx/compose/ui/text/platform/ImmutableBool;
+Landroidx/compose/ui/text/platform/ImmutableBool;
+HSPLandroidx/compose/ui/text/platform/ImmutableBool;-><init>(Z)V
 Landroidx/compose/ui/text/platform/SynchronizedObject;
 HSPLandroidx/compose/ui/text/platform/SynchronizedObject;-><clinit>()V
 HSPLandroidx/compose/ui/text/platform/SynchronizedObject;-><init>()V
@@ -11382,7 +11381,7 @@ PLandroidx/compose/ui/unit/DensityWithConverter;->toDp-GaN1DYA(J)F
 Landroidx/compose/ui/unit/Dp;
 HSPLandroidx/compose/ui/unit/Dp;-><clinit>()V
 HSPLandroidx/compose/ui/unit/Dp;-><init>(F)V
-PLandroidx/compose/ui/unit/Dp;->access$getHairline$cp()F
+HSPLandroidx/compose/ui/unit/Dp;->access$getHairline$cp()F
 HSPLandroidx/compose/ui/unit/Dp;->access$getUnspecified$cp()F
 HSPLandroidx/compose/ui/unit/Dp;->box-impl(F)Landroidx/compose/ui/unit/Dp;
 HSPLandroidx/compose/ui/unit/Dp;->compareTo-0680j_4(FF)I
@@ -11392,7 +11391,7 @@ HSPLandroidx/compose/ui/unit/Dp;->unbox-impl()F
 Landroidx/compose/ui/unit/Dp$Companion;
 HSPLandroidx/compose/ui/unit/Dp$Companion;-><init>()V
 HSPLandroidx/compose/ui/unit/Dp$Companion;-><init>(Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-PLandroidx/compose/ui/unit/Dp$Companion;->getHairline-D9Ej5fM()F
+HSPLandroidx/compose/ui/unit/Dp$Companion;->getHairline-D9Ej5fM()F
 HSPLandroidx/compose/ui/unit/Dp$Companion;->getUnspecified-D9Ej5fM()F
 PLandroidx/compose/ui/unit/DpKt;->DpSize-YgX7TsA(FF)J
 Landroidx/compose/ui/unit/DpOffset;
@@ -16031,7 +16030,6 @@ HSPLdagger/internal/SetBuilder;->newSetBuilder(I)Ldagger/internal/SetBuilder;
 Ljakarta/inject/Provider;
 Ljavax/inject/Provider;
 Lkotlin/Function;
-Lkotlin/KotlinNothingValueException;
 Lkotlin/Lazy;
 Lkotlin/LazyKt;
 Lkotlin/LazyKt__LazyJVMKt;
@@ -17493,6 +17491,7 @@ HSPLkotlinx/coroutines/channels/BufferedChannel;->receiveCatching-JP2dKIU(Lkotli
 HSPLkotlinx/coroutines/channels/BufferedChannel;->receiveCatchingOnNoWaiterSuspend-GKJJFZk(Lkotlinx/coroutines/channels/ChannelSegment;IJLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 HSPLkotlinx/coroutines/channels/BufferedChannel;->receiveOnNoWaiterSuspend(Lkotlinx/coroutines/channels/ChannelSegment;IJLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 HSPLkotlinx/coroutines/channels/BufferedChannel;->removeUnprocessedElements(Lkotlinx/coroutines/channels/ChannelSegment;)V
+HSPLkotlinx/coroutines/channels/BufferedChannel;->resumeReceiverOnClosedChannel(Lkotlinx/coroutines/Waiter;)V
 HSPLkotlinx/coroutines/channels/BufferedChannel;->resumeWaiterOnClosedChannel(Lkotlinx/coroutines/Waiter;Z)V
 HSPLkotlinx/coroutines/channels/BufferedChannel;->send$suspendImpl(Lkotlinx/coroutines/channels/BufferedChannel;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 HSPLkotlinx/coroutines/channels/BufferedChannel;->send(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -17510,7 +17509,6 @@ HSPLkotlinx/coroutines/channels/BufferedChannel$BufferedChannelIterator;->hasNex
 HSPLkotlinx/coroutines/channels/BufferedChannel$BufferedChannelIterator;->hasNextOnNoWaiterSuspend(Lkotlinx/coroutines/channels/ChannelSegment;IJLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 HSPLkotlinx/coroutines/channels/BufferedChannel$BufferedChannelIterator;->invokeOnCancellation(Lkotlinx/coroutines/internal/Segment;I)V
 HSPLkotlinx/coroutines/channels/BufferedChannel$BufferedChannelIterator;->next()Ljava/lang/Object;
-HSPLkotlinx/coroutines/channels/BufferedChannel$BufferedChannelIterator;->onClosedHasNext()Z
 HSPLkotlinx/coroutines/channels/BufferedChannel$BufferedChannelIterator;->tryResumeHasNext(Ljava/lang/Object;)Z
 HSPLkotlinx/coroutines/channels/BufferedChannel$BufferedChannelIterator;->tryResumeHasNextOnClosedChannel()V
 Lkotlinx/coroutines/channels/BufferedChannel$SendBroadcast;
@@ -17579,10 +17577,12 @@ Lkotlinx/coroutines/channels/ChannelSegment;
 HSPLkotlinx/coroutines/channels/ChannelSegment;-><init>(JLkotlinx/coroutines/channels/ChannelSegment;Lkotlinx/coroutines/channels/BufferedChannel;I)V
 HSPLkotlinx/coroutines/channels/ChannelSegment;->casState$kotlinx_coroutines_core(ILjava/lang/Object;Ljava/lang/Object;)Z
 HSPLkotlinx/coroutines/channels/ChannelSegment;->cleanElement$kotlinx_coroutines_core(I)V
+HSPLkotlinx/coroutines/channels/ChannelSegment;->getChannel()Lkotlinx/coroutines/channels/BufferedChannel;
 HSPLkotlinx/coroutines/channels/ChannelSegment;->getData()Ljava/util/concurrent/atomic/AtomicReferenceArray;
 HSPLkotlinx/coroutines/channels/ChannelSegment;->getElement$kotlinx_coroutines_core(I)Ljava/lang/Object;
 HSPLkotlinx/coroutines/channels/ChannelSegment;->getNumberOfSlots()I
 HSPLkotlinx/coroutines/channels/ChannelSegment;->getState$kotlinx_coroutines_core(I)Ljava/lang/Object;
+HSPLkotlinx/coroutines/channels/ChannelSegment;->onCancelledRequest(IZ)V
 HSPLkotlinx/coroutines/channels/ChannelSegment;->retrieveElement$kotlinx_coroutines_core(I)Ljava/lang/Object;
 HSPLkotlinx/coroutines/channels/ChannelSegment;->setElementLazy(ILjava/lang/Object;)V
 HSPLkotlinx/coroutines/channels/ChannelSegment;->setState$kotlinx_coroutines_core(ILjava/lang/Object;)V
@@ -18154,7 +18154,7 @@ HSPLkotlinx/coroutines/internal/LockFreeLinkedListNode;->addNext(Lkotlinx/corout
 HSPLkotlinx/coroutines/internal/LockFreeLinkedListNode;->addOneIfEmpty(Lkotlinx/coroutines/internal/LockFreeLinkedListNode;)Z
 HSPLkotlinx/coroutines/internal/LockFreeLinkedListNode;->close(I)V
 HSPLkotlinx/coroutines/internal/LockFreeLinkedListNode;->correctPrev()Lkotlinx/coroutines/internal/LockFreeLinkedListNode;
-HSPLkotlinx/coroutines/internal/LockFreeLinkedListNode;->findPrevNonRemoved(Lkotlinx/coroutines/internal/LockFreeLinkedListNode;)Lkotlinx/coroutines/internal/LockFreeLinkedListNode;
+PLkotlinx/coroutines/internal/LockFreeLinkedListNode;->findPrevNonRemoved(Lkotlinx/coroutines/internal/LockFreeLinkedListNode;)Lkotlinx/coroutines/internal/LockFreeLinkedListNode;
 HSPLkotlinx/coroutines/internal/LockFreeLinkedListNode;->finishAdd(Lkotlinx/coroutines/internal/LockFreeLinkedListNode;)V
 HSPLkotlinx/coroutines/internal/LockFreeLinkedListNode;->getNext()Ljava/lang/Object;
 HSPLkotlinx/coroutines/internal/LockFreeLinkedListNode;->getNextNode()Lkotlinx/coroutines/internal/LockFreeLinkedListNode;

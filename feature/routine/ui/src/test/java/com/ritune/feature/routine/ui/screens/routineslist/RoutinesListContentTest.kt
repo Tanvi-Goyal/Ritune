@@ -3,19 +3,24 @@ package com.ritune.feature.routine.ui.screens.routineslist
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToNode
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ritune.core.designsystem.R
+import com.ritune.core.designsystem.TestTags
 import com.ritune.core.designsystem.theme.RituneTheme
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
 
 @RunWith(AndroidJUnit4::class)
@@ -28,7 +33,8 @@ class RoutinesListContentTest {
     private val opened = mutableListOf<String>()
     private var newRoutineClicks = 0
 
-    private val morning = RoutineItem("morning", "Morning", 8.minutes, stepCount = 4, anchorName = "Wake")
+    private val morning =
+        RoutineItem("morning", "Morning", 8.minutes, stepCount = 4, anchorName = "Wake")
     private val focus = RoutineItem("focus", "Focus", 25.minutes, stepCount = 1, anchorName = null)
 
     private fun string(id: Int, vararg args: Any) = composeTestRule.activity.getString(id, *args)
@@ -89,14 +95,40 @@ class RoutinesListContentTest {
         val restorationTester = StateRestorationTester(composeTestRule)
         restorationTester.setContent {
             RituneTheme {
-                RoutinesListContent(RoutinesUiState.Content(many), SnackbarHostState(), {}, {}, {}, {})
+                RoutinesListContent(
+                    RoutinesUiState.Content(many),
+                    SnackbarHostState(),
+                    {},
+                    {},
+                    {},
+                    {})
             }
         }
-        composeTestRule.onNodeWithText("Routine 20").performScrollTo()
+        composeTestRule.onNodeWithTag(TestTags.ROUTINES_LIST)
+            .performScrollToNode(hasText("Routine 20"))
 
         restorationTester.emulateSavedInstanceStateRestore()
 
         composeTestRule.onNodeWithText("Routine 20").assertIsDisplayed()
+    }
+
+    @Test
+    fun manyRoutines_composeOnlyTheRowsOnScreen() {
+        val many = (1..50).map {
+            morning.copy(id = "r$it", name = "Routine $it")
+        }
+        setContent(RoutinesUiState.Content(many))
+
+        val composedRows =
+            composeTestRule.onAllNodesWithTag(TestTags.ROUTINE_ROW).fetchSemanticsNodes().size
+        assertTrue(
+            composedRows < many.size,
+            "composed $composedRows of ${many.size} rows"
+        )
+
+        composeTestRule.onNodeWithTag(TestTags.ROUTINES_LIST)
+            .performScrollToNode(hasText("Routine 50"))
+        composeTestRule.onNodeWithText("Routine 50").assertIsDisplayed()
     }
 
     @Test

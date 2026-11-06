@@ -43,7 +43,10 @@ class PlayerViewModel @Inject constructor(
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5_000),
-            PlayerUiState.Loading
+            toUiState(
+                observeRunProgress.runProgress(),
+                confirming = false
+            )
         )
 
     private val _effects = Channel<PlayerUiEffect>(Channel.BUFFERED)

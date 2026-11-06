@@ -6,18 +6,23 @@ import androidx.tracing.Trace
 import com.ritune.core.designsystem.theme.ThemeMode
 import com.ritune.core.domain.usecases.settings.ObserveSettings
 import com.ritune.core.models.ThemeSetting
+import com.ritune.platform.android.di.Dispatcher
+import com.ritune.platform.android.di.RituneDispatchers
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 @HiltViewModel
 class AppThemeViewModel @Inject constructor(
-    observeSettings: ObserveSettings
+    observeSettings: ObserveSettings,
+    @Dispatcher(RituneDispatchers.Default) dispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     val themeMode: StateFlow<ThemeMode?> = observeSettings()
@@ -29,8 +34,10 @@ class AppThemeViewModel @Inject constructor(
                 ThemeSetting.DARK -> ThemeMode.DARK
             }
         }
+        // The splash waits for the first value. On main it would queue behind onResume and the
+        // first frame, like InitializeApp did, so the whole collection runs off main.
         .stateIn(
-            viewModelScope,
+            viewModelScope + dispatcher,
             SharingStarted.Eagerly,
             null
         )

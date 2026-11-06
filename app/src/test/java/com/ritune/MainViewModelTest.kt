@@ -21,7 +21,7 @@ class MainViewModelTest {
     fun startDestination_staysUnsetUntilInitializationFinishes() {
         initializer.gate = CompletableDeferred()
 
-        val viewModel = MainViewModel(InitializeApp(initializer))
+        val viewModel = MainViewModel(InitializeApp(initializer), mainDispatcherRule.testDispatcher)
 
         assertNull(viewModel.startDestination.value)
         initializer.gate!!.complete(Unit)
@@ -30,7 +30,7 @@ class MainViewModelTest {
 
     @Test
     fun init_initializesTheAppOnce() {
-        MainViewModel(InitializeApp(initializer))
+        MainViewModel(InitializeApp(initializer), mainDispatcherRule.testDispatcher)
 
         assertEquals(1, initializer.initializeCount)
     }

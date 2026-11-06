@@ -4,13 +4,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -30,7 +31,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ritune.core.designsystem.R
 import com.ritune.core.designsystem.TestTags
 import com.ritune.core.designsystem.TraceSections
+import com.ritune.core.designsystem.components.CardSegment
 import com.ritune.core.designsystem.components.RituneCard
+import com.ritune.core.designsystem.components.RituneCardSegment
 import com.ritune.core.designsystem.components.RituneDivider
 import com.ritune.core.designsystem.components.RituneSnackbarHost
 import com.ritune.core.designsystem.components.SecondaryButton
@@ -110,60 +113,68 @@ private fun ListBody(
     onOpenSettings: () -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .testTag(TestTags.ROUTINES_LIST)
-            .endTraceOnFirstDraw(TraceSections.ROUTINES_OPEN)
-            .verticalScroll(rememberScrollState())
-            .padding(
-                start = Ritune.spacing.xl,
-                end = Ritune.spacing.xl,
-                top = Ritune.spacing.lg,
-                bottom = Ritune.spacing.xl
-            ),
-        verticalArrangement = Arrangement.spacedBy(Ritune.spacing.lg),
+            .endTraceOnFirstDraw(TraceSections.ROUTINES_OPEN),
+        contentPadding = PaddingValues(
+            start = Ritune.spacing.xl,
+            end = Ritune.spacing.xl,
+            top = Ritune.spacing.lg,
+            bottom = Ritune.spacing.xl
+        ),
     ) {
-        Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                stringResource(R.string.routines_title),
-                style = MaterialTheme.typography.headlineLarge,
-                color = colors.onBackground
-            )
-            TextButton(onClick = onOpenSettings) {
+        item(key = "header", contentType = "header") {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = Ritune.spacing.lg),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
-                    stringResource(R.string.routines_settings),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = colors.primary
+                    stringResource(R.string.routines_title),
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = colors.onBackground
                 )
+                TextButton(onClick = onOpenSettings) {
+                    Text(
+                        stringResource(R.string.routines_settings),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = colors.primary
+                    )
+                }
             }
         }
 
         if (state.routines.isEmpty()) {
-            RituneCard {
-                Column(
-                    Modifier.padding(Ritune.spacing.lg),
-                    verticalArrangement = Arrangement.spacedBy(Ritune.spacing.xs)
-                ) {
-                    Text(
-                        stringResource(R.string.routines_empty_title),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = colors.onSurface
-                    )
-                    Text(
-                        stringResource(R.string.routines_empty_body),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = colors.onSurfaceVariant
-                    )
+            item(key = "empty", contentType = "empty") {
+                RituneCard {
+                    Column(
+                        Modifier.padding(Ritune.spacing.lg),
+                        verticalArrangement = Arrangement.spacedBy(Ritune.spacing.xs)
+                    ) {
+                        Text(
+                            stringResource(R.string.routines_empty_title),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = colors.onSurface
+                        )
+                        Text(
+                            stringResource(R.string.routines_empty_body),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = colors.onSurfaceVariant
+                        )
+                    }
                 }
             }
         } else {
-            RituneCard {
-                state.routines.forEachIndexed { index, item ->
+            itemsIndexed(
+                state.routines,
+                key = { _, item -> item.id },
+                contentType = { _, _ -> "routine" },
+            ) { index, item ->
+                RituneCardSegment(CardSegment.of(index, state.routines.size)) {
                     if (index > 0) RituneDivider()
                     RoutineRow(
                         item,
@@ -173,11 +184,15 @@ private fun ListBody(
             }
         }
 
-        SecondaryButton(
-            text = stringResource(R.string.routines_new),
-            onClick = onNewRoutine,
-            modifier = Modifier.fillMaxWidth(),
-        )
+        item(key = "new", contentType = "new") {
+            SecondaryButton(
+                text = stringResource(R.string.routines_new),
+                onClick = onNewRoutine,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = Ritune.spacing.lg),
+            )
+        }
     }
 }
 

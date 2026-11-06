@@ -1,4 +1,7 @@
-# Ritune
+<h1>
+  <img src="docs/store/out/icon-512.png" width="40" align="center" style="border-radius: 10px" />
+  Ritune
+</h1>
 
 **A daily-rhythm app for Android.** Log the anchors of your day (wake, morning light, movement, last meal, screens off, lights out) and run guided routines with haptic, sound and spoken cues that keep working with the screen off.
 

@@ -29,6 +29,7 @@ All numbers are from the Redmi Note 10 Pro (the mid-range phone) unless the row 
 | Compiled code is what Today's load waits for | Speed profile cuts TTFD by 118 ms (735 → 617 ms) | Macrobenchmark, session 1 | [2](#cold-start-and-compilation-modes) |
 | Opening Routines grows with every row | ~135 ms fixed + ~4.6 ms per routine | Macrobenchmark, day one, 7 / 37 / 67 routines | [2](#opening-routines) |
 | Ritune's own Baseline Profile speeds up compiled cold start | TTFD −83 ms (−10.2%), TTID −29 ms (−5.7%) | Alternating A/B, same commit, 2 × 15 iterations per side | [3](#phase-3-baseline-profiles) |
+| A lazy Routines list opens 60% faster at 67 routines | 195 → 78 ms (−118 ms), shader compilation subtracted; flat from 7 to 67 routines | Alternating A/B against `main`, compiled, 30 iterations per side | [4](#fix-1-a-lazy-routines-list) |
 | Leaks, StrictMode, R8 rules and Compose stability add no fix | No leaks, no violation in Ritune's code, ~1% of code kept by rules | Phase 4 Learn | [4](#phase-4-learn-findings) |
 
 ## The track
@@ -39,7 +40,7 @@ All numbers are from the Redmi Note 10 Pro (the mid-range phone) unless the row 
 | 1. Instrumentation | Trace sections, TTFD, one annotated cold-start trace | `perf/tracing`, [#40](https://github.com/Tanvi-Goyal/Ritune/pull/40) | Done | Part 1 |
 | 2. Macrobenchmark | A repeatable harness for startup, scroll and screen-open journeys | `perf/macrobenchmark`, [#41](https://github.com/Tanvi-Goyal/Ritune/pull/41); `perf/open-screen-benchmark`, [#43](https://github.com/Tanvi-Goyal/Ritune/pull/43) | Done | [Part 2](https://medium.com/@goyaltanvi94/custom-baseline-profiles-made-ritunes-first-screen-load-10-faster-b256866b154d) |
 | 3. Baseline and Startup Profiles | Ship compiled first-run code, measured in an A/B | `perf/baseline-profiles`, [#44](https://github.com/Tanvi-Goyal/Ritune/pull/44) | Done | Part 2 |
-| 4. Deep analysis and fixes | Trace-driven fixes, each with its benchmark delta | One `perf/<fix>` branch per fix | In progress: Learn done, fix 1 being built | Part 3 (planned) |
+| 4. Deep analysis and fixes | Trace-driven fixes, each with its benchmark delta | One `perf/<fix>` branch per fix; fix 1 `perf/routines-lazy-list`, [#53](https://github.com/Tanvi-Goyal/Ritune/pull/53) | In progress: Learn done, fix 1 merged | Part 3 (planned) |
 | 5. Battery and background | Wake locks and wakeups during a routine run | `perf/player-power` | Not started | |
 | 6. Field monitoring | Opt-in measure.sh in the Play build, then self-hosted | `feat/opt-in-performance-monitoring` | Not started | |
 | 7. CI perf gates | Benchmarks and profiles checked on every PR | `ci/perf-gates` | Not started | |
@@ -194,6 +195,7 @@ The Redmi's timings can shift between sessions by more than the noise, so result
 | 2: 2026-11-01, 12:36–14:30 | Warm and hot startup, a cold rerun, and old-commit vs current-code A/B | Cold is about 60–80 ms slower on TTID and 120–220 ms on TTFD than in session 1, for old and new code alike |
 | 3: 2026-11-02, 10:38–11:00 | Skipping player steps, then cold and warm startup with the Phase 1 trace sections | Cold TTID (523 ms) is still at session 2's level, so the shift has lasted overnight |
 | 4: 2026-11-03, 06:31–08:33 | The Phase 3 Baseline Profile A/B, 24 runs | Auto-rotate off |
+| 5: 2026-11-06, 02:32–03:14 | Phase 4 fix 1 (lazy Routines list) A/B against `main`: open at 7 and 67 routines, scroll, 12 runs | Compiled only; shader compilation subtracted from open times |
 
 The shift between sessions 1 and 2 lines up with the MIUI optimization toggle, but that is not proven. What is proven is that the code did not cause it: the old commit `0afdb46` was just as slow in session 2 ([details](#the-redmi-drifts-between-sessions)).
 
@@ -455,7 +457,7 @@ It doesn't use `StartupMode.COLD`. COLD runs `setupBlock` *before* killing the a
 | 37 | 308 ms | 334 ms | [R30](perf/results/2026-11-01-redmi-open-routines-R30/) |
 | 67 | 441 ms | 491 ms | [R60](perf/results/2026-11-01-redmi-open-routines-R60/) |
 
-Each extra 30 routines adds about 140 ms (+142, then +133): roughly **4.6 ms per routine** on top of about 135 ms of fixed cost. That straight line is what composing and measuring every row up front predicts. A `LazyColumn` composes only the visible rows, so its time should stay roughly flat. The R30 rerun (308 ms) is within 8 ms of the first run (316 ms).
+Each extra 30 routines adds about 140 ms (+142, then +133): roughly **4.6 ms per routine** on top of about 135 ms of fixed cost. That straight line is what composing and measuring every row up front predicts. A `LazyColumn` composes only the visible rows, so its time should stay roughly flat. The R30 rerun (308 ms) is within 8 ms of the first run (316 ms). Phase 4 [fix 1](#fix-1-a-lazy-routines-list) made the list lazy and confirmed it.
 
 #### Opening Rhythm
 
@@ -597,7 +599,7 @@ Only the last complete attempt is reported. Earlier attempts' files are kept loc
 
 ### Phase 4: deep analysis and fixes
 
-**Status: in progress.** The six Learn topics are done. They added no new fix candidates, so the build plan is the six candidates found in Phases 1 to 3. Fix 1 (a lazy Routines list) is being built.
+**Status: in progress.** The six Learn topics are done. They added no new fix candidates, so the build plan is the six candidates found in Phases 1 to 3. [Fix 1](#fix-1-a-lazy-routines-list), a lazy Routines list, is merged ([#53](https://github.com/Tanvi-Goyal/Ritune/pull/53)). Fix 2 is next.
 
 #### Phase 4 Learn findings
 
@@ -614,7 +616,7 @@ Only the last complete attempt is reported. Earlier attempts' files are kept loc
 
 | Order | Candidate | Evidence | Lever | Branch | Measured with | Status |
 |---|---|---|---|---|---|---|
-| 1 | Routines list: `Column + verticalScroll` → `LazyColumn` with keys | `Routines.open` 316 ms; its content frame 217 ms; ~4.6 ms per routine | Compose and measure only the visible rows | `perf/routines-lazy-list` | Routines open at 7 and 67 routines; Routines scroll frame CPU P99 must stay under 16.7 ms | In progress |
+| 1 | Routines list: `Column + verticalScroll` → `LazyColumn` with keys | `Routines.open` 316 ms; its content frame 217 ms; ~4.6 ms per routine | Compose and measure only the visible rows | `perf/routines-lazy-list` | Routines open at 7 and 67 routines; Routines scroll frame CPU P99 must stay under 16.7 ms | [Done](#fix-1-a-lazy-routines-list): −118 ms at 67 routines, [#53](https://github.com/Tanvi-Goyal/Ritune/pull/53) |
 | 2 | Player draws an empty `Loading` frame first | ~30 ms empty frame before the content | Start `stateIn` from the engine's current `StateFlow` value | `perf/player-first-frame` | Start routine journey: the empty frame and `Player.open` | Not started |
 | 3 | Editor step rows: lazy list or lighter rows | Editor content frame ~107 ms against Detail's ~60 ms; 45 interactive nodes for 15 steps | Per-row cost | `perf/editor-rows` | Editor open; re-check the evidence first, because of the text-field caveat | Not started |
 | 4 | Startup critical path: ViewModels created lazily in the first `doFrame`, Today's queries starting only after the splash, and the Room open | Startup work begins 61 ms after `activityStart`; 83 ms between TTID and TTFD; Room open 27 of 34 ms, in parallel with `ThemeRead` | Create ViewModels in `onCreate`, start Today's queries during the splash, move the open off the critical path together with the theme read | `perf/startup-critical-path` | Cold startup TTID and TTFD | Not started |
@@ -623,11 +625,52 @@ The Room open alone saves about 2 ms, because `ThemeRead` then becomes the criti
 
 **Moved to Phase 5.** The plan listed "the 200 ms poll → notification update churn in `PlayerService`" as a Phase 4 candidate. Phase 2 showed `Player.notify` runs once per player state change, not per tick, so the per-second work while a routine runs is a battery question for Phase 5.
 
-**Method for every fix.** Its own branch from `origin/main`, tests as `AGENTS.md` requires, and an alternating A/B on the Redmi at the compiled state, the same method as Phase 3: A = `main`, B = the branch, 15 iterations, results copied to `perf/results/`. If a fix changes code the Baseline Profile covers, the profile is regenerated on the branch, so B isn't measured with a profile written for A's code.
+**Method for every fix.** Its own branch from `origin/main`, tests as `AGENTS.md` requires, and an alternating A/B on the Redmi at the compiled state, the same method as Phase 3: A = `main`, B = the branch, A1, B1, A2, B2 with 15 iterations per run (30 per side), results copied to `perf/results/` by [`perf/phase4-ab.sh`](perf/phase4-ab.sh). If a fix changes code the Baseline Profile covers, the profile is regenerated on the branch, so B isn't measured with a profile written for A's code.
 
 #### Fix results
 
 Each fix adds a subsection here when it is measured: the hypothesis, the trace evidence, the change, and the before/after table with device, build, compilation state and results folder, then its PR.
+
+##### Fix 1: a lazy Routines list
+
+**Hypothesis.** Opening Routines costs about 4.6 ms per routine because the list is a `Column` with `verticalScroll`: the first frame composes and measures every row, including the ones off screen ([Phase 2](#opening-routines)). A `LazyColumn` composes and measures only the rows on screen, so the open time should stay roughly flat as the list grows. With 7 routines all rows fit on screen, so no gain is expected there.
+
+**Change** ([#53](https://github.com/Tanvi-Goyal/Ritune/pull/53), branch `perf/routines-lazy-list`):
+
+- `ListBody` in `RoutinesListScreen` is a `LazyColumn` with keys (the routine id) and content types. The test tag and the `Routines.open` trace section stay on the list, so the benchmarks and the profile generator didn't change.
+- A lazy list can't wrap its items in one card, because each item is laid out on its own. So each row draws its own slice of the card: `RituneCardSegment` and `CardSegment.of(index, count)` in `:core:designsystem`. Each slice draws the whole card's background and border, stretched past the edges it shares with its neighbours, then clips it to itself. The list still looks like one card.
+- Tests: `RoutinesListContentTest` checks that 50 routines compose fewer than 50 rows and that the last one is still reachable by scrolling; `CardSegmentTest` covers the slices. The 11 Routines screenshot goldens were re-recorded: about 350 pixels per image differ by at most 7/255, on anti-aliased edges.
+- The Baseline Profile was regenerated on the branch, so B wasn't measured with a profile written for A's code.
+
+**Method.** Redmi Note 10 Pro, release key, benchmark build, compiled state (`compile=bgdexopt`; `speed-profile` checked before and after every run). A = `main` at `3fa8efd`, B = the branch. Alternating A1, B1, A2, B2, 15 iterations per run, 30 per side, in one session on 2026-11-06 (02:32 to 03:14 UTC). Opening uses `OpenScreenBenchmark.openRoutines` at 7 routines (`seedRoutines=0`) and 67 (`seedRoutines=60`); scrolling uses `ScrollBenchmark.scrollRoutines` at 30.
+
+**Shader compilation is noise in these runs.** Every run starts from a fresh install, so the shader cache starts empty and fills at a different iteration in each run. `shader_compile` on the RenderThread adds 0 to 85 ms to an iteration, and the main thread waits for it. In the 7-routine runs it was 34 ms at the median for A and 1.9 ms for B, which alone made B look 21 ms faster. So the open time is compared with `shader_compile` subtracted, read from each iteration's trace, next to the raw medians.
+
+| Open Routines, compiled, 30 iterations per side | A: `main` | B: lazy list | Change |
+|---|---|---|---|
+| 7 routines, raw median | 95.2 ms | 74.0 ms | shader noise, see above |
+| 7 routines, minus `shader_compile` | 63.0 ms | 68.3 ms | +5 ms, within noise |
+| 7 routines, content frame | 29.5 ms | 39.0 ms | +9.5 ms |
+| 67 routines, raw median | 222.5 ms | 112.9 ms | −110 ms (−49%) |
+| 67 routines, minus `shader_compile` | 195.3 ms | 77.5 ms | **−118 ms (−60%)** |
+| 67 routines, content frame | 150.9 ms | 39.7 ms | −111 ms |
+| Text measures in the content frame, 7 / 67 routines | 24 / 204 | 24 / 26 | |
+
+| Scroll Routines (30 routines), compiled | A: `main` | B: lazy list |
+|---|---|---|
+| Frame CPU P50 / P90 / P99 | 5.1 / 8.8 / 12.8 ms | 5.1 / 8.4 / 12.8 ms |
+| Frame overrun P99 | 5.7 ms | 5.7 ms |
+
+Results: `perf/results/2026-11-06-redmi-p4-routines-lazy-list-*` (12 folders: 3 journeys × A1, B1, A2, B2). The raw medians above pool the two runs on each side.
+
+**What it shows.**
+
+- **The prediction held.** The lazy list's content frame stays at about 39 ms whether there are 7 or 67 routines, because it measures only the rows on screen: 26 text measures instead of 204.
+- **At 67 routines, opening is 118 ms faster** without shader noise, and 110 ms faster raw.
+- **At 7 routines there is no gain.** The content frame is about 10 ms slower, the cost of the lazy list's subcomposition when every row already fits. The whole open differs by 5 ms, inside the noise.
+- **Scrolling didn't get worse.** Rows are now composed as they scroll on screen, and frame CPU stays well under the 16.7 ms deadline at P99.
+
+Also in #53: `docs/perf/phase4-ab.sh`, an opt-in flag for Compose compiler reports (`-Pritune.composeReports=true`, used in Learn 4.2), and the StrictMode VM policy in debug builds (used in Learn 4.5).
 
 ## Plan changes
 
@@ -659,6 +702,7 @@ Where the phones disagreed with the plan, the plan changed. Each change and its 
 - **Use an async trace section around a coroutine.** A sync section can be closed by whichever thread the coroutine resumes on.
 - **End a screen's trace section on its first drawn frame, not when its data arrives.**
 - **One trace is one sample.** Run a query over every iteration's trace and report the median.
+- **Check what else changes between A and B.** Each run starts from a fresh install, so shader compilation landed in different iterations on each side and made B look 21 ms faster on its own. Subtract it, or warm the cache, before reading the difference.
 - **The phone can lie.** MIUI reports success for skipped compiles, and Gradle reports success when the install prompt blocks every test. Check outputs, not exit codes.
 
 ## Commands
@@ -811,6 +855,34 @@ Regenerate the profile after changing code it covers:
 ```bash
 ./gradlew :app:generateBaselineProfile
 ```
+
+### Fix A/B (Phase 4)
+
+[`perf/phase4-ab.sh`](perf/phase4-ab.sh) runs one fix against `main` on the Redmi, alternating A1, B1, A2, B2, and copies every run to `perf/results/` before the next starts. A is `main` in a separate worktree, with `main`'s own Baseline Profile; B is the fix branch, with a profile regenerated for its code.
+
+```bash
+git worktree add --detach ../Ritune-p4-main origin/main
+cp local.properties ../Ritune-p4-main/
+```
+
+Then, from the fix branch, with the `RITUNE_KEYSTORE_*` variables set and auto-rotate off:
+
+```bash
+FIX=routines-lazy-list docs/perf/phase4-ab.sh OpenScreenBenchmark#openRoutines
+FIX=routines-lazy-list SEED_ROUTINES=60 docs/perf/phase4-ab.sh OpenScreenBenchmark#openRoutines
+FIX=routines-lazy-list docs/perf/phase4-ab.sh ScrollBenchmark#scrollRoutines
+```
+
+- `STATES="dayone compiled"` adds the day-one state (the default is `compiled`). `REPS=2` resumes at the second A, B pair after an interrupted run.
+- The script refuses to start unless `A_DIR` is at `origin/main`, and stops if a run produced no result (usually MIUI's install prompt).
+
+### Compose compiler reports
+
+```bash
+./gradlew :app:assembleRelease -Pritune.composeReports=true
+```
+
+Each module writes its stability reports and metrics to `build/compose_compiler/`.
 
 ## Write-ups and sources
 

@@ -3,7 +3,6 @@ package com.ritune
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.tracing.traceAsync
-import com.ritune.core.domain.usecases.InitializeApp
 import com.ritune.feature.today.ui.navigation.TodayRoute
 import com.ritune.feature.today.ui.screens.TodayStateSource
 import com.ritune.platform.android.di.Dispatcher
@@ -18,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val initializeApp: InitializeApp,
+    private val startup: AppStartup,
     private val todayState: TodayStateSource,
     @Dispatcher(RituneDispatchers.Default) private val dispatcher: CoroutineDispatcher,
 ) : ViewModel() {
@@ -29,7 +28,7 @@ class MainViewModel @Inject constructor(
         // Off the main thread: during startup main is busy with onResume and the first frame, and
         // the splash would wait for it just to resume this coroutine and set the destination.
         viewModelScope.launch(dispatcher) {
-            traceAsync("InitializeApp", cookie = 0) { initializeApp() }
+            startup.awaitInitialized()
             // Today is the start destination. Holding the splash for its first state lets its first
             // frame draw the content, instead of a Loading frame and then the content.
             traceAsync("TodayPreload", cookie = 0) { todayState.preload() }

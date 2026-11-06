@@ -12,8 +12,8 @@ import android.os.PowerManager
 import androidx.core.app.ServiceCompat
 import androidx.tracing.trace
 import com.ritune.core.domain.ports.PlayerController
-import com.ritune.core.models.player.PlayerState
 import com.ritune.core.models.RunOutcome
+import com.ritune.core.models.player.PlayerState
 import com.ritune.platform.android.di.Dispatcher
 import com.ritune.platform.android.di.RituneDispatchers
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,6 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,10 +45,15 @@ class PlayerService : Service() {
     @Dispatcher(RituneDispatchers.Main)
     lateinit var mainDispatcher: CoroutineDispatcher
 
+    @Inject
+    @Dispatcher(RituneDispatchers.Default)
+    lateinit var defaultDispatcher: CoroutineDispatcher
+
     private lateinit var scope: CoroutineScope
     private val manager by lazy { getSystemService(NotificationManager::class.java) }
     private var observing: Job? = null
     private var wakeLock: PowerManager.WakeLock? = null
+    private val wakeLockGuard = Any()
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -72,7 +78,9 @@ class PlayerService : Service() {
         // Android requires startForeground soon after startForegroundService, so do it before anything else.
         startForegroundCompat(notifications.ongoing(controller.state.value))
         if (observing == null) {
-            observing = scope.launch { controller.state.collect(::render) }
+            observing = scope.launch(defaultDispatcher) {
+                controller.state.collect(::render)
+            }
         }
     }
 
@@ -126,8 +134,8 @@ class PlayerService : Service() {
         )
     }
 
-    private fun holdWakeLock() {
-        if (wakeLock?.isHeld == true) return
+    private fun holdWakeLock(): Unit = synchronized(wakeLockGuard) {
+        if (!scope.isActive || wakeLock?.isHeld == true) return
         val power = getSystemService(Context.POWER_SERVICE) as PowerManager
         wakeLock = power.newWakeLock(
             PowerManager.PARTIAL_WAKE_LOCK,
@@ -138,7 +146,7 @@ class PlayerService : Service() {
         }
     }
 
-    private fun releaseWakeLock() {
+    private fun releaseWakeLock(): Unit = synchronized(wakeLockGuard) {
         wakeLock?.takeIf { it.isHeld }?.release()
         wakeLock = null
     }

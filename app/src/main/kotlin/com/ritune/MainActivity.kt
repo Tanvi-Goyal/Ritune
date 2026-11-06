@@ -26,13 +26,17 @@ class MainActivity : ComponentActivity() {
         val splash = installSplashScreen()
 
         super.onCreate(savedInstanceState)
+        // `by viewModels()` is lazy. Reading both here creates them now, so the two reads the
+        // splash waits for run during the rest of the activity's startup, not after onResume.
+        val startDestinationFlow = viewModel.startDestination
+        val themeModeFlow = themeViewModel.themeMode
         splash.setKeepOnScreenCondition {
-            viewModel.startDestination.value == null || themeViewModel.themeMode.value == null
+            startDestinationFlow.value == null || themeModeFlow.value == null
         }
 
         setContent {
-            val mode by themeViewModel.themeMode.collectAsState()
-            val startDestination by viewModel.startDestination.collectAsState()
+            val mode by themeModeFlow.collectAsState()
+            val startDestination by startDestinationFlow.collectAsState()
             val themeMode = mode
             val destination = startDestination
 

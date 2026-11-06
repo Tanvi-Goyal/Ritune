@@ -1,0 +1,71 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+body{margin:0;background:#fff;font-family:Inter,sans-serif}
+.t{font-size:21px;font-weight:500}
+.s{font-size:17px}
+.and rect{fill:#EEEDFC;stroke:#5B4FC7;stroke-width:1.2}
+.and .t{fill:#3B2F96}.and .s{fill:#5146C9}
+.kt rect{fill:#E2F4EE;stroke:#127356;stroke-width:1.2}
+.kt .t{fill:#0B4A3A}.kt .s{fill:#146C52}
+.fut rect{fill:#F2EFEA;stroke:#777;stroke-width:1.2;stroke-dasharray:6 5}
+.fut .t{fill:#222}.fut .s{fill:#555}
+.a{stroke:#8A8A86;stroke-width:2.4;fill:none;marker-end:url(#m)}
+.d{stroke-dasharray:7 6}
+.lg{font-size:17px;fill:#444}
+</style></head><body>
+<svg width="1000" height="780" viewBox="0 0 1000 780" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="m" viewBox="0 0 12 12" refX="10" refY="6" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto-start-reverse"><path d="M2 1L10 6L2 11" fill="none" stroke="#8A8A86" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+<!-- left column: Android -->
+<g class="and"><rect x="60" y="50" width="370" height="84" rx="14"/>
+<text class="t" x="245" y="84" text-anchor="middle">:app</text>
+<text class="s" x="245" y="113" text-anchor="middle">Composition root, Hilt, navigation</text></g>
+
+<g class="and"><rect x="60" y="185" width="370" height="84" rx="14"/>
+<text class="t" x="245" y="219" text-anchor="middle">:feature:*:ui</text>
+<text class="s" x="245" y="248" text-anchor="middle">Screens, ViewModels</text></g>
+
+<g class="and"><rect x="60" y="320" width="370" height="84" rx="14"/>
+<text class="t" x="245" y="354" text-anchor="middle">:platform:android</text>
+<text class="s" x="245" y="383" text-anchor="middle">Player engine, service, cue channels</text></g>
+
+<g class="and"><rect x="60" y="455" width="370" height="84" rx="14"/>
+<text class="t" x="245" y="489" text-anchor="middle">:core:data</text>
+<text class="s" x="245" y="518" text-anchor="middle">Repositories, mappers, seeding</text></g>
+
+<g class="fut"><rect x="60" y="590" width="370" height="84" rx="14"/>
+<text class="t" x="245" y="624" text-anchor="middle">iOS app (later)</text>
+<text class="s" x="245" y="653" text-anchor="middle">Core moves to KMP, new adapters</text></g>
+
+<!-- right column -->
+<g class="kt"><rect x="570" y="185" width="370" height="84" rx="14"/>
+<text class="t" x="755" y="219" text-anchor="middle">:core:domain</text>
+<text class="s" x="755" y="248" text-anchor="middle">Use cases, player reducer, ports</text></g>
+
+<g class="and"><rect x="570" y="455" width="370" height="84" rx="14"/>
+<text class="t" x="755" y="489" text-anchor="middle">:core:database · :core:datastore</text>
+<text class="s" x="755" y="518" text-anchor="middle">Room, DataStore</text></g>
+
+<g class="kt"><rect x="570" y="590" width="370" height="84" rx="14"/>
+<text class="t" x="755" y="624" text-anchor="middle">:core:models</text>
+<text class="s" x="755" y="653" text-anchor="middle">Plain Kotlin models (JVM)</text></g>
+
+<!-- arrows -->
+<path class="a" d="M245 138 V179"/>
+<path class="a" d="M434 227 H563"/>
+<path class="a" d="M434 350 L563 262"/>
+<path class="a" d="M434 470 L590 275"/>
+<path class="a" d="M434 497 H563"/>
+<path class="a" d="M755 543 V584"/>
+<path class="a" d="M944 227 H972 V632 H947"/>
+<path class="a d" d="M434 632 H563"/>
+
+<!-- legend -->
+<rect x="60" y="718" width="22" height="22" rx="5" fill="#E2F4EE" stroke="#127356"/>
+<text class="lg" x="94" y="735">Pure Kotlin, no Android APIs</text>
+<rect x="390" y="718" width="22" height="22" rx="5" fill="#EEEDFC" stroke="#5B4FC7"/>
+<text class="lg" x="424" y="735">Android</text>
+<rect x="545" y="718" width="22" height="22" rx="5" fill="#F2EFEA" stroke="#777" stroke-dasharray="4 3"/>
+<text class="lg" x="579" y="735">Future</text>
+</svg></body></html>

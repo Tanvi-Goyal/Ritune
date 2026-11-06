@@ -3,7 +3,9 @@ import com.ritune.buildlogic.libs
 import com.ritune.buildlogic.library
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 
 private const val SCREENSHOT_TESTING_MODULE = ":core:screenshot-testing"
 
@@ -29,6 +31,14 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
 
             add("debugImplementation", bom)
             add("debugImplementation", libs.library("androidx-compose-ui-test-manifest"))
+        }
+
+        extensions.configure<ComposeCompilerGradlePluginExtension> {
+            if (providers.gradleProperty("ritune.composeReports").isPresent) {
+                val dir = layout.buildDirectory.dir("compose_compiler")
+                reportsDestination.set(dir)
+                metricsDestination.set(dir)
+            }
         }
     }
 }

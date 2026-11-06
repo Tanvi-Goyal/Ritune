@@ -30,6 +30,7 @@ All numbers are from the Redmi Note 10 Pro (the mid-range phone) unless the row 
 | Opening Routines grows with every row | ~135 ms fixed + ~4.6 ms per routine | Macrobenchmark, day one, 7 / 37 / 67 routines | [2](#opening-routines) |
 | Ritune's own Baseline Profile speeds up compiled cold start | TTFD −83 ms (−10.2%), TTID −29 ms (−5.7%) | Alternating A/B, same commit, 2 × 15 iterations per side | [3](#phase-3-baseline-profiles) |
 | A lazy Routines list opens 60% faster at 67 routines | 195 → 78 ms (−118 ms), shader compilation subtracted; flat from 7 to 67 routines | Alternating A/B against `main`, compiled, 30 iterations per side | [4](#fix-1-a-lazy-routines-list) |
+| Starting a routine no longer draws an empty player frame | `Player.open` 100 → 88 ms (−12 ms, −12%) | Alternating A/B, compiled, 30 iterations per side | [4](#fix-2-the-player-draws-its-content-on-the-first-frame) |
 | Leaks, StrictMode, R8 rules and Compose stability add no fix | No leaks, no violation in Ritune's code, ~1% of code kept by rules | Phase 4 Learn | [4](#phase-4-learn-findings) |
 
 ## The track
@@ -40,7 +41,7 @@ All numbers are from the Redmi Note 10 Pro (the mid-range phone) unless the row 
 | 1. Instrumentation | Trace sections, TTFD, one annotated cold-start trace | `perf/tracing`, [#40](https://github.com/Tanvi-Goyal/Ritune/pull/40) | Done | Part 1 |
 | 2. Macrobenchmark | A repeatable harness for startup, scroll and screen-open journeys | `perf/macrobenchmark`, [#41](https://github.com/Tanvi-Goyal/Ritune/pull/41); `perf/open-screen-benchmark`, [#43](https://github.com/Tanvi-Goyal/Ritune/pull/43) | Done | [Part 2](https://medium.com/@goyaltanvi94/custom-baseline-profiles-made-ritunes-first-screen-load-10-faster-b256866b154d) |
 | 3. Baseline and Startup Profiles | Ship compiled first-run code, measured in an A/B | `perf/baseline-profiles`, [#44](https://github.com/Tanvi-Goyal/Ritune/pull/44) | Done | Part 2 |
-| 4. Deep analysis and fixes | Trace-driven fixes, each with its benchmark delta | One `perf/<fix>` branch per fix; fix 1 `perf/routines-lazy-list`, [#53](https://github.com/Tanvi-Goyal/Ritune/pull/53) | In progress: Learn done, fix 1 merged | Part 3 (planned) |
+| 4. Deep analysis and fixes | Trace-driven fixes, each with its benchmark delta | One `perf/<fix>` branch per fix; fix 1 `perf/routines-lazy-list`, [#53](https://github.com/Tanvi-Goyal/Ritune/pull/53); fix 2 `perf/player-first-frame`, [#54](https://github.com/Tanvi-Goyal/Ritune/pull/54) | In progress: Learn done, fixes 1 and 2 merged, fix 3 dropped for now | Part 3 (planned) |
 | 5. Battery and background | Wake locks and wakeups during a routine run | `perf/player-power` | Not started | |
 | 6. Field monitoring | Opt-in measure.sh in the Play build, then self-hosted | `feat/opt-in-performance-monitoring` | Not started | |
 | 7. CI perf gates | Benchmarks and profiles checked on every PR | `ci/perf-gates` | Not started | |
@@ -195,7 +196,7 @@ The Redmi's timings can shift between sessions by more than the noise, so result
 | 2: 2026-11-01, 12:36–14:30 | Warm and hot startup, a cold rerun, and old-commit vs current-code A/B | Cold is about 60–80 ms slower on TTID and 120–220 ms on TTFD than in session 1, for old and new code alike |
 | 3: 2026-11-02, 10:38–11:00 | Skipping player steps, then cold and warm startup with the Phase 1 trace sections | Cold TTID (523 ms) is still at session 2's level, so the shift has lasted overnight |
 | 4: 2026-11-03, 06:31–08:33 | The Phase 3 Baseline Profile A/B, 24 runs | Auto-rotate off |
-| 5: 2026-11-06, 02:32–03:14 | Phase 4 fix 1 (lazy Routines list) A/B against `main`: open at 7 and 67 routines, scroll, 12 runs | Compiled only; shader compilation subtracted from open times |
+| 5: 2026-11-06, 02:32–05:10 | Phase 4: fix 1 (lazy Routines list) A/B, 12 runs, 02:32–03:14; fix 2 (player first frame) A/B, 4 runs, 04:18–04:43; fix 3 Editor baseline, 1 run, ~05:05 | Compiled only; shader compilation subtracted from fix 1's open times |
 
 The shift between sessions 1 and 2 lines up with the MIUI optimization toggle, but that is not proven. What is proven is that the code did not cause it: the old commit `0afdb46` was just as slow in session 2 ([details](#the-redmi-drifts-between-sessions)).
 
@@ -493,7 +494,7 @@ So the cost is the fixed price of running Compose and navigation code at `verify
 | RenderThread `shader_compile` | ~29 ms, every iteration | 0 |
 | JIT-compiled methods | ~72 | ~53 |
 
-- **Editor's content frame is about 47 ms heavier.** Each Editor step row has a clickable column and two `TextButton`s; a Detail row has three `Text`s. For 15 steps that is 45 interactive nodes against none. The Editor also starts with text fields.
+- **Editor's content frame is about 47 ms heavier.** Each Editor step row has a clickable column and two `TextButton`s; a Detail row has three `Text`s. For 15 steps that is 45 interactive nodes against none. (Phase 4 [fix 3](#fix-3-editor-rows-dropped-for-now) found that the rows themselves have no text fields; only the routine name and the step sheet do.)
 - **Detail pays first-navigation costs that Editor doesn't.** Opening Detail is the first push navigation in the process, so it compiles shaders and JITs code for the first time. Editor's setup has already opened Detail, so that work is done before its section starts. In the user's journey that is true too: you always pass through Detail to reach the Editor.
 - The frame cost hardly changes between iterations. The run-to-run spread comes from the wait before it.
 
@@ -599,7 +600,7 @@ Only the last complete attempt is reported. Earlier attempts' files are kept loc
 
 ### Phase 4: deep analysis and fixes
 
-**Status: in progress.** The six Learn topics are done. They added no new fix candidates, so the build plan is the six candidates found in Phases 1 to 3. [Fix 1](#fix-1-a-lazy-routines-list), a lazy Routines list, is merged ([#53](https://github.com/Tanvi-Goyal/Ritune/pull/53)). Fix 2 is next.
+**Status: in progress.** The six Learn topics are done. They added no new fix candidates, so the build plan is the six candidates found in Phases 1 to 3. [Fix 1](#fix-1-a-lazy-routines-list), a lazy Routines list, and [fix 2](#fix-2-the-player-draws-its-content-on-the-first-frame), a player without the empty first frame, are merged ([#53](https://github.com/Tanvi-Goyal/Ritune/pull/53), [#54](https://github.com/Tanvi-Goyal/Ritune/pull/54)). [Fix 3](#fix-3-editor-rows-dropped-for-now), the Editor rows, is dropped for now: its saving is below the noise. Fix 4, the startup critical path, is next.
 
 #### Phase 4 Learn findings
 
@@ -617,8 +618,8 @@ Only the last complete attempt is reported. Earlier attempts' files are kept loc
 | Order | Candidate | Evidence | Lever | Branch | Measured with | Status |
 |---|---|---|---|---|---|---|
 | 1 | Routines list: `Column + verticalScroll` → `LazyColumn` with keys | `Routines.open` 316 ms; its content frame 217 ms; ~4.6 ms per routine | Compose and measure only the visible rows | `perf/routines-lazy-list` | Routines open at 7 and 67 routines; Routines scroll frame CPU P99 must stay under 16.7 ms | [Done](#fix-1-a-lazy-routines-list): −118 ms at 67 routines, [#53](https://github.com/Tanvi-Goyal/Ritune/pull/53) |
-| 2 | Player draws an empty `Loading` frame first | ~30 ms empty frame before the content | Start `stateIn` from the engine's current `StateFlow` value | `perf/player-first-frame` | Start routine journey: the empty frame and `Player.open` | Not started |
-| 3 | Editor step rows: lazy list or lighter rows | Editor content frame ~107 ms against Detail's ~60 ms; 45 interactive nodes for 15 steps | Per-row cost | `perf/editor-rows` | Editor open; re-check the evidence first, because of the text-field caveat | Not started |
+| 2 | Player draws an empty `Loading` frame first | ~30 ms empty frame before the content | Start `stateIn` from the engine's current `StateFlow` value | `perf/player-first-frame` | Start routine journey: the empty frame and `Player.open` | [Done](#fix-2-the-player-draws-its-content-on-the-first-frame): −12 ms, [#54](https://github.com/Tanvi-Goyal/Ritune/pull/54) |
+| 3 | Editor step rows: lazy list or lighter rows | Editor content frame ~107 ms against Detail's ~60 ms; 45 interactive nodes for 15 steps | Per-row cost | `perf/editor-rows` | Editor open; re-check the evidence first, because of the text-field caveat | [Dropped for now](#fix-3-editor-rows-dropped-for-now): ~0–10 ms possible, below the noise |
 | 4 | Startup critical path: ViewModels created lazily in the first `doFrame`, Today's queries starting only after the splash, and the Room open | Startup work begins 61 ms after `activityStart`; 83 ms between TTID and TTFD; Room open 27 of 34 ms, in parallel with `ThemeRead` | Create ViewModels in `onCreate`, start Today's queries during the splash, move the open off the critical path together with the theme read | `perf/startup-critical-path` | Cold startup TTID and TTFD | Not started |
 
 The Room open alone saves about 2 ms, because `ThemeRead` then becomes the critical path. It goes in only together with the theme read, or is dropped with that reason.
@@ -672,6 +673,60 @@ Results: `perf/results/2026-11-06-redmi-p4-routines-lazy-list-*` (12 folders: 3 
 
 Also in #53: `docs/perf/phase4-ab.sh`, an opt-in flag for Compose compiler reports (`-Pritune.composeReports=true`, used in Learn 4.2), and the StrictMode VM policy in debug builds (used in Learn 4.5).
 
+##### Fix 2: the player draws its content on the first frame
+
+**Cause.** `PlayerViewModel` started its `stateIn` at `PlayerUiState.Loading`. The screen subscribes only after its first composition, so the first frame always drew an empty `Box`, even though the run had already started before navigation (`StartResult.Started` or `AlreadyRunning`, then `OpenPlayer`). Phase 2 saw the content arrive one frame later, about 30 ms after, at day one ([Starting a routine](#starting-a-routine)).
+
+**Change** ([#54](https://github.com/Tanvi-Goyal/Ritune/pull/54), branch `perf/player-first-frame`):
+
+- `ObserveRunProgress.current()` returns the progress right now from `player.state.value`, with the same rounding as the flow: both use one `progressOf()`.
+- `PlayerViewModel` starts `stateIn` from `current()`. With nothing running that is still `Loading`, so closing the player behaves as before.
+- Tests: `PlayerViewModelTest.running_isActiveBeforeTheScreenCollects` reads the state before anything collects it, which is the value the first frame draws. It fails without the fix. `ObserveRunProgressTest` adds `current_running_matchesTheFirstEmission` and `current_paused_reportsRemaining`.
+- The Baseline Profile was regenerated on top of `main` after #53 merged, so the shipped profile covers both fixes.
+
+**Method.** As fix 1: Redmi Note 10 Pro, release key, benchmark build, compiled (`speed-profile` checked before and after every run). `OpenRoutineBenchmark.openPlayer` measures the `Player.open` section, from the Start tap to the player's first content draw. A1, B1, A2, B2, 15 iterations per run, 30 per side, 2026-11-06, 04:18 to 04:43 UTC. A = `79f03b4`, the branch's base, which is `main` before #53; the Routines list isn't on this journey's measured path. `shader_compile` was 0 ms in every iteration, so no correction was needed.
+
+| Open the player, compiled, 30 iterations per side | A: `79f03b4` | B: fix |
+|---|---|---|
+| Run 1 / run 2 median | 109.2 / 95.2 ms | 90.1 / 86.0 ms |
+| Pooled median | 100.0 ms | **88.0 ms (−12 ms, −12%)** |
+| Pooled P90 | 122.7 ms | 113.2 ms |
+| Frames in the section | 5 in 16 of 30, 4 in 8, 6 in 5, 3 in 1 | 4 in 17 of 30, 3 in 11, 5 in 2 |
+| Content frame median | 16.0 ms | 25.3 ms |
+
+Results: `perf/results/2026-11-06-redmi-p4-player-first-frame-*` (4 folders).
+
+**What it shows.**
+
+- **The empty frame is gone.** The section usually has one frame fewer, and both B runs beat both A runs.
+- **The gain is 12 ms, not the ~30 ms Phase 2 saw.** Phase 2 was day one, where code runs interpreted and every frame costs more.
+- **The content frame is about 9 ms heavier**, because it now does the player's first composition, which used to be spread over the empty frame and the next one. The total still drops, because a whole frame's overhead (input, animation, traversal and the RenderThread sync) is gone.
+
+##### Fix 3: Editor rows (dropped for now)
+
+**The evidence was re-checked first.** The Phase 2 caveat was wrong: the step rows have no text fields. Each row is a title, a duration and two `TextButton`s (↑ ↓). The only text fields are the routine name at the top and the step editor's bottom sheet. A routine has at most 20 steps (`RoutineValidator.MAX_STEPS`).
+
+**Baseline on `main` (`d5b2d51`), compiled.** `OpenRoutineBenchmark.openEditor`, Redmi, release key, `speed-profile` before and after, the 15-step routine, 15 iterations, 2026-11-06.
+
+| Open Editor, compiled, 15 steps | Value |
+|---|---|
+| `RoutineEditor.open` median (range) | 91.5 ms (78.0–102.0 ms) |
+| Content frame median | 54.0 ms, no shader compilation |
+| … recomposition / measuring / layout and draw (median iteration) | 16.4 / 27.8 / 7.4 ms |
+| Text measures in the content frame | 69 (21.5 ms, ~0.31 ms each); 60 of them are in the 15 rows |
+| Cost per row | ~2.2 ms (~30–35 ms for 15 rows) |
+
+Results: [`perf/results/2026-11-06-redmi-p4-editor-rows-openEditor-compiled-baseline`](perf/results/2026-11-06-redmi-p4-editor-rows-openEditor-compiled-baseline/).
+
+**Why it was dropped.**
+
+- **A lazy list saves about nothing at 15 steps.** About 10 of 15 rows fit on the Redmi's screen, so it would skip about 5 rows (~11 ms), and fix 1 measured about 10 ms of lazy-list overhead in the first frame. The net is about 0 at 15 steps and about 10 ms at the 20-step maximum.
+- **Lighter move buttons might save about 10 ms**, using vector icons instead of the ↑ ↓ text glyphs (30 of the 69 text measures), but they change the editor's look.
+- Both savings are below this run's spread (78 to 102 ms).
+- Phase 2's 107 ms content frame was at day one. Compiling with the Baseline Profile halved it, to 54 ms.
+
+It can come back if the Editor grows heavier rows or longer routines.
+
 ## Plan changes
 
 Where the phones disagreed with the plan, the plan changed. Each change and its reason:
@@ -702,6 +757,7 @@ Where the phones disagreed with the plan, the plan changed. Each change and its 
 - **Use an async trace section around a coroutine.** A sync section can be closed by whichever thread the coroutine resumes on.
 - **End a screen's trace section on its first drawn frame, not when its data arrives.**
 - **One trace is one sample.** Run a query over every iteration's trace and report the median.
+- **A fix's gain depends on the compilation state.** The player's empty frame cost ~30 ms at day one and 12 ms compiled. Measure the fix in the state users are in, and don't promise the day-one number.
 - **Check what else changes between A and B.** Each run starts from a fresh install, so shader compilation landed in different iterations on each side and made B look 21 ms faster on its own. Subtract it, or warm the cache, before reading the difference.
 - **The phone can lie.** MIUI reports success for skipped compiles, and Gradle reports success when the install prompt blocks every test. Check outputs, not exit codes.
 

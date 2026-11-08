@@ -38,7 +38,11 @@ class MainViewModelTest {
     )
 
     private fun newViewModel() =
-        MainViewModel(InitializeApp(initializer), todayState, mainDispatcherRule.testDispatcher)
+        MainViewModel(
+            AppStartup(InitializeApp(initializer), mainDispatcherRule.testDispatcher),
+            todayState,
+            mainDispatcherRule.testDispatcher,
+        )
 
     @Test
     fun startDestination_staysUnsetUntilInitializationFinishes() {

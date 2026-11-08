@@ -101,7 +101,21 @@ class PlayerServiceTest {
         awaitOngoing { it == null }
     }
 
+    @Test
+    fun stoppingRightAfterSkips_leavesNoOngoingNotification(): Unit = runBlocking {
+        awaitOngoing { it != null }
+
+        repeat(3) { player.skipStep() }
+        player.stop()
+
+        awaitOngoing { it == null }
+        // Updates run off the main thread. A late one must not post the notification again.
+        delay(SETTLE_MS)
+        assertEquals(null, ongoing())
+    }
+
     private companion object {
+        const val SETTLE_MS = 500L
         const val TIMEOUT_MS = 5_000L
         const val POLL_MS = 50L
     }

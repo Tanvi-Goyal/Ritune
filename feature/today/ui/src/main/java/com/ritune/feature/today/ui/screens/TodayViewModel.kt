@@ -5,66 +5,38 @@ import androidx.lifecycle.viewModelScope
 import com.ritune.core.domain.models.anchor.LogResult
 import com.ritune.core.domain.ports.StartResult
 import com.ritune.core.domain.usecases.anchor.LogAnchor
-import com.ritune.core.domain.usecases.anchor.ObserveToday
 import com.ritune.core.domain.usecases.anchor.UndoLogAnchor
-import com.ritune.core.domain.usecases.player.ObservePlayerState
 import com.ritune.core.domain.usecases.player.StartRoutine
-import com.ritune.core.domain.usecases.rhythm.ObserveCurrentDay
-import com.ritune.core.domain.usecases.routine.ObserveRoutines
 import com.ritune.core.models.AnchorId
 import com.ritune.core.models.EventId
 import com.ritune.core.models.EventSource
 import com.ritune.core.models.RoutineId
 import com.ritune.core.models.Timekeeper
-import com.ritune.feature.today.ui.mapper.buildContent
 import com.ritune.feature.today.ui.mapper.toLocalTime
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDate
 import javax.inject.Inject
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class TodayViewModel @Inject constructor(
-    observeToday: ObserveToday,
-    observeCurrentDay: ObserveCurrentDay,
-    observePlayerState: ObservePlayerState,
-    private val observeRoutines: ObserveRoutines,
+    todayState: TodayStateSource,
     private val logAnchor: LogAnchor,
     private val undoLogAnchor: UndoLogAnchor,
     private val timekeeper: Timekeeper,
     private val startRoutine: StartRoutine,
 ) : ViewModel() {
 
-    val state: StateFlow<TodayUiState> = observeCurrentDay()
-        .flatMapLatest<LocalDate, TodayUiState> { day ->
-            combine(
-                observeToday(day),
-                observeRoutines(),
-                observePlayerState(),
-            ) { statuses, allRoutines, playerState ->
-                buildContent(
-                    day,
-                    statuses,
-                    allRoutines,
-                    playerState,
-                    timekeeper.timeZone()
-                )
-            }
-        }
+    val state: StateFlow<TodayUiState> = todayState.observe()
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5_000),
-            TodayUiState.Loading
+            todayState.takePreloaded(),
         )
 
     private val _effects = Channel<TodayEffect>(Channel.BUFFERED)

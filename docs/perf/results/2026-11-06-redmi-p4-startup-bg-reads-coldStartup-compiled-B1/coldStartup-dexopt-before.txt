@@ -1,0 +1,3 @@
+  [com.ritune]
+    path: /data/app/~~_bRdSqXqQQ54PStp99TUWg==/com.ritune-9rtQpAwG4yLXyKN8yPvtqQ==/base.apk
+      arm64: [status=speed-profile] [reason=bg-dexopt]

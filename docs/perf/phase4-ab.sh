@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Phase 4 Prove: one fix against main, on one phone, in one session.
 #
-#   A = main, checked out in A_DIR, with main's own Baseline Profile
+#   A = the fix branch's base on main, checked out in A_DIR, with its own Baseline Profile
 #   B = this checkout: the fix, with a Baseline Profile regenerated for its code
 #
 # For each journey and state the runs alternate A, B, A, B. "compiled" passes compile=bgdexopt:
@@ -25,8 +25,9 @@ DATE=$(date -u +%F)
 TESTS=("$@")
 [[ ${#TESTS[@]} -gt 0 ]] || { echo "name at least one test, for example OpenScreenBenchmark#openRoutines"; exit 1; }
 
-[[ $(git -C "$A_DIR" rev-parse HEAD) == $(git -C "$B_DIR" rev-parse origin/main) ]] ||
-  { echo "A_DIR isn't at origin/main"; exit 1; }
+# Main can move while a fix is measured. A must be the commit the fix branched from.
+[[ $(git -C "$A_DIR" rev-parse HEAD) == $(git -C "$B_DIR" merge-base HEAD origin/main) ]] ||
+  { echo "A_DIR isn't at this branch's base on main"; exit 1; }
 
 run() { # side test state rep
   local side=$1 test=$2 state=$3 rep=$4 dir=$B_DIR

@@ -18,9 +18,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingCommand
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -49,7 +52,7 @@ class RoutineDetailViewModel @Inject constructor(
             buildState(routine, anchors, confirming)
         }.stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(5_000),
+            StartNowWhileSubscribed,
             RoutineDetailUiState.Loading
         )
 
@@ -101,4 +104,14 @@ class RoutineDetailViewModel @Inject constructor(
             confirmingDelete = confirming,
         )
     }
+}
+
+// Loads from the moment the view model exists. The screen only starts collecting after its second
+// frame, and waiting for that left the routine's query until about 50 ms after the tap. Like
+// WhileSubscribed, it still stops 5 s after the screen stops collecting.
+private val StartNowWhileSubscribed = SharingStarted { subscriptionCount ->
+    SharingStarted.WhileSubscribed(5_000)
+        .command(subscriptionCount)
+        .onStart { emit(SharingCommand.START) }
+        .distinctUntilChanged()
 }

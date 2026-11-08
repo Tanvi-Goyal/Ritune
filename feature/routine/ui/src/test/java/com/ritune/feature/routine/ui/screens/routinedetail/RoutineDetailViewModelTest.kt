@@ -50,7 +50,7 @@ class RoutineDetailViewModelTest {
     private val routines = FakeRoutineRepository(listOf(custom, builtIn))
     private val player = FakePlayerController()
 
-    private fun TestScope.newViewModel(id: String = "custom"): RoutineDetailViewModel {
+    private fun TestScope.newViewModel(id: String = "custom", collect: Boolean = true): RoutineDetailViewModel {
         val viewModel = RoutineDetailViewModel(
             SavedStateHandle(mapOf("routineId" to id)),
             ObserveRoutine(routines),
@@ -58,7 +58,7 @@ class RoutineDetailViewModelTest {
             StartRoutine(routines, player),
             DeleteRoutine(routines),
         )
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.state.collect() }
+        if (collect) backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.state.collect() }
         return viewModel
     }
 
@@ -78,6 +78,14 @@ class RoutineDetailViewModelTest {
             ),
             newViewModel().state.value,
         )
+    }
+
+    // The first frame draws state.value before the screen starts collecting.
+    @Test
+    fun state_loadsBeforeTheScreenCollects() = runTest {
+        val viewModel = newViewModel(collect = false)
+
+        assertEquals("custom", viewModel.content().id)
     }
 
     @Test

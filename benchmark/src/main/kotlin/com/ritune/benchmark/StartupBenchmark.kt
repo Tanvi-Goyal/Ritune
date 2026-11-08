@@ -61,6 +61,6 @@ class StartupBenchmark {
     private companion object {
         // The Phase 1 sections, each run once per launch. Seeding finds the rule's data already
         // there, so Seed.* times the row counts, not the first-launch inserts.
-        val STARTUP_SECTIONS = listOf("InitializeApp", "ThemeRead", "Seed.anchors", "Seed.routines")
+        val STARTUP_SECTIONS = listOf("InitializeApp", "TodayPreload", "ThemeRead", "Seed.anchors", "Seed.routines")
     }
 }

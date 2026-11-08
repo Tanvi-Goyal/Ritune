@@ -20,7 +20,7 @@ class AppThemeViewModelTest {
 
     @Test
     fun themeMode_followsTheSavedThemeSetting() {
-        val viewModel = AppThemeViewModel(ObserveSettings(settings))
+        val viewModel = AppThemeViewModel(ObserveSettings(settings), mainDispatcherRule.testDispatcher)
         assertEquals(ThemeMode.SYSTEM, viewModel.themeMode.value)
 
         settings.settings.update { it.copy(theme = ThemeSetting.LIGHT) }

@@ -5,13 +5,18 @@ import android.content.pm.ApplicationInfo
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy.Builder
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 
 @HiltAndroidApp
 class RituneApplication : Application() {
 
+    @Inject
+    lateinit var startup: AppStartup
+
     override fun onCreate() {
         super.onCreate()
         setStrictModePolicy()
+        startup.start()
     }
 
     private fun isDebuggable(): Boolean {

@@ -1,0 +1,277 @@
+{
+    "context": {
+        "build": {
+            "brand": "Redmi",
+            "device": "sweetin",
+            "fingerprint": "Redmi/sweetin/sweetin:12/SKQ1.210908.001/V13.0.10.0.SKFINXM:user/release-keys",
+            "id": "SKQ1.210908.001",
+            "model": "M2101K6P",
+            "type": "user",
+            "version": {
+                "codename": "REL",
+                "sdk": 31
+            }
+        },
+        "cpuCoreCount": 8,
+        "cpuLocked": false,
+        "cpuMaxFreqHz": 2304000000,
+        "memTotalBytes": 5840433152,
+        "sustainedPerformanceModeEnabled": false,
+        "artMainlineVersion": 311310000,
+        "osCodenameAbbreviated": "S",
+        "compilationMode": "run-from-apk",
+        "payload": {}
+    },
+    "benchmarks": [
+        {
+            "name": "coldStartup",
+            "params": {},
+            "className": "com.ritune.benchmark.StartupBenchmark",
+            "totalRunTimeNs": 92782032256,
+            "metrics": {
+                "InitializeAppFirstMs": {
+                    "minimum": 30.137188,
+                    "maximum": 48.714791,
+                    "median": 35.314427,
+                    "coefficientOfVariation": 0.14550474896513516,
+                    "runs": [
+                        36.007813,
+                        42.531302,
+                        40.877552,
+                        39.301354,
+                        31.935156,
+                        35.314427,
+                        30.872916,
+                        48.714791,
+                        38.543594,
+                        37.935677,
+                        30.137188,
+                        32.067136,
+                        30.384635,
+                        33.253906,
+                        33.726042
+                    ]
+                },
+                "Seed.anchorsFirstMs": {
+                    "minimum": 0.748645,
+                    "maximum": 3.83375,
+                    "median": 1.459792,
+                    "coefficientOfVariation": 0.4556080386106954,
+                    "runs": [
+                        0.748645,
+                        1.893229,
+                        1.432708,
+                        3.83375,
+                        1.459792,
+                        1.243333,
+                        1.113021,
+                        1.091667,
+                        1.695417,
+                        2.044844,
+                        2.702709,
+                        2.33776,
+                        1.659062,
+                        1.281146,
+                        1.169011
+                    ]
+                },
+                "Seed.routinesFirstMs": {
+                    "minimum": 0.595104,
+                    "maximum": 3.025053,
+                    "median": 1.046979,
+                    "coefficientOfVariation": 0.5565800685883555,
+                    "runs": [
+                        0.707917,
+                        3.025053,
+                        0.907761,
+                        1.27349,
+                        2.256771,
+                        1.83,
+                        0.620781,
+                        0.635937,
+                        0.895313,
+                        1.046979,
+                        2.379948,
+                        0.976614,
+                        1.900625,
+                        0.595104,
+                        1.202083
+                    ]
+                },
+                "ThemeReadFirstMs": {
+                    "minimum": 1.577552,
+                    "maximum": 12.529531,
+                    "median": 4.738073,
+                    "coefficientOfVariation": 0.5182607050091503,
+                    "runs": [
+                        4.091042,
+                        2.954948,
+                        4.738073,
+                        5.06849,
+                        1.577552,
+                        5.039792,
+                        4.464271,
+                        12.529531,
+                        5.476458,
+                        3.785417,
+                        9.221823,
+                        3.524167,
+                        3.469688,
+                        5.162032,
+                        7.512605
+                    ]
+                },
+                "TodayPreloadFirstMs": {
+                    "minimum": 27.144792,
+                    "maximum": 55.630938,
+                    "median": 40.057031,
+                    "coefficientOfVariation": 0.20567145237737186,
+                    "runs": [
+                        52.869375,
+                        46.313542,
+                        46.114167,
+                        55.630938,
+                        42.607343,
+                        31.069271,
+                        30.415677,
+                        48.225156,
+                        43.769896,
+                        39.505573,
+                        39.257968,
+                        34.815312,
+                        32.983646,
+                        40.057031,
+                        27.144792
+                    ]
+                },
+                "timeToFullDisplayMs": {
+                    "minimum": 551.214739,
+                    "maximum": 788.539948,
+                    "median": 698.102292,
+                    "coefficientOfVariation": 0.0907271975318396,
+                    "runs": [
+                        720.289167,
+                        559.52901,
+                        698.102292,
+                        681.051979,
+                        731.178438,
+                        725.262552,
+                        722.73276,
+                        693.682604,
+                        687.413854,
+                        685.458125,
+                        788.539948,
+                        711.198959,
+                        753.630469,
+                        694.160938,
+                        551.214739
+                    ]
+                },
+                "timeToInitialDisplayMs": {
+                    "minimum": 508.575052,
+                    "maximum": 731.178438,
+                    "median": 681.051979,
+                    "coefficientOfVariation": 0.13203353918529787,
+                    "runs": [
+                        720.289167,
+                        559.52901,
+                        698.102292,
+                        681.051979,
+                        731.178438,
+                        508.575052,
+                        531.015885,
+                        693.682604,
+                        687.413854,
+                        685.458125,
+                        586.070573,
+                        510.31349,
+                        567.23849,
+                        694.160938,
+                        551.214739
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 0,
+            "repeatIterations": 15,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 0",
+                    "filename": "StartupBenchmark_coldStartup_iter000_2026-11-06-09-56-43.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 1",
+                    "filename": "StartupBenchmark_coldStartup_iter001_2026-11-06-09-56-50.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 2",
+                    "filename": "StartupBenchmark_coldStartup_iter002_2026-11-06-09-56-55.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 3",
+                    "filename": "StartupBenchmark_coldStartup_iter003_2026-11-06-09-57-02.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 4",
+                    "filename": "StartupBenchmark_coldStartup_iter004_2026-11-06-09-57-08.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 5",
+                    "filename": "StartupBenchmark_coldStartup_iter005_2026-11-06-09-57-14.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 6",
+                    "filename": "StartupBenchmark_coldStartup_iter006_2026-11-06-09-57-20.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 7",
+                    "filename": "StartupBenchmark_coldStartup_iter007_2026-11-06-09-57-26.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 8",
+                    "filename": "StartupBenchmark_coldStartup_iter008_2026-11-06-09-57-32.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 9",
+                    "filename": "StartupBenchmark_coldStartup_iter009_2026-11-06-09-57-38.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 10",
+                    "filename": "StartupBenchmark_coldStartup_iter010_2026-11-06-09-57-44.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 11",
+                    "filename": "StartupBenchmark_coldStartup_iter011_2026-11-06-09-57-49.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 12",
+                    "filename": "StartupBenchmark_coldStartup_iter012_2026-11-06-09-57-55.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 13",
+                    "filename": "StartupBenchmark_coldStartup_iter013_2026-11-06-09-58-01.perfetto-trace"
+                },
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace Iteration 14",
+                    "filename": "StartupBenchmark_coldStartup_iter014_2026-11-06-09-58-07.perfetto-trace"
+                }
+            ]
+        }
+    ]
+}

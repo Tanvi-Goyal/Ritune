@@ -20,6 +20,10 @@ abstract class RoutineDao {
 
     @Transaction
     @Query("SELECT * FROM routines WHERE id = :id")
+    abstract fun observe(id: String): Flow<RoutineWithSteps?>
+
+    @Transaction
+    @Query("SELECT * FROM routines WHERE id = :id")
     abstract suspend fun get(id: String): RoutineWithSteps?
 
     @Query("SELECT COUNT(*) FROM routines")

@@ -20,6 +20,10 @@ class RoutineRepositoryImpl @Inject constructor(
                 rows.filter { it.steps.isNotEmpty() }.map { it.toRoutine() }
             }
 
+    override fun observe(id: RoutineId): Flow<Routine?> =
+        dao.observe(id.value)
+            .map { row -> row?.takeIf { it.steps.isNotEmpty() }?.toRoutine() }
+
     override suspend fun get(id: RoutineId): Routine? =
         dao.get(id.value)?.takeIf { it.steps.isNotEmpty() }?.toRoutine()
 

@@ -111,4 +111,20 @@ class RoutineDaoTest {
 
         assertEquals(listOf("early", "middle", "late"), ids)
     }
+
+    @Test
+    fun observe_returnsOnlyThatRoutineWithItsSteps() = runTest {
+        dao.replace(routine("r1"), listOf(step(0, "breathe")))
+        dao.replace(routine("r2", sortOrder = 1), listOf(step(0, routineId = "r2"), step(1, routineId = "r2")))
+
+        val observed = dao.observe("r2").first()!!
+
+        assertEquals("r2", observed.routine.id)
+        assertEquals(2, observed.steps.size)
+    }
+
+    @Test
+    fun observe_unknownRoutine_isNull() = runTest {
+        assertNull(dao.observe("missing").first())
+    }
 }

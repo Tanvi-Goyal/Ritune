@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface RoutineRepository {
     fun observeAll(): Flow<List<Routine>>
+    fun observe(id: RoutineId): Flow<Routine?>
     suspend fun get(id: RoutineId): Routine?
     suspend fun save(routine: Routine)
     suspend fun delete(id: RoutineId)

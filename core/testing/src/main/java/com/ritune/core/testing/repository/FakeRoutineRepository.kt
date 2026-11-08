@@ -6,6 +6,7 @@ import com.ritune.core.models.Routine
 import com.ritune.core.models.RoutineId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
 class FakeRoutineRepository(
@@ -15,6 +16,9 @@ class FakeRoutineRepository(
     val routines = MutableStateFlow(routines)
 
     override fun observeAll(): Flow<List<Routine>> = routines
+
+    override fun observe(id: RoutineId): Flow<Routine?> =
+        routines.map { all -> all.firstOrNull { it.id == id } }
 
     override suspend fun get(id: RoutineId): Routine? =
         routines.value.firstOrNull { it.id == id }

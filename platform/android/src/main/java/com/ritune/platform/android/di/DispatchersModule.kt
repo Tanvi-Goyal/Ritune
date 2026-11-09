@@ -8,7 +8,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Qualifier
 
-enum class RituneDispatchers { Default, Main }
+enum class RituneDispatchers { Default, IO, Main }
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
@@ -20,6 +20,10 @@ object DispatchersModule {
     @Provides
     @Dispatcher(RituneDispatchers.Default)
     fun provideDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
+
+    @Provides
+    @Dispatcher(RituneDispatchers.IO)
+    fun provideIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
 
     @Provides
     @Dispatcher(RituneDispatchers.Main)

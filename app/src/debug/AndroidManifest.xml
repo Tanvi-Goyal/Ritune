@@ -7,7 +7,7 @@
         <activity
             android:name="com.ritune.ailab.AiLabActivity"
             android:exported="true"
-            android:label="Ritune AI lab"
+            android:label="@string/ai_lab_label"
             android:taskAffinity="com.ritune.ailab"
             android:theme="@style/Theme.Ritune"
             android:windowSoftInputMode="adjustResize">

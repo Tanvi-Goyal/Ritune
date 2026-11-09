@@ -137,5 +137,4 @@ dependencies {
     debugImplementation(platform(libs.firebase.bom))
     debugImplementation(libs.firebase.ai)
     debugImplementation(libs.firebase.appcheck.debug)
-    debugImplementation(libs.androidx.lifecycle.viewmodel.compose)
 }

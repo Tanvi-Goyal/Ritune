@@ -28,7 +28,6 @@ class FirebaseLabChatClient @Inject constructor(
     // A chat resends the earlier turns with every request; the model itself keeps nothing.
     private var chat: Chat? = null
 
-    // Firebase reads its config from disk the first time a model is built.
     override fun stream(request: LabRequest): Flow<LabChunk> = flow {
         val responses = if (request.rememberChat) {
             val session = chat ?: model(request).startChat().also { chat = it }

@@ -75,7 +75,12 @@ class AiLabViewModel @Inject constructor(
         var firstChunkAt: Long? = null
         var usage: LabUsage? = null
         try {
-            val request = LabRequest(prompt, settings.model, settings.thinking, settings.rememberChat)
+            val request = LabRequest(
+                prompt,
+                settings.model,
+                settings.thinking,
+                settings.rememberChat
+            )
             client.stream(request).collect { chunk ->
                 if (firstChunkAt == null) firstChunkAt = timekeeper.now().monoMillis
                 chunk.text?.let { text -> _state.update { it.copy(reply = it.reply + text) } }
@@ -108,6 +113,6 @@ class AiLabViewModel @Inject constructor(
 
 private fun LabStats.logLine(settings: AiLabUiState) =
     "${settings.model.id} · thinking ${settings.thinking.name.lowercase()} · " +
-        "first chunk ${firstChunkMillis ?: "-"} ms · total $totalMillis ms · " +
-        "tokens in ${inputTokens ?: "-"} / out ${outputTokens ?: "-"} / " +
-        "thinking ${thinkingTokens ?: "-"}"
+            "first chunk ${firstChunkMillis ?: "-"} ms · total $totalMillis ms · " +
+            "tokens in ${inputTokens ?: "-"} / out ${outputTokens ?: "-"} / " +
+            "thinking ${thinkingTokens ?: "-"}"

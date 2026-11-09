@@ -2,13 +2,10 @@ package com.ritune.ailab
 
 import kotlinx.coroutines.flow.Flow
 
-/** The lab's only view of the model provider, so the ViewModel is tested without Firebase. */
 interface LabChatClient {
 
-    /** Streams the reply. With [LabRequest.rememberChat], the earlier turns are sent too. */
     fun stream(request: LabRequest): Flow<LabChunk>
 
-    /** Forgets the earlier turns, so the next remembered request starts a new chat. */
     fun clearHistory()
 }
 

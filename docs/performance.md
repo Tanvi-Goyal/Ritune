@@ -31,6 +31,7 @@ All numbers are from the Redmi Note 10 Pro (the mid-range phone) unless the row 
 | Ritune's own Baseline Profile speeds up compiled cold start | TTFD −83 ms (−10.2%), TTID −29 ms (−5.7%) | Alternating A/B, same commit, 2 × 15 iterations per side | [3](#phase-3-baseline-profiles) |
 | A lazy Routines list opens 60% faster at 67 routines | 195 → 78 ms (−118 ms), shader compilation subtracted; flat from 7 to 67 routines | Alternating A/B against `main`, compiled, 30 iterations per side | [4](#fix-1-a-lazy-routines-list) |
 | Starting a routine no longer draws an empty player frame | `Player.open` 100 → 88 ms (−12 ms, −12%) | Alternating A/B, compiled, 30 iterations per side | [4](#fix-2-the-player-draws-its-content-on-the-first-frame) |
+| All of Phase 4 together: Today is ready sooner after a cold start, and every screen opens faster | Cold-start TTFD 802 → 691 ms (−110 ms, −14%); Routines −28%, Detail −23%, Player −17% | Before vs after Phase 4, alternating A/B, compiled, 30 per side | [4](#phase-4-before-and-after) |
 | Preloading Today during the splash shows its content sooner | TTFD 766 → 691 ms (−75 ms, −10%) | Cold start, alternating A/B, compiled, 30 per side | [4](#fix-5-today-draws-its-content-on-the-first-frame) |
 | Starting `InitializeApp` from `Application.onCreate` drops a frame from startup | Content in the first frame in 27 of 30 starts (was 0); TTFD −43 ms, −71 ms with shader compilation subtracted | Same | [4](#fix-6-start-initializeapp-from-application) |
 | Detail loads one routine, and starts loading before the screen subscribes | `RoutineDetail.open` 113 → 100 ms (−12.7 ms, −11%); 2 fewer empty frames | Alternating A/B, compiled, 30 per side | [4](#fix-8-detail-and-editor-load-sooner) |
@@ -44,7 +45,7 @@ All numbers are from the Redmi Note 10 Pro (the mid-range phone) unless the row 
 | 1. Instrumentation | Trace sections, TTFD, one annotated cold-start trace | `perf/tracing`, [#40](https://github.com/Tanvi-Goyal/Ritune/pull/40) | Done | Part 1 |
 | 2. Macrobenchmark | A repeatable harness for startup, scroll and screen-open journeys | `perf/macrobenchmark`, [#41](https://github.com/Tanvi-Goyal/Ritune/pull/41); `perf/open-screen-benchmark`, [#43](https://github.com/Tanvi-Goyal/Ritune/pull/43) | Done | [Part 2](https://medium.com/@goyaltanvi94/custom-baseline-profiles-made-ritunes-first-screen-load-10-faster-b256866b154d) |
 | 3. Baseline and Startup Profiles | Ship compiled first-run code, measured in an A/B | `perf/baseline-profiles`, [#44](https://github.com/Tanvi-Goyal/Ritune/pull/44) | Done | Part 2 |
-| 4. Deep analysis and fixes | Trace-driven fixes, each with its benchmark delta | One `perf/<fix>` branch per fix; fix 1 `perf/routines-lazy-list`, [#53](https://github.com/Tanvi-Goyal/Ritune/pull/53); then [#54](https://github.com/Tanvi-Goyal/Ritune/pull/54) to [#60](https://github.com/Tanvi-Goyal/Ritune/pull/60), listed in [the fix list](#fix-candidates-and-build-order) | In progress: every candidate built or dropped; 7 fixes merged, 2 dropped | Part 3 (planned) |
+| 4. Deep analysis and fixes | Trace-driven fixes, each with its benchmark delta | One `perf/<fix>` branch per fix; fix 1 `perf/routines-lazy-list`, [#53](https://github.com/Tanvi-Goyal/Ritune/pull/53); then [#54](https://github.com/Tanvi-Goyal/Ritune/pull/54) to [#60](https://github.com/Tanvi-Goyal/Ritune/pull/60), listed in [the fix list](#fix-candidates-and-build-order); before/after `perf/before-after`, [#61](https://github.com/Tanvi-Goyal/Ritune/pull/61) | Done: 7 fixes merged, 2 dropped; [before/after](#phase-4-before-and-after) measured | Part 3 (planned) |
 | 5. Battery and background | Wake locks and wakeups during a routine run | `perf/player-power` | Not started | |
 | 6. Field monitoring | Opt-in measure.sh in the Play build, then self-hosted | `feat/opt-in-performance-monitoring` | Not started | |
 | 7. CI perf gates | Benchmarks and profiles checked on every PR | `ci/perf-gates` | Not started | |
@@ -200,7 +201,7 @@ The Redmi's timings can shift between sessions by more than the noise, so result
 | 3: 2026-11-02, 10:38–11:00 | Skipping player steps, then cold and warm startup with the Phase 1 trace sections | Cold TTID (523 ms) is still at session 2's level, so the shift has lasted overnight |
 | 4: 2026-11-03, 06:31–08:33 | The Phase 3 Baseline Profile A/B, 24 runs | Auto-rotate off |
 | 5: 2026-11-06, 02:32–10:54 | Phase 4: fix 1 A/B, 12 runs (02:32–03:14); fix 2, 4 runs (04:18–04:43); fix 3 baseline, 1 run (~05:05); fix 4 in three steps, 12 runs (05:28–06:30); notification A/B (09:24–09:52); fix 5 (09:52–10:03); fix 6 (10:43–10:54); two diagnostic runs | Compiled only. A moved within the session (cold TTFD 799 → 831 ms), so each fix is read against its own A runs |
-| 6: 2026-11-08 | Phase 4: fix 7 A/B, 4 runs; Today composition diagnostic, 1 run; fix 8 A/Bs, 12 runs (detail early load 06:26–06:50) | Compiled only. One Editor B run was rerun whole after an install prompt went unaccepted |
+| 6: 2026-11-08 | Phase 4: fix 7 A/B, 4 runs; Today composition diagnostic, 1 run; fix 8 A/Bs, 12 runs (detail early load 06:26–06:50); the [before/after](#phase-4-before-and-after) A/B, 32 runs (08:21–10:43) | Compiled only. One Editor B run was rerun whole after an install prompt went unaccepted |
 
 The shift between sessions 1 and 2 lines up with the MIUI optimization toggle, but that is not proven. What is proven is that the code did not cause it: the old commit `0afdb46` was just as slow in session 2 ([details](#the-redmi-drifts-between-sessions)).
 
@@ -604,7 +605,7 @@ Only the last complete attempt is reported. Earlier attempts' files are kept loc
 
 ### Phase 4: deep analysis and fixes
 
-**Status: in progress.** The six Learn topics are done. They added no new fix candidates, so the build plan is the six candidates found in Phases 1 to 3. Every candidate from the build plan has been built and measured, or dropped with a reason, along with the ones the work uncovered on the way. Seven fixes are merged (#53 to #58 and #60). Two are dropped because their saving was below the noise: fix 3, the Editor rows, and fix 7, warming the date formats (its runs are kept, in #59). The [fix list](#fix-candidates-and-build-order) has the outcome of each one.
+**Status: done.** The six Learn topics are done. They added no new fix candidates, so the build plan is the six candidates found in Phases 1 to 3. Every candidate from the build plan has been built and measured, or dropped with a reason, along with the ones the work uncovered on the way. Seven fixes are merged (#53 to #58 and #60). Two are dropped because their saving was below the noise: fix 3, the Editor rows, and fix 7, warming the date formats (its runs are kept, in #59). The [fix list](#fix-candidates-and-build-order) has the outcome of each one. A final A/B of `main` before and after Phase 4 ([#61](https://github.com/Tanvi-Goyal/Ritune/pull/61)) measured the result as a whole: cold-start TTFD −110 ms (−14%), and every screen open faster except the Editor, which is at the edge of the noise ([details](#phase-4-before-and-after)).
 
 #### Phase 4 Learn findings
 
@@ -889,9 +890,39 @@ A = `19f6e19`, 30 opens per side, 2026-11-08. Change 1 alone was measured on bot
 
 **Detail shows content two frames earlier, and the Editor about 9 ms sooner.** Detail's query still starts at about 35 ms, not when the view model is created (about 10 ms), probably because the collection runs on the main thread, which is busy with the tap's first frames. That wasn't checked in the trace. P90 drops 15 ms.
 
-##### What Phase 4 has not measured yet
+#### Phase 4 before and after
 
-Each fix was measured against its own base, in its own session. There is no single A/B yet of the code before Phase 4 against the code after it, so the fixes' gains shouldn't be added up into one number.
+Each fix was measured against its own base, in its own session, so their gains can't be added up. This A/B measures the whole phase at once ([#61](https://github.com/Tanvi-Goyal/Ritune/pull/61)).
+
+**Method.** Redmi Note 10 Pro, release key, benchmark build, 2026-11-08, 08:21 to 10:43 UTC.
+
+- **A = `79f03b4`**: `main` before #53, the first Phase 4 fix, with the Baseline Profile it shipped.
+- **B = `08d9c59`**: `main` with #60 merged, with its profile regenerated for that code.
+- Every journey compiled (`compile=bgdexopt`; `speed-profile` confirmed before and after all 32 runs), run A, B, A, B, 15 iterations a run, 30 per side.
+- The benchmark code is the same on both sides, apart from the `TodayPreload` section, which A doesn't have.
+- `phase4-ab.sh` gained `A_COMMIT`, so A can be a commit other than the branch's base.
+- Ranges are bootstrapped 95% ranges of the median difference, 4,000 resamples.
+- Results: `perf/results/2026-11-08-redmi-p4-before-after-*` (32 folders: 8 journeys × A1, B1, A2, B2).
+
+| Journey, median | Before (`79f03b4`) | After (`08d9c59`) | Change | 95% range |
+|---|---|---|---|---|
+| Cold start, full display (TTFD) | 801.6 ms | 691.3 ms | **−110.3 ms (−14%)** | −136.9 to −69.5 |
+| Cold start, first frame (TTID) | 485.7 ms | 668.4 ms | +182.7 ms (+38%), by design | +156.4 to +204.2 |
+| Open Routines, 37 routines (the rule's default seed) | 156.6 ms | 112.6 ms | −44.0 ms (−28%) | −61.4 to −11.6 |
+| Open Routines, 67 routines | 217.6 ms | 169.8 ms | −47.8 ms (−22%) | −77.6 to −28.3 |
+| Open Detail | 132.8 ms | 102.1 ms | −30.7 ms (−23%) | −37.6 to −20.6 |
+| Open Editor | 93.5 ms | 87.4 ms | −6.1 ms (−6%) | −10.8 to +0.1 |
+| Open Player | 107.8 ms | 89.6 ms | −18.2 ms (−17%) | −26.8 to −5.4 |
+| `Player.notify` on the main thread, per run of 5 skips | 30.0 ms | 0 ms | −30.0 ms | all 30 runs at 0 |
+| Scroll Routines, late frames per iteration | 2.3% | 3.3% | +1.0 pt | −0.6 to +10.6 |
+
+**What it shows.**
+
+- **Today is ready 110 ms sooner after a cold start, and the first frame comes later by design.** Before, frame 1 drew only the splash, and Today's content followed 316 ms later. Since [fix 5](#fix-5-today-draws-its-content-on-the-first-frame), frame 1 is Today's content, so the first frame and full display are 23 ms apart. Full display is when Today can be read and used. P90 full display went from 932.9 to 772.7 ms, but its range (−398 to +218 ms) includes zero.
+- **Every screen open is faster.** Routines −28% (−22% with 60 more routines), Detail −23%, Player −17%. The Editor's −6% sits at the edge of the noise; it matches fix 8's single-routine query, which measured −8.9 ms on its own.
+- **The notification work left the main thread.** Each `Player.notify` call takes longer now (6.0 → 11.0 ms on average), because it runs on the Default dispatcher: 55 ms per run in all, none of it on main.
+- **Scrolling shows no change.** Late frames per iteration and P90 frame CPU per iteration (6.1 → 6.5 ms, range −0.4 to +3.3 ms) both include zero. Pooled, 9.0% of frames were late before and 14.3% after, but that comes from a few iterations with 36% to 63% late frames, on both sides.
+- **The startup fixes don't add up.** Fixes 4, 5 and 6 measured −24, −75 and −43 ms on TTFD against their own bases, 142 ms in all; together they give −110 ms. Each one changed what the next one was measured against.
 
 ## Plan changes
 
@@ -931,6 +962,7 @@ Where the phones disagreed with the plan, the plan changed. Each change and its 
 - **Moving work into the first frame raises TTID even when the app gets faster.** The first drawn frame pays for the EGL context and shader compiles. Read TTFD, and subtract `shader_compile` when a fix moves it between frames.
 - **A cost the trace points at can still be too small to show.** Fix 7 removed ~11 ms from the first text measure, and frame 1 didn't get measurably shorter. Measure before keeping the change.
 - **Off the main thread is only faster if the work was inside a frame.** The notification updates ran between frames, so moving them changed nothing on screen.
+- **Measure the whole phase once at the end.** Fix-by-fix gains are each read against a different base, and they overlap: the startup fixes summed to 142 ms but gave 110 ms together.
 - **Check what else changes between A and B.** Each run starts from a fresh install, so shader compilation landed in different iterations on each side and made B look 21 ms faster on its own. Subtract it, or warm the cache, before reading the difference.
 - **The phone can lie.** MIUI reports success for skipped compiles, and Gradle reports success when the install prompt blocks every test. Check outputs, not exit codes.
 
@@ -1104,6 +1136,7 @@ FIX=routines-lazy-list docs/perf/phase4-ab.sh ScrollBenchmark#scrollRoutines
 
 - `STATES="dayone compiled"` adds the day-one state (the default is `compiled`). `REPS=2` resumes at the second A, B pair after an interrupted run.
 - The script refuses to start unless `A_DIR` is at the branch's base on `main` (`git merge-base HEAD origin/main`), and stops if a run produced no result (usually MIUI's install prompt). To move A to a new base: `git -C ../Ritune-p4-main checkout --detach <commit>`.
+- `A_COMMIT=<commit>` checks A against that commit instead of the branch's base. The before/after run used it with A at `main` before Phase 4: `A_COMMIT=79f03b4 FIX=before-after docs/perf/phase4-ab.sh StartupBenchmark#coldStartup`.
 - Cold-start fixes use `StartupBenchmark#coldStartup`; for example `FIX=today-first-frame docs/perf/phase4-ab.sh StartupBenchmark#coldStartup`.
 
 ### Compose compiler reports

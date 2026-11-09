@@ -15,7 +15,7 @@ Perfetto traces are not committed; they are 1–2 MB each. Rebuild them by rerun
 
 ## Sessions
 
-Only compare folders from the same session. The Redmi's timings shifted between sessions 1 and 2 on 2026-11-01, for old and new code alike (see "Phase 2: summary" in `performance.md`). Each later day is a new session.
+Only compare folders from the same session. The Redmi's timings shifted between sessions 1 and 2 on 2026-11-01, for old and new code alike (see "Sessions" and "The Redmi drifts between sessions" in `performance.md`). Each later day is a new session.
 
 | Session (UTC, 2026-11-01) | Redmi folders |
 |---|---|
@@ -23,6 +23,8 @@ Only compare folders from the same session. The Redmi's timings shifted between 
 | 2: 12:36–14:30, after MIUI optimization was switched off and on | `redmi-startup-warm-day-one`, `redmi-startup-hot-day-one`, `redmi-startup-day-one-rerun`, `redmi-startup-ab-old-0afdb46`, `redmi-startup-ab-head` |
 | 3: 2026-11-02, 10:38–11:00 | `2026-11-02-redmi-player-skip-steps`, `2026-11-02-redmi-startup-sections` (cold), `2026-11-02-redmi-startup-sections-warm` |
 | 4: 2026-11-03, 06:31–08:33 | `2026-11-03-redmi-p3-<journey>-<dayone\|compiled>-<A\|B><1\|2>`: the Phase 3 A/B, 24 runs. A is the same code without the generated Baseline Profile. |
+| 5: 2026-11-06, 02:32–03:14 | `2026-11-06-redmi-p4-routines-lazy-list-<journey>[-R0\|-R60]-compiled-<A\|B><1\|2>`: the Phase 4 fix 1 A/B, 12 runs. A is `main` at `3fa8efd`, B the lazy list with its regenerated Baseline Profile. Then `2026-11-06-redmi-p4-player-first-frame-openPlayer-compiled-<A\|B><1\|2>`: the fix 2 A/B, 4 runs, A = `79f03b4`. Then `2026-11-06-redmi-p4-editor-rows-openEditor-compiled-baseline`: fix 3's baseline on `main` (`d5b2d51`), 1 run. Then the fix 4 steps (`...-startup-critical-path-*`, `...-startup-bg-init-*`, `...-startup-bg-reads-*`), `...-player-notify-off-main-*`, `...-today-first-frame-*` and `...-startup-app-init-*`, 4 runs each, plus two `...-diag` folders (single diagnostic runs, not A/Bs). A for each is the fix branch's base. |
+| 6: 2026-11-08 | `2026-11-08-redmi-p4-today-date-formats-*` (fix 7, dropped), `...-routine-single-query-openDetail-*`, `...-routine-single-query-openEditor-*` and `...-detail-early-load-*` (fix 8), 4 runs each, and `...-today-composition-main-coldStartup-compiled-diag`, with A = `19f6e19`. Then `2026-11-08-redmi-p4-before-after-<journey>-compiled-<A\|B><1\|2>`: the Phase 4 before/after, 32 runs, A = `79f03b4` (before Phase 4), B = `08d9c59` (after). |
 
 `2026-11-02-redmi-p3-smoke-compiled-B` only checked that `compile=bgdexopt` works on MIUI. It is not part of any comparison.
 
@@ -33,5 +35,5 @@ Only compare folders from the same session. The Redmi's timings shifted between 
 - Gradle clears `benchmark/build/outputs/connected_android_test_additional_output/` on every run. Copy each result here straight after its run.
 - `2026-11-01-redmi-startup-day-one` kept no traces, so session 1's cold start can't be broken down from its own run.
 - `2026-11-01-redmi-startup-ab-old-0afdb46` ran the old commit, whose `seed.txt` has no `longRoutine` field. That commit had no long routine, so it is the same as `longRoutine=false`.
-- Session 4 is the fifth attempt at the Phase 3 runs. Earlier attempts stopped on MIUI's "Install via USB" prompt or on auto-rotate (see "Phase 3: Baseline Profiles" in `performance.md`), and their files live in `superseded/`, which is not committed. Open Detail ran about 40 minutes after the other two journeys. Its compiled runs were redone as a set of four, after an install prompt stopped them.
+- Session 4 is the fifth attempt at the Phase 3 runs. Earlier attempts stopped on MIUI's "Install via USB" prompt or on auto-rotate (see "Phase 3: Baseline Profiles", run notes, in `performance.md`), and their files live in `superseded/`, which is not committed. Open Detail ran about 40 minutes after the other two journeys. Its compiled runs were redone as a set of four, after an install prompt stopped them.
 - Session 3's first cold run was lost: the warm and `skipSteps` runs started before it was copied, and each run clears the output folder. `2026-11-02-redmi-startup-sections` is the rerun, made after `skipSteps`. The first warm run, if it ran, was lost the same way, and `2026-11-02-redmi-startup-sections-warm` is the run after cold.

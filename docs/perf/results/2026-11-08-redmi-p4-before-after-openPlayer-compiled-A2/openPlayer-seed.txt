@@ -1,0 +1,1 @@
+days=21 routines=30 longRoutine=true

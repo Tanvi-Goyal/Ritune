@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.ritune.hilt)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.androidx.baselineprofile)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -131,4 +132,9 @@ dependencies {
     androidTestImplementation(libs.androidx.navigation.testing)
     androidTestImplementation(libs.androidx.test.uiautomator)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    // AI lab, debug builds only until the coach ships, so release stays offline.
+    debugImplementation(platform(libs.firebase.bom))
+    debugImplementation(libs.firebase.ai)
+    debugImplementation(libs.firebase.appcheck.debug)
 }

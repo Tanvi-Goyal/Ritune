@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Debug-only AI lab. Kept out of :core:designsystem so none of it ships in release. -->
+<resources>
+    <string name="ai_lab_label">Ritune AI lab</string>
+    <string name="ai_lab_title">AI lab</string>
+    <string name="ai_lab_model">Model</string>
+    <string name="ai_lab_thinking">Thinking</string>
+    <string name="ai_lab_message">Message</string>
+    <string name="ai_lab_remember_chat">Remember conversation</string>
+    <string name="ai_lab_send">Send</string>
+    <string name="ai_lab_stop">Stop</string>
+    <string name="ai_lab_stats">first chunk %1$s ms · total %2$d ms · tokens in %3$s / out %4$s / thinking %5$s</string>
+</resources>

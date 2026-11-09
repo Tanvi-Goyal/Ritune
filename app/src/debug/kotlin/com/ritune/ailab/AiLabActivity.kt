@@ -55,7 +55,9 @@ class AiLabActivity : ComponentActivity() {
             val thinking = getStringExtra(EXTRA_THINKING)
             return AiLabEvent.RunBatch(
                 prompt = prompt,
-                model = LabModel.entries.firstOrNull { it.name == model } ?: LabModel.FLASH_LITE_3_5,
+                model = LabModel.entries.firstOrNull {
+                    it.name == model
+                } ?: LabModel.FLASH_LITE_3_5,
                 thinking = LabThinking.entries.firstOrNull { it.name == thinking }
                     ?: LabThinking.DEFAULT,
                 runs = getIntExtra(EXTRA_RUNS, 1),

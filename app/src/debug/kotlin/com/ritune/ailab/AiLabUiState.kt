@@ -6,7 +6,6 @@ enum class LabModel(val id: String) {
     FLASH_LITE_3_5("gemini-3.5-flash-lite"),
 }
 
-/** [DEFAULT] leaves thinking to the model; the others set its thinking level. */
 enum class LabThinking { DEFAULT, MINIMAL, LOW, HIGH }
 
 data class LabStats(
@@ -36,7 +35,6 @@ sealed interface AiLabEvent {
     data object Send : AiLabEvent
     data object Stop : AiLabEvent
 
-    /** Sends [prompt] [runs] times in a row, without chat history. Used for timing runs from adb. */
     data class RunBatch(
         val prompt: String,
         val model: LabModel,

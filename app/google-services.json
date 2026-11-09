@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "77876623294",
+    "project_id": "ritune-31bee",
+    "storage_bucket": "ritune-31bee.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:77876623294:android:7a56aa9a7eafb78adc6bef",
+        "android_client_info": {
+          "package_name": "com.ritune"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPDhsehPEjA55kGgqbX23fpsZsNea_2bA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

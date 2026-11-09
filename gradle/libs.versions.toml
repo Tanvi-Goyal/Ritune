@@ -38,6 +38,8 @@ androidxBenchmark = "1.5.0"
 profileinstaller = "1.4.1"
 androidxTestRules = "1.7.0"
 androidxTracing = "2.0.5"
+firebaseBom = "35.1.0"
+googleServices = "4.5.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -54,6 +56,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 room = { id = "androidx.room3", version.ref = "room" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 
 ritune-android-application = { id = "ritune.android.application" }
 ritune-android-library = { id = "ritune.android.library" }
@@ -97,6 +100,9 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-ai = { group = "com.google.firebase", name = "firebase-ai" }
+firebase-appcheck-debug = { group = "com.google.firebase", name = "firebase-appcheck-debug" }
 androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "androidxNavigation" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }

@@ -12,6 +12,7 @@
 # Usage: FIX=routines-lazy-list docs/perf/phase4-ab.sh OpenScreenBenchmark#openRoutines
 #   SEED_ROUTINES=60  seeds 60 routines on top of the 7 built-in ones (default: the rule's 30)
 #   STATES="dayone compiled"  (default: compiled)
+#   A_COMMIT=79f03b4  checks A_DIR against this commit instead of the merge-base
 #   REPS=2  resumes at the second A, B pair after an interrupted run (default: "1 2")
 # Needs the RITUNE_KEYSTORE_* variables, like any benchmark build.
 set -euo pipefail
@@ -25,9 +26,11 @@ DATE=$(date -u +%F)
 TESTS=("$@")
 [[ ${#TESTS[@]} -gt 0 ]] || { echo "name at least one test, for example OpenScreenBenchmark#openRoutines"; exit 1; }
 
-# Main can move while a fix is measured. A must be the commit the fix branched from.
-[[ $(git -C "$A_DIR" rev-parse HEAD) == $(git -C "$B_DIR" merge-base HEAD origin/main) ]] ||
-  { echo "A_DIR isn't at this branch's base on main"; exit 1; }
+# Main can move while a fix is measured. A must be the commit the fix branched from, unless A_COMMIT
+# names another one, for example main before Phase 4 for the before/after run.
+A_COMMIT=$(git -C "$B_DIR" rev-parse "${A_COMMIT:-$(git -C "$B_DIR" merge-base HEAD origin/main)}")
+[[ $(git -C "$A_DIR" rev-parse HEAD) == "$A_COMMIT" ]] ||
+  { echo "A_DIR isn't at $A_COMMIT"; exit 1; }
 
 run() { # side test state rep
   local side=$1 test=$2 state=$3 rep=$4 dir=$B_DIR

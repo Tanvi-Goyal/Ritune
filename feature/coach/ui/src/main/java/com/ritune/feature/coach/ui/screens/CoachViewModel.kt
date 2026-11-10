@@ -86,12 +86,15 @@ class CoachViewModel @Inject constructor(
         }
         turn = viewModelScope.launch {
             try {
-                runCoachTurn(conversation, question).collect(::onTurnEvent)
+                runCoachTurn(conversation, question)
+                    .collect(::onTurnEvent)
             } finally {
                 chat.update {
-                    it.copy(answering = false,
+                    it.copy(
+                        answering = false,
                         activeTool = null,
-                        messages = it.messages.dropEmptyAnswer())
+                        messages = it.messages.dropEmptyAnswer()
+                    )
                 }
             }
         }

@@ -32,7 +32,11 @@ fun CoachDebugScreen(
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    CoachDebugContent(state = state, onEvent = viewModel::onEvent, modifier = modifier)
+    CoachDebugContent(
+        state = state,
+        onEvent = viewModel::onEvent,
+        modifier = modifier
+    )
 }
 
 @Composable

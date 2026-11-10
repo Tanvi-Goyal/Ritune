@@ -133,7 +133,8 @@ dependencies {
     androidTestImplementation(libs.androidx.test.uiautomator)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
-    // AI lab, debug builds only until the coach ships, so release stays offline.
+    // AI lab and coach, debug builds only until the coach ships, so release stays offline.
+    debugImplementation(project(":platform:ai-firebase"))
     debugImplementation(platform(libs.firebase.bom))
     debugImplementation(libs.firebase.ai)
     debugImplementation(libs.firebase.appcheck.debug)

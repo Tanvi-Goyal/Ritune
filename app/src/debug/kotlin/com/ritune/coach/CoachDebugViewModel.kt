@@ -71,7 +71,10 @@ class CoachDebugViewModel @Inject constructor(
                 runCoachTurn(conversation, message).collect { event ->
                     when (event) {
                         is CoachEvent.TextDelta -> _state.update {
-                            it.copy(runningTool = null, messages = it.messages.appendToLast(event.text))
+                            it.copy(
+                                runningTool = null,
+                                messages = it.messages.appendToLast(event.text)
+                            )
                         }
 
                         is CoachEvent.ToolRunning -> {
@@ -80,7 +83,11 @@ class CoachDebugViewModel @Inject constructor(
                         }
 
                         is CoachEvent.Done -> {
-                            val stats = CoachTurnStats(timekeeper.now().monoMillis - start, tools, event.usage)
+                            val stats = CoachTurnStats(
+                                timekeeper.now().monoMillis - start,
+                                tools,
+                                event.usage
+                            )
                             // adb validation runs read the turn from logcat.
                             Log.i(TAG, "${stats.logLine()}\n${_state.value.messages.last().text}")
                             _state.update { it.copy(lastTurn = stats) }
@@ -118,4 +125,5 @@ private fun List<CoachMessage>.appendToLast(text: String) =
 
 private fun CoachTurnStats.logLine() =
     "turn · tools $tools · total $totalMillis ms · " +
-            "tokens in ${usage.inputTokens} / out ${usage.outputTokens} / thinking ${usage.thinkingTokens}"
+            "tokens in ${usage.inputTokens} / out ${usage.outputTokens} " +
+            "/ thinking ${usage.thinkingTokens}"

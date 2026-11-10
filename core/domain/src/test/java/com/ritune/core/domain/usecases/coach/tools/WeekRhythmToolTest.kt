@@ -1,4 +1,4 @@
-package com.ritune.core.domain.usecases.coach
+package com.ritune.core.domain.usecases.coach.tools
 
 import com.ritune.core.domain.usecases.rhythm.ConsistencyCalculator
 import com.ritune.core.domain.usecases.rhythm.ObserveCurrentDay
@@ -20,18 +20,16 @@ import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Test
 import kotlin.math.roundToInt
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.time.Instant
 
-class CoachToolExecutorTest {
+class WeekRhythmToolTest {
 
     // The fake clock's "today" is Monday 2026-01-05, so this week is 2025-12-30..2026-01-05.
     private val timekeeper = FakeTimekeeper()
     private val anchors = FakeAnchorRepository()
     private val events = FakeAnchorEventRepository()
-    private val executor = CoachToolExecutor(
-        ObserveCurrentDay(timekeeper),
-        ObserveWeekRhythm(anchors, events, timekeeper),
-    )
+    private val tool = WeekRhythmTool(ObserveCurrentDay(timekeeper), ObserveWeekRhythm(anchors, events, timekeeper))
 
     // Wake at 07:00 on four days and at 08:00 on one: 4 of 5 logs are steady.
     private val wakeLogs = listOf(
@@ -43,8 +41,8 @@ class CoachToolExecutorTest {
     ).mapIndexed { i, at -> anAnchorEvent(id = "e$i", occurredAt = Instant.parse(at)) }
 
     private suspend fun weekRhythm(vararg args: Pair<String, String>): JsonObject {
-        val call = ToolCall(id = "1", name = CoachTools.weekRhythm.name, arguments = args.toMap())
-        return Json.parseToJsonElement(executor.execute(call).json).jsonObject
+        val call = ToolCall(id = "1", name = WeekRhythmTool.DEFINITION.name, arguments = args.toMap())
+        return Json.parseToJsonElement(tool.run(call)).jsonObject
     }
 
     @Test
@@ -84,16 +82,16 @@ class CoachToolExecutorTest {
     }
 
     @Test
-    fun weekRhythm_withOffsetOutOfRange_returnsAnError() = runTest {
-        val result = weekRhythm("week_offset" to "40")
+    fun weekRhythm_withOffsetOutOfRange_isRejected() = runTest {
+        val error = assertFailsWith<ToolArgumentException> { weekRhythm("week_offset" to "40") }
 
-        assertEquals("week_offset must be 0 to 12", result["error"]!!.jsonPrimitive.content)
+        assertEquals("week_offset must be 0 to 12", error.message)
     }
 
     @Test
-    fun unknownTool_returnsAnErrorTheModelCanRead() = runTest {
-        val result = executor.execute(ToolCall(id = "1", name = "delete_everything"))
+    fun weekRhythm_includesAnchorIdsForGetAnchorEvents() = runTest {
+        val ids = weekRhythm()["anchors"]!!.jsonArray.map { it.jsonObject["id"]!!.jsonPrimitive.content }
 
-        assertEquals("""{"error":"Unknown tool: delete_everything"}""", result.json)
+        assertEquals(anchors.anchors.value.map { it.id.value }, ids)
     }
 }

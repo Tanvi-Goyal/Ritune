@@ -1,7 +1,6 @@
 package com.ritune.core.domain.usecases.coach
 
-import com.ritune.core.domain.usecases.rhythm.ObserveCurrentDay
-import com.ritune.core.domain.usecases.rhythm.ObserveWeekRhythm
+import com.ritune.core.domain.usecases.coach.tools.WeekRhythmTool
 import com.ritune.core.models.coach.CoachError
 import com.ritune.core.models.coach.CoachEvent
 import com.ritune.core.models.coach.CoachException
@@ -10,9 +9,8 @@ import com.ritune.core.models.coach.CoachUsage
 import com.ritune.core.models.coach.ConversationId
 import com.ritune.core.models.coach.ModelEvent
 import com.ritune.core.models.coach.ToolCall
+import com.ritune.core.testing.coach.coachToolExecutor
 import com.ritune.core.testing.ports.FakeCoachGateway
-import com.ritune.core.testing.repository.FakeAnchorEventRepository
-import com.ritune.core.testing.repository.FakeAnchorRepository
 import com.ritune.core.testing.time.FakeTimekeeper
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
@@ -25,13 +23,10 @@ class RunCoachTurnTest {
 
     private val gateway = FakeCoachGateway()
     private val timekeeper = FakeTimekeeper()
-    private val executor = CoachToolExecutor(
-        ObserveCurrentDay(timekeeper),
-        ObserveWeekRhythm(FakeAnchorRepository(), FakeAnchorEventRepository(), timekeeper),
-    )
+    private val executor = coachToolExecutor(timekeeper)
     private val runCoachTurn = RunCoachTurn(gateway, executor)
     private val conversation = ConversationId("c-1")
-    private val weekRhythmCall = ToolCall(id = "call-1", name = CoachTools.weekRhythm.name)
+    private val weekRhythmCall = ToolCall(id = "call-1", name = WeekRhythmTool.DEFINITION.name)
 
     @Test
     fun answerWithoutTools_streamsTextThenDone() = runTest {
@@ -58,7 +53,7 @@ class RunCoachTurnTest {
 
         assertEquals(
             listOf<CoachEvent>(
-                CoachEvent.ToolRunning(CoachTools.weekRhythm.name),
+                CoachEvent.ToolRunning(WeekRhythmTool.DEFINITION.name),
                 CoachEvent.TextDelta("Steady week."),
                 CoachEvent.Done(CoachUsage(40, 9, 20)),
             ),

@@ -1,21 +1,17 @@
 package com.ritune.coach
 
-import com.ritune.core.domain.usecases.coach.CoachToolExecutor
-import com.ritune.core.domain.usecases.coach.CoachTools
 import com.ritune.core.domain.usecases.coach.EndCoachConversation
 import com.ritune.core.domain.usecases.coach.RunCoachTurn
-import com.ritune.core.domain.usecases.rhythm.ObserveCurrentDay
-import com.ritune.core.domain.usecases.rhythm.ObserveWeekRhythm
+import com.ritune.core.domain.usecases.coach.tools.WeekRhythmTool
 import com.ritune.core.models.coach.CoachError
 import com.ritune.core.models.coach.CoachException
 import com.ritune.core.models.coach.CoachUsage
 import com.ritune.core.models.coach.ConversationId
 import com.ritune.core.models.coach.ModelEvent
 import com.ritune.core.models.coach.ToolCall
+import com.ritune.core.testing.coach.coachToolExecutor
 import com.ritune.core.testing.id.SequentialIdGenerator
 import com.ritune.core.testing.ports.FakeCoachGateway
-import com.ritune.core.testing.repository.FakeAnchorEventRepository
-import com.ritune.core.testing.repository.FakeAnchorRepository
 import com.ritune.core.testing.rules.MainDispatcherRule
 import com.ritune.core.testing.time.VirtualTimekeeper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -38,10 +34,7 @@ class CoachDebugViewModelTest {
 
     private fun TestScope.newViewModel(): CoachDebugViewModel {
         val timekeeper = VirtualTimekeeper(testScheduler)
-        val executor = CoachToolExecutor(
-            ObserveCurrentDay(timekeeper),
-            ObserveWeekRhythm(FakeAnchorRepository(), FakeAnchorEventRepository(), timekeeper),
-        )
+        val executor = coachToolExecutor(timekeeper)
         return CoachDebugViewModel(
             RunCoachTurn(gateway, executor),
             EndCoachConversation(gateway),
@@ -53,7 +46,7 @@ class CoachDebugViewModelTest {
     @Test
     fun send_showsTheQuestionAndStreamedAnswer() = runTest {
         gateway.reply(
-            ModelEvent.ToolCallRequest(ToolCall("call-1", CoachTools.weekRhythm.name)),
+            ModelEvent.ToolCallRequest(ToolCall("call-1", WeekRhythmTool.DEFINITION.name)),
             ModelEvent.Finished(CoachUsage(10, 2, 0)),
         )
         gateway.reply(ModelEvent.Text("Steady "), ModelEvent.Text("week."), ModelEvent.Finished(CoachUsage(30, 4, 0)))
@@ -70,7 +63,7 @@ class CoachDebugViewModelTest {
         )
         assertEquals("", state.input)
         assertFalse(state.answering)
-        assertEquals(listOf(CoachTools.weekRhythm.name), state.lastTurn?.tools)
+        assertEquals(listOf(WeekRhythmTool.DEFINITION.name), state.lastTurn?.tools)
         assertEquals(CoachUsage(40, 6, 0), state.lastTurn?.usage)
     }
 

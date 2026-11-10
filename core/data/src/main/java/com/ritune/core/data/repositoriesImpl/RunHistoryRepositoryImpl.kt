@@ -8,6 +8,7 @@ import com.ritune.core.models.RunId
 import com.ritune.core.models.RunSummary
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlin.time.Instant
 import javax.inject.Inject
 
 class RunHistoryRepositoryImpl @Inject constructor(
@@ -21,4 +22,7 @@ class RunHistoryRepositoryImpl @Inject constructor(
         val run = runs.observe(runId.value)
         return run.map { it?.toModel() }
     }
+
+    override fun observeSince(from: Instant): Flow<List<RunSummary>> =
+        runs.observeSince(from.toEpochMilliseconds()).map { list -> list.map { it.toModel() } }
 }

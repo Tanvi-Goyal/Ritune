@@ -79,6 +79,18 @@ class SettingsViewModelTest {
     }
 
     @Test
+    fun coachTurnedOff_savesAndShowsItOff() = runTest {
+        settings.settings.value = settings.settings.value.copy(coachEnabled = true)
+        val viewModel = newViewModel()
+
+        viewModel.onEvent(SettingsEvent.CoachTurnedOff)
+        runCurrent()
+
+        assertFalse(settings.settings.value.coachEnabled)
+        assertFalse(viewModel.content().coach)
+    }
+
+    @Test
     fun themeSelected_savesThemeAndClosesSheet() = runTest {
         val viewModel = newViewModel()
 

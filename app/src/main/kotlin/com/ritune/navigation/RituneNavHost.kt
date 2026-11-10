@@ -50,7 +50,10 @@ fun RituneNavHost(
             onOpenSettings = { navController.navigateToSettings() },
             onOpenPlayer = { navController.navigateToPlayer() },
         )
-        rhythmScreen(onOpenSettings = { navController.navigateToSettings() })
+        rhythmScreen(
+            onOpenSettings = { navController.navigateToSettings() },
+            onOpenCoach = navController.coachOpener(),
+        )
         routinesGraph(
             navController = navController,
             onOpenSettings = { navController.navigateToSettings() },
@@ -61,6 +64,7 @@ fun RituneNavHost(
             onClose = { navController.popBackStack() },
             onSummaryDone = { navController.popBackStack() },
         )
-        settingsGraph(navController)
+        settingsGraph(navController, onOpenCoach = navController.coachOpener())
+        coachDestination(navController)
     }
 }

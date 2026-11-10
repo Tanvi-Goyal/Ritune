@@ -28,15 +28,29 @@ class RhythmScreenScreenshotTest {
     private val scored = RhythmUiState.Content(
         weekEnd = weekEnd,
         days = fractions.mapIndexed { i, fraction -> DayBar(LocalDate(2026, 1, 5 + i), fraction) },
-        summary = RhythmSummary.Scored(consistencyPercent = 82, wakeDriftMinutes = 18, steadiestName = "Lights out"),
+        summary = RhythmSummary.Scored(
+            consistencyPercent = 82,
+            wakeDriftMinutes = 18,
+            steadiestName = "Lights out"
+        ),
     )
 
     @Composable
-    private fun Rhythm(state: RhythmUiState) {
+    private fun Rhythm(
+        state: RhythmUiState,
+        onOpenCoach: (() -> Unit)? = null
+    ) {
         RituneTheme {
             Surface(color = MaterialTheme.colorScheme.background) {
-                RhythmContent(state, onOpenSettings = {})
+                RhythmContent(state, onOpenSettings = {}, onOpenCoach = onOpenCoach)
             }
+        }
+    }
+
+    @Test
+    fun rhythm_withCoach() {
+        composeTestRule.captureScreenSizes("rhythm_with_coach") {
+            Rhythm(scored, onOpenCoach = {})
         }
     }
 

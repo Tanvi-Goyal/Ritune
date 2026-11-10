@@ -5,7 +5,8 @@ data class AppSettings(
     val speechEnabled: Boolean = false,
     val soundEnabled: Boolean = true,
     val countdownEnabled: Boolean = true,
-    val theme: ThemeSetting = ThemeSetting.SYSTEM
+    val theme: ThemeSetting = ThemeSetting.SYSTEM,
+    val coachEnabled: Boolean = false,
 )
 
 enum class ThemeSetting {

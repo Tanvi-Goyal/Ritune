@@ -31,13 +31,24 @@ class RhythmContentTest {
         DayBar(LocalDate(2026, 1, 5), 0.75f),
     )
 
-    private fun content(summary: RhythmSummary) = RhythmUiState.Content(LocalDate(2026, 1, 5), days, summary)
+    private fun content(summary: RhythmSummary) =
+        RhythmUiState.Content(LocalDate(2026, 1, 5), days, summary)
 
     private fun string(id: Int, vararg args: Any) = composeTestRule.activity.getString(id, *args)
 
-    private fun setContent(state: RhythmUiState, onOpenSettings: () -> Unit = {}) {
+    private fun setContent(
+        state: RhythmUiState,
+        onOpenSettings: () -> Unit = {},
+        onOpenCoach: (() -> Unit)? = null,
+    ) {
         composeTestRule.setContent {
-            RituneTheme { RhythmContent(state, onOpenSettings) }
+            RituneTheme {
+                RhythmContent(
+                    state,
+                    onOpenSettings,
+                    onOpenCoach = onOpenCoach
+                )
+            }
         }
     }
 
@@ -59,7 +70,15 @@ class RhythmContentTest {
     @Test
     @Config(qualifiers = "en")
     fun scored_showsPercentStatsAndDescribesEachDay() {
-        setContent(content(RhythmSummary.Scored(82, wakeDriftMinutes = 12, steadiestName = "Lights out")))
+        setContent(
+            content(
+                RhythmSummary.Scored(
+                    82,
+                    wakeDriftMinutes = 12,
+                    steadiestName = "Lights out"
+                )
+            )
+        )
 
         composeTestRule.onNodeWithText("82%").assertIsDisplayed()
         composeTestRule.onNodeWithText("12 minutes").performScrollTo().assertIsDisplayed()
@@ -74,7 +93,8 @@ class RhythmContentTest {
 
         assertEquals(
             2,
-            composeTestRule.onAllNodesWithText(string(R.string.rhythm_value_none)).fetchSemanticsNodes().size,
+            composeTestRule.onAllNodesWithText(string(R.string.rhythm_value_none))
+                .fetchSemanticsNodes().size,
         )
     }
 
@@ -100,12 +120,34 @@ class RhythmContentTest {
     fun scrollPosition_survivesRecreation() {
         val restorationTester = StateRestorationTester(composeTestRule)
         restorationTester.setContent {
-            RituneTheme { RhythmContent(content(RhythmSummary.Scored(82, 12, "Lights out")), onOpenSettings = {}) }
+            RituneTheme {
+                RhythmContent(
+                    content(RhythmSummary.Scored(82, 12, "Lights out")),
+                    onOpenSettings = {})
+            }
         }
         composeTestRule.onNodeWithText("Lights out").performScrollTo()
 
         restorationTester.emulateSavedInstanceStateRestore()
 
         composeTestRule.onNodeWithText("Lights out").assertIsDisplayed()
+    }
+
+    @Test
+    fun askTheCoach_opensTheCoach() {
+        var opens = 0
+        setContent(content(RhythmSummary.Building), onOpenCoach = { opens++ })
+
+        composeTestRule.onNodeWithText(string(R.string.rhythm_ask_coach)).performScrollTo()
+            .performClick()
+
+        assertEquals(1, opens)
+    }
+
+    @Test
+    fun buildWithoutCoach_hidesAskTheCoach() {
+        setContent(content(RhythmSummary.Building))
+
+        composeTestRule.onNodeWithText(string(R.string.rhythm_ask_coach)).assertDoesNotExist()
     }
 }

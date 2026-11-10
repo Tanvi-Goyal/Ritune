@@ -31,6 +31,7 @@ class SettingsContentTest {
 
     private val events = mutableListOf<SettingsEvent>()
     private var backClicks = 0
+    private var coachOpens = 0
 
     private val content = SettingsUiState.Content(
         haptics = true,
@@ -38,6 +39,7 @@ class SettingsContentTest {
         sound = true,
         countdown = false,
         theme = ThemeSetting.DARK,
+        coach = false,
         routineActive = false,
         themeSheetOpen = false,
         confirmingDelete = false,
@@ -46,7 +48,7 @@ class SettingsContentTest {
 
     private fun string(id: Int) = composeTestRule.activity.getString(id)
 
-    private fun setContent(state: SettingsUiState) {
+    private fun setContent(state: SettingsUiState, onOpenCoach: (() -> Unit)? = null) {
         composeTestRule.setContent {
             RituneTheme {
                 SettingsContent(
@@ -54,6 +56,7 @@ class SettingsContentTest {
                     snackbarHostState = remember { SnackbarHostState() },
                     onEvent = { events += it },
                     onBack = { backClicks++ },
+                    onOpenCoach = onOpenCoach,
                 )
             }
         }
@@ -147,5 +150,32 @@ class SettingsContentTest {
         setContent(SettingsUiState.Loading)
 
         composeTestRule.onNodeWithText(string(R.string.settings_title)).assertDoesNotExist()
+    }
+
+    @Test
+    fun coachOff_turningOnOpensTheCoachInsteadOfSaving() {
+        setContent(content, onOpenCoach = { coachOpens++ })
+
+        composeTestRule.onNodeWithText(string(R.string.settings_coach)).performScrollTo().performClick()
+
+        assertEquals(1, coachOpens)
+        assertEquals(emptyList(), events)
+    }
+
+    @Test
+    fun coachOn_turningOffSavesRightAway() {
+        setContent(content.copy(coach = true), onOpenCoach = { coachOpens++ })
+
+        composeTestRule.onNodeWithText(string(R.string.settings_coach)).performScrollTo().performClick()
+
+        assertEquals(listOf<SettingsEvent>(SettingsEvent.CoachTurnedOff), events)
+        assertEquals(0, coachOpens)
+    }
+
+    @Test
+    fun buildWithoutCoach_hidesTheCoachSetting() {
+        setContent(content)
+
+        composeTestRule.onNodeWithText(string(R.string.settings_coach)).assertDoesNotExist()
     }
 }

@@ -30,6 +30,7 @@
     <string name="rhythm_week_label">This week</string>
     <string name="rhythm_title">Rhythm</string>
     <string name="rhythm_settings">Settings</string>
+    <string name="rhythm_ask_coach">Ask the coach</string>
     <string name="rhythm_consistency_label">Consistency</string>
     <plurals name="rhythm_consistency_caption">
         <item quantity="one">Logs within %1$d minute of your usual time</item>
@@ -196,6 +197,11 @@
     <string name="settings_countdown_hint">Counts down the last three seconds</string>
     <string name="settings_cues_note">Changes apply from the next step.</string>
 
+    <string name="settings_coach_heading">Coach</string>
+    <string name="settings_coach">Rhythm coach</string>
+    <string name="settings_coach_on_hint">Answers questions using your logs and routines</string>
+    <string name="settings_coach_off_hint">Off. Nothing is sent.</string>
+
     <string name="settings_general_heading">General</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_theme_system">System</string>
@@ -211,4 +217,38 @@
     <string name="settings_cancel">Cancel</string>
     <string name="settings_deleted">All data deleted.</string>
     <string name="settings_delete_failed">Could not delete your data. Try again.</string>
+
+    <!-- Coach -->
+    <string name="coach_back">Back</string>
+    <string name="coach_title">Coach</string>
+    <string name="coach_consent_title">Meet your rhythm coach</string>
+    <string name="coach_consent_intro">Ask about your week and get short, plain answers based on your own logs.</string>
+    <string name="coach_consent_shared_heading">What is shared</string>
+    <string name="coach_consent_shared">When you ask a question, the coach sends it to Google\'s Gemini through Firebase, with the parts of your anchors, logged times, routines and run history it needs to answer.</string>
+    <string name="coach_consent_use">Google may use these requests to improve its services, and people may review them. Don\'t type anything you wouldn\'t want shared.</string>
+    <string name="coach_consent_off">Nothing is sent until you turn the coach on. You can turn it off any time in Settings.</string>
+    <string name="coach_consent_turn_on">Turn on coach</string>
+    <string name="coach_consent_not_now">Not now</string>
+    <string name="coach_empty_title">Ask about your rhythm</string>
+    <string name="coach_starter_week">How was my week?</string>
+    <string name="coach_starter_wake">When do I usually wake up?</string>
+    <string name="coach_starter_routines">Which routines did I run this week?</string>
+    <string name="coach_starter_next">What should I work on next?</string>
+    <string name="coach_input_label">Ask the coach</string>
+    <string name="coach_send">Send</string>
+    <string name="coach_stop">Stop</string>
+    <string name="coach_disclaimer">The coach can make mistakes and isn\'t medical advice.</string>
+    <string name="coach_thinking">Thinking…</string>
+    <string name="coach_tool_week">Checking your week…</string>
+    <string name="coach_tool_anchors">Looking at your anchors…</string>
+    <string name="coach_tool_logs">Reading your logs…</string>
+    <string name="coach_tool_runs">Looking at your runs…</string>
+    <string name="coach_tool_routines">Looking at your routines…</string>
+    <string name="coach_tool_other">Checking your data…</string>
+    <string name="coach_error_quota">The coach is busy right now. Try again in a minute.</string>
+    <string name="coach_error_network">Couldn\'t reach the coach. Check your connection.</string>
+    <string name="coach_error_blocked">The coach can\'t answer that one. Try asking another way.</string>
+    <string name="coach_error_too_many_tools">The coach got stuck looking things up. Try asking another way.</string>
+    <string name="coach_error_unknown">Something went wrong. Try again.</string>
+    <string name="coach_retry">Retry</string>
 </resources>

@@ -6,20 +6,30 @@ import com.ritune.core.models.coach.CoachInput
 import com.ritune.core.models.coach.CoachSetup
 import com.ritune.core.models.coach.ConversationId
 import com.ritune.core.models.coach.ModelEvent
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 /** Answers each request with the next scripted reply, in order. */
 class FakeCoachGateway : CoachGateway {
 
-    private val replies = ArrayDeque<List<ModelEvent>>()
+    private class Reply(
+        val events: List<ModelEvent>,
+        val gate: CompletableDeferred<Unit>?
+    )
+
+    private val replies = ArrayDeque<Reply>()
 
     var failure: CoachException? = null
     val sent = mutableListOf<CoachInput>()
     val closed = mutableListOf<ConversationId>()
 
     fun reply(vararg events: ModelEvent) {
-        replies += events.toList()
+        replies += Reply(events.toList(), gate = null)
+    }
+
+    fun replyAfter(gate: CompletableDeferred<Unit>, vararg events: ModelEvent) {
+        replies += Reply(events.toList(), gate)
     }
 
     override fun send(
@@ -30,7 +40,8 @@ class FakeCoachGateway : CoachGateway {
         sent += input
         failure?.let { throw it }
         val reply = checkNotNull(replies.removeFirstOrNull()) { "No reply scripted for $input" }
-        reply.forEach { emit(it) }
+        reply.gate?.await()
+        reply.events.forEach { emit(it) }
     }
 
     override fun close(conversation: ConversationId) {

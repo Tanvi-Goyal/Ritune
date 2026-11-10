@@ -2,6 +2,7 @@ package com.ritune.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.ritune.feature.coach.ui.navigation.CoachRoute
 import com.ritune.feature.onboarding.ui.navigation.OnboardingRoute
 import com.ritune.feature.player.ui.navigation.PlayerRoute
 import com.ritune.feature.player.ui.navigation.SummaryRoute
@@ -20,6 +21,10 @@ fun NavController.navigateToTopLevel(topLevelDestination: TopLevelDestination) {
 
 fun NavController.navigateToSettings() {
     navigate(SettingsGraph) { launchSingleTop = true }
+}
+
+fun NavController.navigateToCoach() {
+    navigate(CoachRoute) { launchSingleTop = true }
 }
 
 fun NavController.navigateToPlayer() {

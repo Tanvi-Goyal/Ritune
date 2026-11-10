@@ -20,6 +20,7 @@
         <activity
             android:name="com.ritune.coach.CoachDebugActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:label="@string/coach_debug_label"
             android:taskAffinity="com.ritune.coach"
             android:theme="@style/Theme.Ritune"

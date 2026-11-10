@@ -1,4 +1,4 @@
-package com.ritune.core.domain.usecases.coach
+package com.ritune.core.domain.usecases.coach.tools
 
 import com.ritune.core.domain.models.rhythm.WeekRhythm
 import kotlinx.datetime.DateTimeUnit
@@ -24,6 +24,7 @@ internal data class WeekRhythmResult(
 
 @Serializable
 internal data class AnchorResult(
+    val id: String,
     val name: String,
     @SerialName("usual_time") val usualTime: String?,
     @SerialName("target_time") val targetTime: String?,
@@ -48,6 +49,7 @@ internal fun WeekRhythm.toResult(weekEnd: LocalDate) = WeekRhythmResult(
     steadiestAnchor = steadiest?.name,
     anchors = anchors.map {
         AnchorResult(
+            id = it.anchor.id.value,
             name = it.anchor.name,
             usualTime = it.medianMinutes?.let { minutes -> LocalTime(minutes / 60, minutes % 60) }
                 ?.toString(),

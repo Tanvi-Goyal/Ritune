@@ -1,5 +1,6 @@
 package com.ritune.coach
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,6 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
  *
  * Validation runs need no taps:
  * `adb shell am start -S -n com.ritune/com.ritune.coach.CoachDebugActivity --es ask "How was my week?"`
+ * Start again without `-S` to ask a follow-up in the same conversation.
  */
 @AndroidEntryPoint
 class CoachDebugActivity : ComponentActivity() {
@@ -27,9 +29,7 @@ class CoachDebugActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         installDebugAppCheck()
 
-        if (savedInstanceState == null) {
-            intent.getStringExtra(EXTRA_ASK)?.let { viewModel.onEvent(CoachDebugEvent.Ask(it)) }
-        }
+        if (savedInstanceState == null) ask(intent)
 
         enableEdgeToEdge()
         setContent {
@@ -37,6 +37,15 @@ class CoachDebugActivity : ComponentActivity() {
                 Surface(Modifier.fillMaxSize()) { CoachDebugScreen(viewModel) }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        ask(intent)
+    }
+
+    private fun ask(intent: Intent) {
+        intent.getStringExtra(EXTRA_ASK)?.let { viewModel.onEvent(CoachDebugEvent.Ask(it)) }
     }
 
     private companion object {

@@ -47,6 +47,7 @@ class SettingsRepositoryImplTest {
             soundEnabled = false,
             countdownEnabled = false,
             theme = ThemeSetting.DARK,
+            coachEnabled = true,
         )
 
         repository.update { changed }

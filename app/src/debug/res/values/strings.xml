@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Debug-only AI lab. Kept out of :core:designsystem so none of it ships in release. -->
+<!-- Debug-only AI lab and coach. Kept out of :core:designsystem so none of it ships in release. -->
 <resources>
     <string name="ai_lab_label">Ritune AI lab</string>
     <string name="ai_lab_title">AI lab</string>
@@ -10,4 +10,16 @@
     <string name="ai_lab_send">Send</string>
     <string name="ai_lab_stop">Stop</string>
     <string name="ai_lab_stats">first chunk %1$s ms · total %2$d ms · tokens in %3$s / out %4$s / thinking %5$s</string>
+
+    <string name="coach_debug_label">Ritune coach (debug)</string>
+    <string name="coach_debug_title">Coach</string>
+    <string name="coach_debug_new_conversation">New conversation</string>
+    <string name="coach_debug_message">Ask about your rhythm</string>
+    <string name="coach_debug_tool_running">Checking your data (%1$s)…</string>
+    <string name="coach_debug_stats">%1$d tool calls · total %2$d ms · tokens in %3$d / out %4$d / thinking %5$d</string>
+    <string name="coach_debug_error_quota">The coach is busy. Try again in a minute.</string>
+    <string name="coach_debug_error_network">Couldn\'t reach the coach. Check your connection.</string>
+    <string name="coach_debug_error_blocked">The coach can\'t answer that one.</string>
+    <string name="coach_debug_error_too_many_tools">The coach got stuck looking things up. Try asking another way.</string>
+    <string name="coach_debug_error_unknown">Something went wrong. Try again.</string>
 </resources>

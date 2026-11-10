@@ -1,5 +1,6 @@
 package com.ritune.platform.ai.firebase
 
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.ai.type.Content
 import com.google.firebase.ai.type.ContentBlockedException
 import com.google.firebase.ai.type.FunctionCallPart
@@ -71,7 +72,11 @@ internal fun Throwable.toCoachError(): CoachError = when {
     this is PromptBlockedException || this is ResponseStoppedException ||
             this is ContentBlockedException -> CoachError.BLOCKED
 
-    this is RequestTimeoutException || causes().any { it is IOException } -> CoachError.NETWORK
+    this is RequestTimeoutException ||
+            causes().any {
+                it is IOException || it is FirebaseNetworkException
+            } -> CoachError.NETWORK
+
     else -> CoachError.UNKNOWN
 }
 

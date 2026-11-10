@@ -7,6 +7,8 @@ plugins {
 
 android {
     namespace = "com.ritune.platform.ai.firebase"
+
+    testOptions.unitTests.isReturnDefaultValues = true
 }
 
 dependencies {
@@ -15,5 +17,7 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.ai)
+    implementation(libs.firebase.auth)
+    implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.kotlinx.serialization.json)
 }

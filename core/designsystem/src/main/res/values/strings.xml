@@ -224,7 +224,7 @@
     <string name="coach_consent_title">Meet your rhythm coach</string>
     <string name="coach_consent_intro">Ask about your week and get short, plain answers based on your own logs.</string>
     <string name="coach_consent_shared_heading">What is shared</string>
-    <string name="coach_consent_shared">When you ask a question, the coach sends it to Google\'s Gemini through Firebase, with the parts of your anchors, logged times, routines and run history it needs to answer.</string>
+    <string name="coach_consent_shared">When you ask a question, the coach sends it to Google\'s Gemini through Firebase, with the parts of your anchors, logged times, routines and run history it needs to answer. Firebase gives this install an anonymous ID so it can limit how many questions each install sends.</string>
     <string name="coach_consent_use">Google may use these requests to improve its services, and people may review them. Don\'t type anything you wouldn\'t want shared.</string>
     <string name="coach_consent_off">Nothing is sent until you turn the coach on. You can turn it off any time in Settings.</string>
     <string name="coach_consent_turn_on">Turn on coach</string>

@@ -1,5 +1,6 @@
 package com.ritune.platform.ai.firebase
 
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.ai.type.FunctionCallPart
 import com.google.firebase.ai.type.FunctionResponsePart
 import com.google.firebase.ai.type.TextPart
@@ -24,7 +25,11 @@ class FirebaseMappersTest {
         )
 
         assertEquals(
-            ToolCall(id = "call-1", name = "get_week_rhythm", arguments = mapOf("week_offset" to "1", "label" to "wake")),
+            ToolCall(
+                id = "call-1",
+                name = "get_week_rhythm",
+                arguments = mapOf("week_offset" to "1", "label" to "wake")
+            ),
             part.toToolCall(),
         )
     }
@@ -40,7 +45,9 @@ class FirebaseMappersTest {
     @Test
     fun toolResults_becomeFunctionResponsesKeepingTheCallId() {
         val call = ToolCall(id = "call-1", name = "get_week_rhythm")
-        val content = CoachInput.ToolResults(listOf(ToolResult(call, """{"consistency_percent":80}"""))).toContent()
+        val content =
+            CoachInput.ToolResults(listOf(ToolResult(call, """{"consistency_percent":80}""")))
+                .toContent()
 
         assertEquals("user", content.role)
         val part = assertIs<FunctionResponsePart>(content.parts.single())
@@ -51,7 +58,15 @@ class FirebaseMappersTest {
 
     @Test
     fun ioFailureAnywhereInTheCauseChain_isNetwork() {
-        assertEquals(CoachError.NETWORK, IllegalStateException("wrapped", IOException("offline")).toCoachError())
+        assertEquals(
+            CoachError.NETWORK, IllegalStateException("wrapped", IOException("offline"))
+                .toCoachError()
+        )
         assertEquals(CoachError.UNKNOWN, IllegalStateException("bug").toCoachError())
+    }
+
+    @Test
+    fun signInWithoutNetwork_isNetwork() {
+        assertEquals(CoachError.NETWORK, FirebaseNetworkException("offline").toCoachError())
     }
 }

@@ -41,6 +41,7 @@ import com.ritune.core.models.ThemeSetting
 fun SettingsScreen(
     viewModel: SettingsViewModel,
     onBack: () -> Unit,
+    onOpenCoach: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -62,6 +63,7 @@ fun SettingsScreen(
         snackbarHostState = snackbarHostState,
         onEvent = viewModel::onEvent,
         onBack = onBack,
+        onOpenCoach = onOpenCoach,
         modifier = modifier,
     )
 }
@@ -73,10 +75,11 @@ fun SettingsContent(
     onEvent: (SettingsEvent) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    onOpenCoach: (() -> Unit)? = null,
 ) {
     Box(modifier.fillMaxSize()) {
         if (state is SettingsUiState.Content)
-            Body(state, onEvent, onBack)
+            Body(state, onEvent, onBack, onOpenCoach)
 
         RituneSnackbarHost(
             snackbarHostState,
@@ -92,6 +95,7 @@ private fun Body(
     state: SettingsUiState.Content,
     onEvent: (SettingsEvent) -> Unit,
     onBack: () -> Unit,
+    onOpenCoach: (() -> Unit)?,
 ) {
     val colors = MaterialTheme.colorScheme
     Column(
@@ -151,6 +155,23 @@ private fun Body(
             color = colors.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = Ritune.spacing.xs),
         )
+
+        if (onOpenCoach != null) {
+            SectionLabel(stringResource(R.string.settings_coach_heading))
+            RituneCard {
+                // Turning on goes through the coach's consent page instead of flipping here.
+                SwitchRow(
+                    label = stringResource(R.string.settings_coach),
+                    supportingText = stringResource(
+                        if (state.coach) R.string.settings_coach_on_hint else R.string.settings_coach_off_hint,
+                    ),
+                    checked = state.coach,
+                    onCheckedChange = { on ->
+                        if (on) onOpenCoach() else onEvent(SettingsEvent.CoachTurnedOff)
+                    },
+                )
+            }
+        }
 
         SectionLabel(stringResource(R.string.settings_general_heading))
         RituneCard {

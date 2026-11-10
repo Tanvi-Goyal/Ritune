@@ -27,6 +27,7 @@ import com.ritune.core.designsystem.TestTags
 import com.ritune.core.designsystem.TraceSections
 import com.ritune.core.designsystem.components.RituneCard
 import com.ritune.core.designsystem.components.RituneDivider
+import com.ritune.core.designsystem.components.SecondaryButton
 import com.ritune.core.designsystem.components.WeekBars
 import com.ritune.core.designsystem.endTraceOnFirstDraw
 import com.ritune.core.designsystem.theme.Ritune
@@ -38,13 +39,15 @@ import kotlin.math.roundToInt
 fun RhythmScreen(
     viewModel: RhythmViewModel,
     onOpenSettings: () -> Unit,
+    onOpenCoach: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     RhythmContent(
         state = state,
         onOpenSettings = onOpenSettings,
-        modifier = modifier
+        modifier = modifier,
+        onOpenCoach = onOpenCoach,
     )
 }
 
@@ -53,12 +56,14 @@ fun RhythmContent(
     state: RhythmUiState,
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
+    onOpenCoach: (() -> Unit)? = null,
 ) {
     when (state) {
         RhythmUiState.Loading -> Box(modifier.fillMaxSize())
         is RhythmUiState.Content -> RhythmBody(
             state,
             onOpenSettings,
+            onOpenCoach,
             modifier
         )
     }
@@ -68,6 +73,7 @@ fun RhythmContent(
 private fun RhythmBody(
     state: RhythmUiState.Content,
     onOpenSettings: () -> Unit,
+    onOpenCoach: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     val colors = MaterialTheme.colorScheme
@@ -136,6 +142,14 @@ private fun RhythmBody(
                     steadiestName = summary.steadiestName
                 )
             }
+        }
+
+        if (onOpenCoach != null) {
+            SecondaryButton(
+                text = stringResource(R.string.rhythm_ask_coach),
+                onClick = onOpenCoach,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }

@@ -10,12 +10,16 @@ import kotlinx.serialization.Serializable
 @Serializable
 data object RhythmRoute
 
-fun NavGraphBuilder.rhythmScreen(onOpenSettings: () -> Unit) {
+fun NavGraphBuilder.rhythmScreen(
+    onOpenSettings: () -> Unit,
+    onOpenCoach: (() -> Unit)?
+) {
     composable<RhythmRoute> {
         val viewModel: RhythmViewModel = hiltViewModel()
         RhythmScreen(
             viewModel = viewModel,
             onOpenSettings = onOpenSettings,
+            onOpenCoach = onOpenCoach,
         )
     }
 }

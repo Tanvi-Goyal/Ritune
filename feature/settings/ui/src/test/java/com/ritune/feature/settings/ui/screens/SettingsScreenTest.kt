@@ -40,7 +40,7 @@ class SettingsScreenTest {
             DeleteAllData(resetter),
         )
         composeTestRule.setContent {
-            RituneTheme { SettingsScreen(viewModel, onBack = {}) }
+            RituneTheme { SettingsScreen(viewModel, onBack = {}, onOpenCoach = null) }
         }
         composeTestRule.onNodeWithText(string(R.string.settings_delete)).performScrollTo().performClick()
         composeTestRule.onNodeWithText(string(R.string.settings_delete_confirm)).performClick()

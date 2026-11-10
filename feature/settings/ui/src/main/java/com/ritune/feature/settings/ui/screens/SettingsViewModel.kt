@@ -72,6 +72,10 @@ class SettingsViewModel @Inject constructor(
                 it.copy(countdownEnabled = event.enabled)
             }
 
+            SettingsEvent.CoachTurnedOff -> change {
+                it.copy(coachEnabled = false)
+            }
+
             SettingsEvent.ThemeClicked -> local.update {
                 it.copy(themeSheetOpen = true)
             }
@@ -130,6 +134,7 @@ class SettingsViewModel @Inject constructor(
             sound = settings.soundEnabled,
             countdown = settings.countdownEnabled,
             theme = settings.theme,
+            coach = settings.coachEnabled,
             routineActive = player is PlayerState.Running || player is PlayerState.Paused,
             themeSheetOpen = local.themeSheetOpen,
             confirmingDelete = local.confirmingDelete,

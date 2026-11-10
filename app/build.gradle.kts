@@ -61,6 +61,9 @@ android {
         }
     }
 
+    sourceSets["release"].kotlin.srcDir("src/withoutCoach/kotlin")
+    sourceSets["benchmark"].kotlin.srcDir("src/withoutCoach/kotlin")
+
     buildFeatures {
         compose = true
     }
@@ -135,6 +138,7 @@ dependencies {
 
     // AI lab and coach, debug builds only until the coach ships, so release stays offline.
     debugImplementation(project(":platform:ai-firebase"))
+    debugImplementation(project(":feature:coach:ui"))
     debugImplementation(platform(libs.firebase.bom))
     debugImplementation(libs.firebase.ai)
     debugImplementation(libs.firebase.appcheck.debug)

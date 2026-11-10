@@ -46,13 +46,14 @@ class FirebaseCoachGateway @Inject constructor(
         var usage = CoachUsage()
         chat.sendMessageStream(input.toContent()).collect { response ->
             response.text?.takeIf { it.isNotEmpty() }?.let { emit(ModelEvent.Text(it)) }
-            response.functionCalls.forEach { emit(ModelEvent.ToolCallRequest(it.toToolCall())) }
+            response.functionCalls.forEach {
+                emit(ModelEvent.ToolCallRequest(it.toToolCall())) }
             response.usageMetadata?.let { usage = it.toCoachUsage() }
         }
+
         emit(ModelEvent.Finished(usage))
     }.catch { e ->
         if (e is CancellationException) throw e
-        // The domain only sees the error kind, so this is the one place the cause is visible.
         logger.error(TAG, "Gemini request failed", e)
         throw CoachException(e.toCoachError(), e)
     }.flowOn(io) // Firebase reads its config from disk the first time a model is built.

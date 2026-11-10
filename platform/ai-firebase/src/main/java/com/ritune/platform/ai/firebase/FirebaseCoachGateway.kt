@@ -32,7 +32,15 @@ import kotlin.coroutines.cancellation.CancellationException
 class FirebaseCoachGateway @Inject constructor(
     @Dispatcher(RituneDispatchers.IO) private val io: CoroutineDispatcher,
     private val logger: Logger,
+    private val appCheckSetup: AppCheckSetup,
 ) : CoachGateway {
+
+    // Firebase starts on the first coach request, not at app start,
+    // so cold start doesn't pay for it.
+    private val firebase by lazy {
+        appCheckSetup.install()
+        Firebase.ai(backend = GenerativeBackend.googleAI())
+    }
 
     // Each Chat resends its conversation's earlier turns, including the tool calls and results.
     private val chats = ConcurrentHashMap<ConversationId, Chat>()
@@ -46,24 +54,22 @@ class FirebaseCoachGateway @Inject constructor(
         var usage = CoachUsage()
         chat.sendMessageStream(input.toContent()).collect { response ->
             response.text?.takeIf { it.isNotEmpty() }?.let { emit(ModelEvent.Text(it)) }
-            response.functionCalls.forEach {
-                emit(ModelEvent.ToolCallRequest(it.toToolCall())) }
+            response.functionCalls.forEach { emit(ModelEvent.ToolCallRequest(it.toToolCall())) }
             response.usageMetadata?.let { usage = it.toCoachUsage() }
         }
-
         emit(ModelEvent.Finished(usage))
     }.catch { e ->
         if (e is CancellationException) throw e
         logger.error(TAG, "Gemini request failed", e)
         throw CoachException(e.toCoachError(), e)
-    }.flowOn(io) // Firebase reads its config from disk the first time a model is built.
+    }.flowOn(io) // Starting Firebase reads its config from disk.
 
     override fun close(conversation: ConversationId) {
         chats.remove(conversation)
     }
 
     private fun model(setup: CoachSetup) =
-        Firebase.ai(backend = GenerativeBackend.googleAI()).generativeModel(
+        firebase.generativeModel(
             modelName = MODEL,
             tools = listOf(Tool.functionDeclarations(setup.tools.map { it.toDeclaration() })),
             systemInstruction = content { text(setup.instructions) },
@@ -72,6 +78,7 @@ class FirebaseCoachGateway @Inject constructor(
 
     private companion object {
         const val TAG = "CoachGateway"
+
         // Fastest and steadiest in the Step 1 lab runs; revisit once tools are measured.
         const val MODEL = "gemini-3.5-flash-lite"
         const val TIMEOUT_MILLIS = 60_000L

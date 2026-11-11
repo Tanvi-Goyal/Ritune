@@ -32,9 +32,16 @@ internal fun CoachTool.toDeclaration() = FunctionDeclaration(
     parameters.filterNot { it.required }.map { it.name },
 )
 
-private fun ToolParameter.toSchema() = when (type) {
+internal fun ToolParameter.toSchema(): Schema = when (type) {
     ToolParameterType.INTEGER -> Schema.integer(description)
     ToolParameterType.STRING -> Schema.string(description)
+    ToolParameterType.OBJECT_LIST -> Schema.array(
+        Schema.obj(
+            fields.associate { it.name to it.toSchema() },
+            fields.filterNot { it.required }.map { it.name },
+        ),
+        description,
+    )
 }
 
 internal fun FunctionCallPart.toToolCall() = ToolCall(

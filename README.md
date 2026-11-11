@@ -23,7 +23,8 @@ Ritune is built around one loop. Log the day, see the pattern, then change it wi
 - **Routines**: create, edit and reorder steps. A routine can be linked to an anchor, and starting it logs that anchor.
 - **Guided player**: step timer with pause, resume, skip and stop. It survives the screen turning off and process backgrounding, and has an ongoing notification with actions.
 - **Cues**: a haptic pattern, a bell and the spoken step name at each step, a 3-2-1 countdown, and a completion chime. Each one can be turned on or off, and changes apply mid-run.
-- **Settings**: cue toggles, theme, and delete all data.
+- **Rhythm coach**: ask about your week in plain words. The coach reads your logs, routines and runs through tools, and can propose a new target, a new routine or a fixed log. Nothing changes until you tap Apply, and Undo puts it back. It is off by default and asks for consent first.
+- **Settings**: cue toggles, the coach, theme, and delete all data.
 - **Starter content**: six circadian anchors, from a steady wake time to a steady bedtime, and seven short built-in routines (morning start, light walk, 20-minute strength, close the kitchen, evening reset, wind down, focus block). All are seeded from `DefaultCatalog` on first launch and after "Delete all data".
 
 ## Tech stack
@@ -37,6 +38,7 @@ Ritune is built around one loop. Log the day, see the pattern, then change it wi
 | Persistence | Room 3 (relational data), Preferences DataStore (settings, onboarding) |
 | Navigation | Navigation Compose with type-safe `@Serializable` routes, nested graphs and deep links |
 | Platform | Foreground service (`specialUse`), wake lock, notifications with a chronometer, `Vibrator`, `SoundPool`, `TextToSpeech`, audio focus |
+| AI | Firebase AI Logic with Gemini (`gemini-3.5-flash-lite`), function calling for read and write tools, App Check with Play Integrity, anonymous Auth for per-install limits. Firebase starts on the first coach request, not at app launch |
 | Time | `kotlinx-datetime`, `kotlin.time`, and monotonic time (`elapsedRealtime`) for timers |
 | Testing | JUnit, coroutines-test and Turbine with shared fakes; Robolectric Compose tests; Roborazzi screenshot tests; Room, navigation, service and end-to-end tests on a Gradle Managed Device; Kover coverage. See [docs/testing.md](docs/testing.md) |
 | CI/CD | GitHub Actions: lint, unit, screenshot and device tests, coverage and a debug build on every PR. Running the Release workflow with a version builds a signed, R8-optimized APK and AAB, uploads the AAB to Play internal testing as a draft, and publishes a tagged GitHub Release. Dependabot keeps dependencies current |
@@ -57,6 +59,7 @@ flowchart TD
         routine[routine]
         player[player]
         settings[settings]
+        coach[coach]
     end
 
     subgraph core
@@ -70,6 +73,7 @@ flowchart TD
     end
 
     platform[":platform:android<br/>engine · service · cues · notifications"]
+    ai[":platform:ai-firebase<br/>Gemini gateway · App Check"]
 
     app --> features
     app --> data
@@ -81,6 +85,8 @@ flowchart TD
     data --> datastore
     platform --> domain
     platform --> navigation
+    app --> ai
+    ai --> domain
     domain --> models
     database --> models
     datastore --> models
@@ -92,6 +98,7 @@ flowchart TD
 | `:core:domain` | Use cases, the player reducer, and **ports** (`PlayerController`, `CuePlayer`, `RunRecorder`, repositories) | Data, platform, UI |
 | `:core:data` | Implements the repositories on Room and DataStore, and maps entities to models | Features, platform |
 | `:platform:android` | Implements the player and cue ports with Android services | Features, `:core:data` |
+| `:platform:ai-firebase` | Implements the `CoachGateway` port with Firebase AI Logic | Features, `:core:data` |
 | `:feature:*:ui` | Compose screens and ViewModels, one module per feature | Other features, data, platform |
 | `:app` | Wires everything together: Hilt graph, navigation host, theme | n/a |
 
@@ -162,6 +169,8 @@ sequenceDiagram
 | Ports in the domain (`PlayerController`, `CuePlayer`, `RunRecorder`) | Features never see Android services, and the platform can be swapped or faked |
 | One module per feature, features never depend on each other | Navigation between features is wired in `:app` through callbacks |
 | `specialUse` foreground service type | The honest category for a user-started guided timer on Android 14+ |
+| The coach's write tools only propose; the user applies | The model never changes data on its own. A prompt injection in a routine name can at most produce a card the user declines |
+| Tools return computed numbers, not raw rows | The coach quotes the same consistency and durations the Rhythm screen shows, instead of doing maths itself |
 
 ## Project structure
 
@@ -178,11 +187,26 @@ core/
   testing/              Shared fakes, rules and test data for every module's tests
   screenshot-testing/   Roborazzi capture helpers for Compose screenshot tests
 platform/android/       PlayerEngine, PlayerService, notifications, cues/
-feature/<name>/ui/      today · rhythm · routine · player · settings · onboarding
+platform/ai-firebase/   CoachGateway on Firebase AI Logic, App Check setup
+feature/<name>/ui/      today · rhythm · routine · player · settings · onboarding · coach
 build-logic/            Gradle convention plugins shared by every module
 journeys/               Release journeys run on an emulator before each release
 docs/screenshots/       Images used in this README
 ```
+
+## Rhythm coach
+
+<p>
+  <img src="docs/screenshots/coach_proposal.png" width="260" />
+  &nbsp;
+  <img src="docs/screenshots/coach_applied.png" width="260" />
+</p>
+
+The coach answers questions about your rhythm with Gemini through Firebase AI Logic. Each turn is an agent loop in `RunCoachTurn`: the model calls read tools (week rhythm, anchors, logs, runs, routines), the app runs them on the device and sends back computed results, and the model answers from those numbers.
+
+Changes go through write tools that only propose. The loop pauses on a card until you tap Apply or Decline, Apply saves through the same use cases the screens use, and the model is told what you decided. Undo puts the change back and the next question tells the model it was undone.
+
+Domain code talks to the model only through the `CoachGateway` port, so tests use a fake gateway and CI never calls a real model.
 
 ## Design system
 

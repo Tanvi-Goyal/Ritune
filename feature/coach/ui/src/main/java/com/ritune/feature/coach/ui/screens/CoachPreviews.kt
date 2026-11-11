@@ -61,7 +61,11 @@ internal val previewLogProposal = Proposal.LogCorrection(
     from = LocalTime(7, 40),
     to = LocalTime(7, 10),
 )
-private val previewMoveQuestion = CoachMessage(id = 0, fromUser = true, text = "Move screens off to 22:00")
+internal val previewMoveQuestion = CoachMessage(id = 0, fromUser = true, text = "Move screens off to 22:00")
+internal val previewRoutineQuestion =
+    CoachMessage(id = 0, fromUser = true, text = "Build me a short wind-down routine for screens off")
+internal val previewLogQuestion =
+    CoachMessage(id = 0, fromUser = true, text = "I woke up at 7:10 yesterday, please fix that log")
 
 @Composable
 private fun Preview(state: CoachUiState) {
@@ -114,7 +118,7 @@ private fun TargetProposalPreview() = Preview(
 @Composable
 private fun RoutineProposalPreview() = Preview(
     CoachUiState.Chat(
-        items = listOf(previewMoveQuestion, ProposalCard(1, previewRoutineProposal, ProposalStatus.Pending)),
+        items = listOf(previewRoutineQuestion, ProposalCard(1, previewRoutineProposal, ProposalStatus.Pending)),
         answering = true,
     ),
 )
@@ -124,7 +128,7 @@ private fun RoutineProposalPreview() = Preview(
 private fun AppliedLogProposalPreview() = Preview(
     CoachUiState.Chat(
         items = listOf(
-            previewMoveQuestion,
+            previewLogQuestion,
             ProposalCard(1, previewLogProposal, ProposalStatus.Applied(AppliedChange.LogCorrected(previewLogProposal))),
             CoachMessage(id = 2, fromUser = false, text = "Done, your wake log on Monday now says 07:10."),
         ),

@@ -7,8 +7,14 @@ import com.google.firebase.ai.type.TextPart
 import com.ritune.core.models.coach.CoachError
 import com.ritune.core.models.coach.CoachInput
 import com.ritune.core.models.coach.ToolCall
+import com.ritune.core.models.coach.ToolParameter
+import com.ritune.core.models.coach.ToolParameterType
 import com.ritune.core.models.coach.ToolResult
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.add
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import org.junit.Test
 import java.io.IOException
 import kotlin.test.assertEquals
@@ -32,6 +38,36 @@ class FirebaseMappersTest {
             ),
             part.toToolCall(),
         )
+    }
+
+    @Test
+    fun listArgument_arrivesAsItsJsonText() {
+        val steps = buildJsonArray { add(buildJsonObject { put("title", "Read"); put("duration_seconds", 600) }) }
+        val part = FunctionCallPart(name = "propose_routine", args = mapOf("steps" to steps), id = "call-1")
+
+        assertEquals("""[{"title":"Read","duration_seconds":600}]""", part.toToolCall().arguments["steps"])
+    }
+
+    @Test
+    fun objectListParameter_becomesAnArrayOfObjectsWithItsRequiredFields() {
+        val parameter = ToolParameter(
+            name = "steps",
+            description = "The steps.",
+            type = ToolParameterType.OBJECT_LIST,
+            required = true,
+            fields = listOf(
+                ToolParameter("title", "What to do.", ToolParameterType.STRING, required = true),
+                ToolParameter("note", "Optional.", ToolParameterType.STRING, required = false),
+            ),
+        )
+
+        val schema = parameter.toSchema()
+
+        assertEquals("ARRAY", schema.type)
+        val item = checkNotNull(schema.items)
+        assertEquals("OBJECT", item.type)
+        assertEquals(setOf("title", "note"), item.properties?.keys)
+        assertEquals(listOf("title"), item.required)
     }
 
     @Test

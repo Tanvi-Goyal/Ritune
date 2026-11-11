@@ -30,7 +30,9 @@ class AnchorEventsTool @Inject constructor(
 
         val now = timekeeper.now().wall
         val zone = timekeeper.timeZone()
-        val from = now.toLocalDateTime(zone).date.minus(days - 1, DateTimeUnit.DAY).atStartOfDayIn(zone)
+        val from = now.toLocalDateTime(zone).date
+            .minus(days - 1, DateTimeUnit.DAY).atStartOfDayIn(zone)
+
         val logs = events.observeBetween(from, now).first().filter { it.anchorId == anchor.id }
         return toolJson.encodeToString(logs.toResult(anchor, days))
     }
@@ -43,7 +45,8 @@ class AnchorEventsTool @Inject constructor(
         val DEFINITION = CoachTool(
             name = "get_anchor_events",
             description = "Every time the user logged one anchor over the last few days, oldest " +
-                "first, as the local date and time it was logged.",
+                "first, as the local date and time it was logged. Use a log's id with " +
+                    "propose_log_correction.",
             parameters = listOf(
                 ToolParameter(
                     name = ANCHOR_ID,

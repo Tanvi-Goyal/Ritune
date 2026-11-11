@@ -12,24 +12,22 @@ data class ToolParameter(
     val description: String,
     val type: ToolParameterType,
     val required: Boolean,
+    val fields: List<ToolParameter> = emptyList(),
 )
 
-enum class ToolParameterType { INTEGER, STRING }
+enum class ToolParameterType { INTEGER, STRING, OBJECT_LIST }
 
-/** The model's request to run [name]. Argument values arrive as their JSON text. */
 data class ToolCall(
     val id: String?,
     val name: String,
     val arguments: Map<String, String> = emptyMap(),
 )
 
-/** What the app sends back for [call]: a JSON object computed by code. */
 data class ToolResult(
     val call: ToolCall,
     val json: String,
 )
 
-/** The fixed part of every request: the system instructions and the tools on offer. */
 data class CoachSetup(
     val instructions: String,
     val tools: List<CoachTool>,

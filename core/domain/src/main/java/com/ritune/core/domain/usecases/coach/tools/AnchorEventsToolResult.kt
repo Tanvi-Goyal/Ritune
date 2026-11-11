@@ -15,14 +15,20 @@ internal data class AnchorEventsResult(
 )
 
 @Serializable
-internal data class LogItem(val date: String, val time: String)
+internal data class LogItem(val id: String, val date: String, val time: String)
 
-// Each log keeps the time zone it was logged in, so a trip abroad shows the time the user saw.
 internal fun List<AnchorEvent>.toResult(anchor: Anchor, days: Int) = AnchorEventsResult(
     anchor = anchor.name,
     days = days,
     logs = sortedBy { it.occurredAt }.map { event ->
-        val local = event.occurredAt.toLocalDateTime(UtcOffset(seconds = event.utcOffsetSeconds).asTimeZone())
-        LogItem(local.date.toString(), local.time.toString().take(5))
+        val local = event.occurredAt.toLocalDateTime(
+            UtcOffset(
+                seconds = event.utcOffsetSeconds
+            ).asTimeZone()
+        )
+
+        LogItem(event.id.value,
+            local.date.toString(),
+            local.time.toString().take(5))
     },
 )

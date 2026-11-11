@@ -2,6 +2,7 @@ package com.ritune.feature.settings.ui.screens
 
 import app.cash.turbine.test
 import com.ritune.core.domain.usecases.DeleteAllData
+import com.ritune.core.domain.usecases.coach.TurnOffCoach
 import com.ritune.core.domain.usecases.player.ObservePlayerState
 import com.ritune.core.domain.usecases.settings.ObserveSettings
 import com.ritune.core.domain.usecases.settings.UpdateSettings
@@ -9,6 +10,7 @@ import com.ritune.core.models.AppSettings
 import com.ritune.core.models.ThemeSetting
 import com.ritune.core.models.player.PlayerState
 import com.ritune.core.testing.data.aSession
+import com.ritune.core.testing.ports.FakeCoachGateway
 import com.ritune.core.testing.ports.FakeDataResetter
 import com.ritune.core.testing.ports.FakePlayerController
 import com.ritune.core.testing.repository.FakeSettingsRepository
@@ -48,13 +50,15 @@ class SettingsViewModelTest {
     )
     private val player = FakePlayerController()
     private val resetter = FakeDataResetter()
+    private val gateway = FakeCoachGateway()
 
     private fun TestScope.newViewModel(): SettingsViewModel {
         val viewModel = SettingsViewModel(
             ObserveSettings(settings),
             UpdateSettings(settings),
             ObservePlayerState(player),
-            DeleteAllData(resetter),
+            DeleteAllData(resetter, gateway),
+            TurnOffCoach(settings, gateway),
         )
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.state.collect() }
         return viewModel
@@ -79,7 +83,7 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun coachTurnedOff_savesAndShowsItOff() = runTest {
+    fun coachTurnedOff_savesShowsItOffAndForgetsUser() = runTest {
         settings.settings.value = settings.settings.value.copy(coachEnabled = true)
         val viewModel = newViewModel()
 
@@ -88,6 +92,7 @@ class SettingsViewModelTest {
 
         assertFalse(settings.settings.value.coachEnabled)
         assertFalse(viewModel.content().coach)
+        assertEquals(1, gateway.forgotUser)
     }
 
     @Test
@@ -151,7 +156,7 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun confirmDelete_success_resetsDataAndReportsDeleted() = runTest {
+    fun confirmDelete_success_resetsDataForgetsCoachUserAndReportsDeleted() = runTest {
         val viewModel = newViewModel()
         viewModel.onEvent(SettingsEvent.RequestDelete)
 
@@ -160,6 +165,7 @@ class SettingsViewModelTest {
             assertEquals(SettingsEffect.DataDeleted, awaitItem())
         }
         assertEquals(1, resetter.resetCount)
+        assertEquals(1, gateway.forgotUser)
         assertFalse(viewModel.content().confirmingDelete)
         assertFalse(viewModel.content().deleting)
     }

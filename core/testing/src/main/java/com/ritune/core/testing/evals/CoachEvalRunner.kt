@@ -172,6 +172,8 @@ private class RecordingGateway(private val real: CoachGateway) : CoachGateway {
     }
 
     override fun close(conversation: ConversationId) = real.close(conversation)
+
+    override suspend fun forgetUser() = real.forgetUser()
 }
 
 data class TurnResult(

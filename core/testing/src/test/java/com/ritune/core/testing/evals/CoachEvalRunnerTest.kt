@@ -150,6 +150,8 @@ class CoachEvalRunnerTest {
             }
 
             override fun close(conversation: ConversationId) = gateway.close(conversation)
+
+            override suspend fun forgetUser() = gateway.forgetUser()
         }
         callWeekRhythm()
         gateway.reply(ModelEvent.Text("A steady week."), ModelEvent.Finished(CoachUsage()))

@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -75,6 +76,19 @@ class FirebaseCoachGateway @Inject constructor(
 
     override fun close(conversation: ConversationId) {
         chats.remove(conversation)
+    }
+
+    override suspend fun forgetUser() = withContext(io) {
+        val auth = Firebase.auth(app)
+        val user = auth.currentUser ?: return@withContext
+        try {
+            user.delete().await()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            logger.error(TAG, "Couldn't delete the anonymous user", e)
+        }
+        auth.signOut()
     }
 
     private suspend fun signIn() {

@@ -10,9 +10,11 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ritune.core.designsystem.R
 import com.ritune.core.designsystem.theme.RituneTheme
 import com.ritune.core.domain.usecases.DeleteAllData
+import com.ritune.core.domain.usecases.coach.TurnOffCoach
 import com.ritune.core.domain.usecases.player.ObservePlayerState
 import com.ritune.core.domain.usecases.settings.ObserveSettings
 import com.ritune.core.domain.usecases.settings.UpdateSettings
+import com.ritune.core.testing.ports.FakeCoachGateway
 import com.ritune.core.testing.ports.FakeDataResetter
 import com.ritune.core.testing.ports.FakePlayerController
 import com.ritune.core.testing.repository.FakeSettingsRepository
@@ -28,6 +30,7 @@ class SettingsScreenTest {
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     private val resetter = FakeDataResetter()
+    private val gateway = FakeCoachGateway()
 
     private fun string(id: Int) = composeTestRule.activity.getString(id)
 
@@ -37,7 +40,8 @@ class SettingsScreenTest {
             ObserveSettings(settings),
             UpdateSettings(settings),
             ObservePlayerState(FakePlayerController()),
-            DeleteAllData(resetter),
+            DeleteAllData(resetter, gateway),
+            TurnOffCoach(settings, gateway),
         )
         composeTestRule.setContent {
             RituneTheme { SettingsScreen(viewModel, onBack = {}, onOpenCoach = null) }

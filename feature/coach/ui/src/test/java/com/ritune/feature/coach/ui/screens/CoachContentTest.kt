@@ -11,6 +11,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ritune.core.designsystem.R
 import com.ritune.core.designsystem.theme.RituneTheme
 import com.ritune.core.domain.usecases.coach.tools.RoutinesTool
+import com.ritune.core.models.coach.AppliedChange
 import com.ritune.core.models.coach.CoachError
 import org.junit.Rule
 import org.junit.Test
@@ -71,7 +72,7 @@ class CoachContentTest {
     fun answering_showsTheToolAndStop() {
         setContent(
             CoachUiState.Chat(
-                messages = listOf(previewQuestion),
+                items = listOf(previewQuestion),
                 answering = true,
                 activeTool = RoutinesTool.DEFINITION.name,
             ),
@@ -87,7 +88,7 @@ class CoachContentTest {
     fun error_showsItsMessageAndRetries() {
         setContent(
             CoachUiState.Chat(
-                messages = listOf(previewQuestion),
+                items = listOf(previewQuestion),
                 error = CoachError.QUOTA_EXCEEDED
             )
         )
@@ -100,13 +101,7 @@ class CoachContentTest {
 
     @Test
     fun answeringBeforeAnyText_showsThinking() {
-        val emptyAnswer = CoachMessage(id = 1, fromUser = false, text = "")
-        setContent(
-            CoachUiState.Chat(
-                messages = listOf(previewQuestion, emptyAnswer),
-                answering = true
-            )
-        )
+        setContent(CoachUiState.Chat(items = listOf(previewQuestion), answering = true))
 
         composeTestRule.onNodeWithText(string(R.string.coach_thinking)).assertIsDisplayed()
     }
@@ -115,11 +110,51 @@ class CoachContentTest {
     fun streamingText_hidesThinking() {
         setContent(
             CoachUiState.Chat(
-                messages = listOf(previewQuestion, previewAnswer),
+                items = listOf(previewQuestion, previewAnswer),
                 answering = true
             )
         )
 
         composeTestRule.onNodeWithText(string(R.string.coach_thinking)).assertDoesNotExist()
+    }
+
+    @Test
+    fun pendingProposal_showsTheChangeAndItsButtons_notThinking() {
+        setContent(
+            CoachUiState.Chat(
+                items = listOf(previewQuestion, ProposalCard(1, previewTargetProposal, ProposalStatus.Pending)),
+                answering = true,
+            ),
+        )
+
+        composeTestRule.onNodeWithText(string(R.string.coach_proposal_target_title)).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screens off", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText(string(R.string.coach_thinking)).assertDoesNotExist()
+        composeTestRule.onNodeWithText(string(R.string.coach_proposal_apply)).performClick()
+        composeTestRule.onNodeWithText(string(R.string.coach_proposal_decline)).performClick()
+
+        assertEquals(listOf(CoachUiEvent.Apply, CoachUiEvent.Decline), events)
+    }
+
+    @Test
+    fun appliedProposal_offersUndo() {
+        val applied = ProposalStatus.Applied(AppliedChange.TargetChanged(previewTargetProposal))
+        setContent(CoachUiState.Chat(items = listOf(previewQuestion, ProposalCard(7, previewTargetProposal, applied))))
+
+        composeTestRule.onNodeWithText(string(R.string.coach_proposal_apply)).assertDoesNotExist()
+        composeTestRule.onNodeWithText(string(R.string.coach_proposal_undo)).performClick()
+
+        assertEquals(listOf<CoachUiEvent>(CoachUiEvent.Undo(7)), events)
+    }
+
+    @Test
+    fun routineProposal_listsEveryStep() {
+        setContent(
+            CoachUiState.Chat(items = listOf(previewQuestion, ProposalCard(1, previewRoutineProposal, ProposalStatus.Pending))),
+        )
+
+        previewRoutineProposal.steps.forEach {
+            composeTestRule.onNodeWithText(it.title, substring = true).assertExists()
+        }
     }
 }

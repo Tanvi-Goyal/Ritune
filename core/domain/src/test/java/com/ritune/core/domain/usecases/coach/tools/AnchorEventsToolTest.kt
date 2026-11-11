@@ -22,17 +22,33 @@ class AnchorEventsToolTest {
 
     // The fake clock's "now" is Monday 2026-01-05 08:00 UTC.
     private val events = FakeAnchorEventRepository()
-    private val tool = AnchorEventsTool(ObserveAnchors(FakeAnchorRepository()), events, FakeTimekeeper())
+    private val tool =
+        AnchorEventsTool(ObserveAnchors(FakeAnchorRepository()), events, FakeTimekeeper())
     private val wakeId = DefaultCatalog.wake.id.value
 
     private suspend fun anchorEvents(vararg args: Pair<String, String>): JsonObject {
-        val call = ToolCall(id = "1", name = AnchorEventsTool.DEFINITION.name, arguments = args.toMap())
+        val call =
+            ToolCall(id = "1", name = AnchorEventsTool.DEFINITION.name, arguments = args.toMap())
         return Json.parseToJsonElement(tool.run(call)).jsonObject
     }
 
     private fun JsonObject.logs() = this["logs"]!!.jsonArray.map {
         val log = it.jsonObject
         "${log["date"]!!.jsonPrimitive.content} ${log["time"]!!.jsonPrimitive.content}"
+    }
+
+    @Test
+    fun eachLog_carriesItsIdForCorrections() = runTest {
+        events.events.value = listOf(
+            anAnchorEvent(
+                id = "log-1",
+                occurredAt = Instant.parse("2026-01-05T06:55:00Z")
+            )
+        )
+
+        val log = anchorEvents("anchor_id" to wakeId)["logs"]!!.jsonArray.single().jsonObject
+
+        assertEquals("log-1", log["id"]!!.jsonPrimitive.content)
     }
 
     @Test
@@ -57,7 +73,10 @@ class AnchorEventsToolTest {
     @Test
     fun logsShowTheTimeZoneTheyWereLoggedIn() = runTest {
         events.events.value = listOf(
-            anAnchorEvent(occurredAt = Instant.parse("2026-01-04T23:30:00Z"), utcOffsetSeconds = 5 * 3600 + 1800),
+            anAnchorEvent(
+                occurredAt = Instant.parse("2026-01-04T23:30:00Z"),
+                utcOffsetSeconds = 5 * 3600 + 1800
+            ),
         )
 
         val result = anchorEvents("anchor_id" to wakeId, "days" to "2")

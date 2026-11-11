@@ -224,7 +224,7 @@
     <string name="coach_consent_title">Meet your rhythm coach</string>
     <string name="coach_consent_intro">Ask about your week and get short, plain answers based on your own logs.</string>
     <string name="coach_consent_shared_heading">What is shared</string>
-    <string name="coach_consent_shared">When you ask a question, the coach sends it to Google\'s Gemini through Firebase, with the parts of your anchors, logged times, routines and run history it needs to answer.</string>
+    <string name="coach_consent_shared">When you ask a question, the coach sends it to Google\'s Gemini through Firebase, with the parts of your anchors, logged times, routines and run history it needs to answer. Firebase gives this install an anonymous ID so it can limit how many questions each install sends.</string>
     <string name="coach_consent_use">Google may use these requests to improve its services, and people may review them. Don\'t type anything you wouldn\'t want shared.</string>
     <string name="coach_consent_off">Nothing is sent until you turn the coach on. You can turn it off any time in Settings.</string>
     <string name="coach_consent_turn_on">Turn on coach</string>
@@ -251,4 +251,20 @@
     <string name="coach_error_too_many_tools">The coach got stuck looking things up. Try asking another way.</string>
     <string name="coach_error_unknown">Something went wrong. Try again.</string>
     <string name="coach_retry">Retry</string>
+    <string name="coach_proposal_target_title">Change a target</string>
+    <string name="coach_proposal_target_change">%1$s: %2$s → %3$s</string>
+    <string name="coach_proposal_no_target">no target</string>
+    <string name="coach_proposal_routine_title">New routine</string>
+    <string name="coach_proposal_routine_anchor">Starts with %1$s</string>
+    <string name="coach_proposal_routine_step">%1$s · %2$s</string>
+    <string name="coach_proposal_routine_total">Total %1$s</string>
+    <string name="coach_proposal_log_title">Fix a log</string>
+    <string name="coach_proposal_log_change">%1$s on %2$s: %3$s → %4$s</string>
+    <string name="coach_proposal_apply">Apply</string>
+    <string name="coach_proposal_decline">Decline</string>
+    <string name="coach_proposal_applied">Applied</string>
+    <string name="coach_proposal_declined">Declined</string>
+    <string name="coach_proposal_not_applied">Couldn\'t apply this change</string>
+    <string name="coach_proposal_undone">Undone</string>
+    <string name="coach_proposal_undo">Undo</string>
 </resources>

@@ -2,6 +2,7 @@ package com.ritune.ailab
 
 import android.content.Intent
 import android.os.Bundle
+import com.google.firebase.FirebaseApp
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -26,6 +27,7 @@ class AiLabActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
         installDebugAppCheck()
 
         if (savedInstanceState == null) intent.toRunBatch()?.let(viewModel::onEvent)

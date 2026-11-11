@@ -61,8 +61,8 @@ android {
         }
     }
 
-    sourceSets["release"].kotlin.srcDir("src/withoutCoach/kotlin")
-    sourceSets["benchmark"].kotlin.srcDir("src/withoutCoach/kotlin")
+    sourceSets["release"].kotlin.srcDir("src/playIntegrity/kotlin")
+    sourceSets["benchmark"].kotlin.srcDir("src/playIntegrity/kotlin")
 
     buildFeatures {
         compose = true
@@ -111,6 +111,8 @@ dependencies {
     implementation(project(":feature:today:ui"))
     implementation(project(":feature:player:ui"))
     implementation(project(":feature:settings:ui"))
+    implementation(project(":feature:coach:ui"))
+    implementation(project(":platform:ai-firebase"))
 
     implementation(project(":core:designsystem"))
     implementation(platform(libs.androidx.compose.bom))
@@ -136,10 +138,9 @@ dependencies {
     androidTestImplementation(libs.androidx.test.uiautomator)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
-    // AI lab and coach, debug builds only until the coach ships, so release stays offline.
-    debugImplementation(project(":platform:ai-firebase"))
-    debugImplementation(project(":feature:coach:ui"))
-    debugImplementation(platform(libs.firebase.bom))
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.appcheck.playintegrity)
+    // AI lab and the App Check debug provider, debug builds only.
     debugImplementation(libs.firebase.ai)
     debugImplementation(libs.firebase.appcheck.debug)
 }

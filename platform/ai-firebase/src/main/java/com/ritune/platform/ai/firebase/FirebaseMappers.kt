@@ -1,5 +1,6 @@
 package com.ritune.platform.ai.firebase
 
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.ai.type.Content
 import com.google.firebase.ai.type.ContentBlockedException
 import com.google.firebase.ai.type.FunctionCallPart
@@ -31,9 +32,16 @@ internal fun CoachTool.toDeclaration() = FunctionDeclaration(
     parameters.filterNot { it.required }.map { it.name },
 )
 
-private fun ToolParameter.toSchema() = when (type) {
+internal fun ToolParameter.toSchema(): Schema = when (type) {
     ToolParameterType.INTEGER -> Schema.integer(description)
     ToolParameterType.STRING -> Schema.string(description)
+    ToolParameterType.OBJECT_LIST -> Schema.array(
+        Schema.obj(
+            fields.associate { it.name to it.toSchema() },
+            fields.filterNot { it.required }.map { it.name },
+        ),
+        description,
+    )
 }
 
 internal fun FunctionCallPart.toToolCall() = ToolCall(
@@ -71,7 +79,11 @@ internal fun Throwable.toCoachError(): CoachError = when {
     this is PromptBlockedException || this is ResponseStoppedException ||
             this is ContentBlockedException -> CoachError.BLOCKED
 
-    this is RequestTimeoutException || causes().any { it is IOException } -> CoachError.NETWORK
+    this is RequestTimeoutException ||
+            causes().any {
+                it is IOException || it is FirebaseNetworkException
+            } -> CoachError.NETWORK
+
     else -> CoachError.UNKNOWN
 }
 

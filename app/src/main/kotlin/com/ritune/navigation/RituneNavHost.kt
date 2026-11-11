@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import com.ritune.core.designsystem.theme.RituneMotion
 import com.ritune.core.designsystem.theme.rememberReducedMotion
 import com.ritune.core.designsystem.theme.rituneTween
+import com.ritune.feature.coach.ui.navigation.coachScreen
 import com.ritune.feature.onboarding.ui.navigation.onboardingScreen
 import com.ritune.feature.player.ui.navigation.playerGraph
 import com.ritune.feature.rhythm.ui.navigation.rhythmScreen
@@ -52,7 +53,7 @@ fun RituneNavHost(
         )
         rhythmScreen(
             onOpenSettings = { navController.navigateToSettings() },
-            onOpenCoach = navController.coachOpener(),
+            onOpenCoach = { navController.navigateToCoach() },
         )
         routinesGraph(
             navController = navController,
@@ -64,7 +65,7 @@ fun RituneNavHost(
             onClose = { navController.popBackStack() },
             onSummaryDone = { navController.popBackStack() },
         )
-        settingsGraph(navController, onOpenCoach = navController.coachOpener())
-        coachDestination(navController)
+        settingsGraph(navController, onOpenCoach = { navController.navigateToCoach() })
+        coachScreen(onBack = { navController.popBackStack() })
     }
 }

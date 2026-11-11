@@ -162,11 +162,11 @@ private fun ColumnScope.Consent(onEvent: (CoachUiEvent) -> Unit, onBack: () -> U
 private fun ColumnScope.Chat(state: CoachUiState.Chat, onEvent: (CoachUiEvent) -> Unit) {
     val colors = MaterialTheme.colorScheme
     val listState = rememberLazyListState()
-    LaunchedEffect(state.messages.size) {
-        if (state.messages.isNotEmpty()) listState.animateScrollToItem(state.messages.lastIndex)
+    LaunchedEffect(state.items.size) {
+        if (state.items.isNotEmpty()) listState.animateScrollToItem(state.items.lastIndex)
     }
 
-    if (state.messages.isEmpty()) {
+    if (state.items.isEmpty()) {
         Starters(onEvent, Modifier.weight(1f))
     } else {
         LazyColumn(
@@ -176,15 +176,21 @@ private fun ColumnScope.Chat(state: CoachUiState.Chat, onEvent: (CoachUiEvent) -
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(Ritune.spacing.md),
         ) {
-            items(state.messages, key = { it.id }) { Message(it) }
+            items(state.items, key = { it.id }) { item ->
+                when (item) {
+                    is CoachMessage -> Message(item)
+                    is ProposalCard -> ProposalCardView(item, onEvent)
+                }
+            }
         }
     }
 
     val tool = state.activeTool
-    val waitingForText = state.answering && state.messages.lastOrNull()?.text?.isEmpty() == true
+    val last = state.items.lastOrNull()
+    val textStreaming = last is CoachMessage && !last.fromUser
     when {
         tool != null -> Activity(toolLabel(tool))
-        waitingForText -> Activity(R.string.coach_thinking)
+        state.answering && !state.waitingForApproval && !textStreaming -> Activity(R.string.coach_thinking)
     }
     state.error?.let { ErrorRow(it, onRetry = { onEvent(CoachUiEvent.Retry) }) }
 

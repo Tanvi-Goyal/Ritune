@@ -7,27 +7,32 @@ import com.ritune.core.models.coach.CoachException
 import com.ritune.core.models.coach.CoachInput
 import com.ritune.core.models.coach.CoachUsage
 import com.ritune.core.models.coach.ConversationId
+import com.ritune.core.models.coach.Decision
 import com.ritune.core.models.coach.ModelEvent
+import com.ritune.core.models.coach.Proposal
+import com.ritune.core.models.coach.ProposalOutcome
 import com.ritune.core.models.coach.ToolCall
+import com.ritune.core.models.coach.ToolResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
-/**
- * One coach turn, the agent loop: send the message, run any tools the model asks for, send their
- * results back, and repeat until the model answers with text only.
- */
 class RunCoachTurn @Inject constructor(
     private val gateway: CoachGateway,
     private val tools: CoachToolExecutor,
+    private val applyProposal: ApplyCoachProposal,
 ) {
     operator fun invoke(
         conversation: ConversationId,
-        message: String
+        message: String,
+        approve: suspend (Proposal) -> Decision,
+        undone: List<Proposal> = emptyList(),
     ): Flow<CoachEvent> = flow {
-        var input: CoachInput = CoachInput.UserMessage(message)
+        var input: CoachInput = CoachInput.UserMessage(
+            CoachNotes.withUndone(message, undone)
+        )
         var usage = CoachUsage()
         var toolRounds = 0
         while (true) {
@@ -49,9 +54,27 @@ class RunCoachTurn @Inject constructor(
                 return@flow
             }
             toolRounds++
-            val results = calls.map { call ->
-                emit(CoachEvent.ToolRunning(call.name))
-                tools.execute(call)
+            val results = mutableListOf<ToolResult>()
+            var proposed = false
+            for (call in calls) {
+                val write = tools.isWriteTool(call.name)
+                if (write && proposed) {
+                    results += tools.oneAtATime(call)
+                    continue
+                }
+                if (!write) emit(CoachEvent.ToolRunning(call.name))
+                when (val outcome = tools.execute(call)) {
+                    is ToolOutcome.Done -> results += outcome.result
+                    is ToolOutcome.NeedsApproval -> {
+                        proposed = true
+                        val decided = when (approve(outcome.proposal)) {
+                            Decision.APPLY -> applyProposal(outcome.proposal)
+                            Decision.DECLINE -> ProposalOutcome.Declined
+                        }
+                        emit(CoachEvent.ProposalResolved(decided))
+                        results += tools.decided(call, decided)
+                    }
+                }
             }
             input = CoachInput.ToolResults(results)
         }

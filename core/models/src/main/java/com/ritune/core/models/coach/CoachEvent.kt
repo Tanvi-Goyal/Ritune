@@ -5,6 +5,7 @@ data class ConversationId(val value: String)
 sealed interface CoachEvent {
     data class TextDelta(val text: String) : CoachEvent
     data class ToolRunning(val tool: String) : CoachEvent
+    data class ProposalResolved(val outcome: ProposalOutcome) : CoachEvent
     data class Done(val usage: CoachUsage) : CoachEvent
     data class Failed(val error: CoachError) : CoachEvent
 }

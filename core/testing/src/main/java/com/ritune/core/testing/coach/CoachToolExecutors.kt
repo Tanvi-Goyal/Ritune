@@ -4,17 +4,28 @@ import com.ritune.core.domain.repositories.AnchorEventRepository
 import com.ritune.core.domain.repositories.AnchorRepository
 import com.ritune.core.domain.repositories.RoutineRepository
 import com.ritune.core.domain.repositories.RunHistoryRepository
+import com.ritune.core.domain.usecases.anchor.CorrectAnchorTime
 import com.ritune.core.domain.usecases.anchor.ObserveAnchors
+import com.ritune.core.domain.usecases.anchor.UpdateAnchorTarget
+import com.ritune.core.domain.usecases.coach.ApplyCoachProposal
 import com.ritune.core.domain.usecases.coach.CoachToolExecutor
+import com.ritune.core.domain.usecases.coach.UndoCoachChange
 import com.ritune.core.domain.usecases.coach.tools.AnchorEventsTool
 import com.ritune.core.domain.usecases.coach.tools.AnchorsTool
+import com.ritune.core.domain.usecases.coach.tools.ProposeAnchorTargetTool
+import com.ritune.core.domain.usecases.coach.tools.ProposeLogCorrectionTool
+import com.ritune.core.domain.usecases.coach.tools.ProposeRoutineTool
 import com.ritune.core.domain.usecases.coach.tools.RoutinesTool
 import com.ritune.core.domain.usecases.coach.tools.RunHistoryTool
 import com.ritune.core.domain.usecases.coach.tools.WeekRhythmTool
 import com.ritune.core.domain.usecases.rhythm.ObserveCurrentDay
 import com.ritune.core.domain.usecases.rhythm.ObserveWeekRhythm
+import com.ritune.core.domain.usecases.routine.DeleteRoutine
 import com.ritune.core.domain.usecases.routine.ObserveRoutines
+import com.ritune.core.domain.usecases.routine.SaveRoutine
+import com.ritune.core.models.IdGenerator
 import com.ritune.core.models.Timekeeper
+import com.ritune.core.testing.id.SequentialIdGenerator
 import com.ritune.core.testing.repository.FakeAnchorEventRepository
 import com.ritune.core.testing.repository.FakeAnchorRepository
 import com.ritune.core.testing.repository.FakeRoutineRepository
@@ -37,5 +48,26 @@ fun coachToolExecutor(
         AnchorEventsTool(observeAnchors, events, timekeeper),
         RunHistoryTool(runs, timekeeper),
         RoutinesTool(ObserveRoutines(routines), observeAnchors),
+        ProposeAnchorTargetTool(observeAnchors),
+        ProposeRoutineTool(observeAnchors),
+        ProposeLogCorrectionTool(observeAnchors, events, timekeeper),
     )
 }
+
+fun applyCoachProposal(
+    timekeeper: Timekeeper,
+    anchors: AnchorRepository = FakeAnchorRepository(),
+    events: AnchorEventRepository = FakeAnchorEventRepository(),
+    routines: RoutineRepository = FakeRoutineRepository(),
+    ids: IdGenerator = SequentialIdGenerator(),
+) = ApplyCoachProposal(
+    UpdateAnchorTarget(anchors),
+    SaveRoutine(routines, ids),
+    CorrectAnchorTime(events, timekeeper, ids),
+)
+
+fun undoCoachChange(
+    anchors: AnchorRepository = FakeAnchorRepository(),
+    events: AnchorEventRepository = FakeAnchorEventRepository(),
+    routines: RoutineRepository = FakeRoutineRepository(),
+) = UndoCoachChange(UpdateAnchorTarget(anchors), DeleteRoutine(routines), events)

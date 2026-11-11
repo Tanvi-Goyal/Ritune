@@ -142,5 +142,4 @@ dependencies {
     implementation(libs.firebase.appcheck.playintegrity)
     debugImplementation(libs.firebase.ai)
     debugImplementation(libs.firebase.appcheck.debug)
-    debugImplementation(libs.firebase.appcheck.debug.testing)
 }

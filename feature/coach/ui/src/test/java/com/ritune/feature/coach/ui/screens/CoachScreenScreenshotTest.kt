@@ -88,7 +88,7 @@ class CoachScreenScreenshotTest {
         composeTestRule.captureScreenVariants("coach_proposal_target") {
             Coach(
                 CoachUiState.Chat(
-                    items = listOf(previewQuestion, ProposalCard(1, previewTargetProposal, ProposalStatus.Pending)),
+                    items = listOf(previewMoveQuestion, ProposalCard(1, previewTargetProposal, ProposalStatus.Pending)),
                     answering = true,
                 ),
             )
@@ -100,7 +100,7 @@ class CoachScreenScreenshotTest {
         composeTestRule.captureScreenSizes("coach_proposal_routine") {
             Coach(
                 CoachUiState.Chat(
-                    items = listOf(previewQuestion, ProposalCard(1, previewRoutineProposal, ProposalStatus.Pending)),
+                    items = listOf(previewRoutineQuestion, ProposalCard(1, previewRoutineProposal, ProposalStatus.Pending)),
                     answering = true,
                 ),
             )
@@ -111,7 +111,23 @@ class CoachScreenScreenshotTest {
     fun appliedLogProposal() {
         composeTestRule.captureScreenVariants("coach_proposal_applied") {
             val applied = ProposalStatus.Applied(AppliedChange.LogCorrected(previewLogProposal))
-            Coach(CoachUiState.Chat(items = listOf(previewQuestion, ProposalCard(1, previewLogProposal, applied))))
+            Coach(CoachUiState.Chat(items = listOf(previewLogQuestion, ProposalCard(1, previewLogProposal, applied))))
+        }
+    }
+
+    @Test
+    fun appliedTargetWithReply() {
+        composeTestRule.captureScreenSizes("coach_proposal_target_applied") {
+            val applied = ProposalStatus.Applied(AppliedChange.TargetChanged(previewTargetProposal))
+            Coach(
+                CoachUiState.Chat(
+                    items = listOf(
+                        previewMoveQuestion,
+                        ProposalCard(1, previewTargetProposal, applied),
+                        CoachMessage(id = 2, fromUser = false, text = "Done. Screens off is now set for 22:00."),
+                    ),
+                ),
+            )
         }
     }
 }

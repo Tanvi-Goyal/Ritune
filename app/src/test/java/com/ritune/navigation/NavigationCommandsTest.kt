@@ -11,6 +11,7 @@ import androidx.navigation.navigation
 import androidx.navigation.testing.TestNavHostController
 import androidx.navigation.toRoute
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.ritune.feature.coach.ui.navigation.CoachRoute
 import com.ritune.feature.onboarding.ui.navigation.OnboardingRoute
 import com.ritune.feature.player.ui.navigation.PlayerRoute
 import com.ritune.feature.player.ui.navigation.SummaryRoute
@@ -51,6 +52,7 @@ class NavigationCommandsTest {
                 navigation<SettingsGraph>(startDestination = SettingsRoute) {
                     composable<SettingsRoute> {}
                 }
+                composable<CoachRoute> {}
             }
         }
     }
@@ -143,6 +145,28 @@ class NavigationCommandsTest {
         assertEquals(listOf(TodayRoute::class), backStack())
     }
 
+    @Test
+    fun navigateToCoach_twice_opensOneCopyOverTheCurrentScreen() {
+        setUpGraph()
+        navigate { navigateToTopLevel(TopLevelDestination.RHYTHM) }
+
+        navigate { navigateToCoach() }
+        navigate { navigateToCoach() }
+
+        assertEquals(listOf(TodayRoute::class, RhythmRoute::class, CoachRoute::class), backStack())
+    }
+
+    @Test
+    fun backFromCoach_returnsToWhereItOpened() {
+        setUpGraph()
+        navigate { navigateToTopLevel(TopLevelDestination.RHYTHM) }
+        navigate { navigateToCoach() }
+
+        navigate { popBackStack() }
+
+        assertEquals(listOf(TodayRoute::class, RhythmRoute::class), backStack())
+    }
+
     private companion object {
         val ROUTES = listOf(
             OnboardingRoute::class,
@@ -152,6 +176,7 @@ class NavigationCommandsTest {
             PlayerRoute::class,
             SummaryRoute::class,
             SettingsRoute::class,
+            CoachRoute::class,
         )
     }
 }

@@ -14,13 +14,20 @@
 #   STATES="dayone compiled"  (default: compiled)
 #   A_COMMIT=79f03b4  checks A_DIR against this commit instead of the merge-base
 #   REPS=2  resumes at the second A, B pair after an interrupted run (default: "1 2")
+#   PHONE=pixel  runs on the Pixel 9 Pro instead of the Redmi (default: redmi)
 # Needs the RITUNE_KEYSTORE_* variables, like any benchmark build.
 set -euo pipefail
 
 B_DIR=$(cd "$(dirname "$0")/../.." && pwd)
 A_DIR=${A_DIR:-$B_DIR/../Ritune-p4-main}
 FIX=${FIX:?set FIX to the fix name, for example routines-lazy-list}
-export ANDROID_SERIAL=${ANDROID_SERIAL:-de0a757d}
+PHONE=${PHONE:-redmi}
+case $PHONE in
+  redmi) SERIAL=de0a757d ;;
+  pixel) SERIAL=53171FDAP000HQ ;;
+  *) echo "PHONE must be redmi or pixel"; exit 1 ;;
+esac
+export ANDROID_SERIAL=${ANDROID_SERIAL:-$SERIAL}
 OUT_SUB=benchmark/build/outputs/connected_android_test_additional_output/benchmark/connected
 DATE=$(date -u +%F)
 TESTS=("$@")
@@ -42,7 +49,7 @@ run() { # side test state rep
     args+=(-Pandroid.testInstrumentationRunnerArguments.seedRoutines=$SEED_ROUTINES)
     seed=-R$SEED_ROUTINES
   fi
-  local name=$DATE-redmi-p4-$FIX-${test##*#}$seed-$state-$side$rep
+  local name=$DATE-$PHONE-p4-$FIX-${test##*#}$seed-$state-$side$rep
   echo "== $name, started $(date -u +%T) UTC"
   (cd "$dir" && ./gradlew -q :benchmark:connectedBenchmarkAndroidTest "${args[@]}")
   # If MIUI's "Install via USB" prompt isn't accepted, nothing installs, zero tests run and Gradle

@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import kotlin.time.Instant
 
 class FakeRunHistoryRepository(
     summaries: List<RunSummary> = emptyList(),
@@ -15,6 +16,10 @@ class FakeRunHistoryRepository(
     val summaries = MutableStateFlow(summaries.associateBy { it.runId })
 
     override fun observe(runId: RunId): Flow<RunSummary?> = summaries.map { it[runId] }
+
+    override fun observeSince(from: Instant): Flow<List<RunSummary>> = summaries.map { all ->
+        all.values.filter { it.startedAt >= from }.sortedByDescending { it.startedAt }
+    }
 
     override suspend fun save(summary: RunSummary) {
         summaries.update { it + (summary.runId to summary) }

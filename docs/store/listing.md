@@ -38,10 +38,13 @@ Add, edit and reorder steps, set how long each one lasts, and link a routine to 
 CUES THAT KEEP TIME FOR YOU
 At each step Ritune can buzz, ring a soft bell and read the step name aloud, with a 3-2-1 countdown before the next step and a chime when you finish. Turn any cue on or off, even mid-routine; changes apply from the next step. Pause, resume, skip or stop from the app or the notification. The routine keeps running with the screen off, so you can put your phone down and follow along.
 
+ASK THE RHYTHM COACH
+Optional and off until you turn it on. Ask about your week in plain words and get short answers based on your own logs. The coach can suggest a new target time, a routine or a fix to a log, and nothing changes until you tap Apply. It runs on Google's Gemini, and it isn't medical advice.
+
 PRIVATE BY DESIGN
 • No account, no ads, no analytics
-• Ritune does not ask for internet access
 • Your logs, routines and history stay on your phone
+• Only the coach uses the internet, and only after you turn it on
 • Delete all data from Settings at any time
 
 LIGHT AND DARK THEMES
@@ -88,17 +91,38 @@ shortService is limited to about three minutes, but routines run from 5 to over 
 
 ## Data safety (Policy > App content > Data safety)
 
+Since 1.0.2 the optional rhythm coach sends data off the device, so the app collects data under Play's definition. These answers cover the release build: Firebase AI Logic, Firebase Authentication (anonymous) and Firebase App Check with Play Integrity. It has no analytics, crash reporting, ads or Firebase Installations.
+
+### Data collection and security
+
 | Question | Answer |
 |---|---|
-| Does your app collect or share any of the required user data types? | **No** |
+| Does your app collect or share any of the required user data types? | **Yes** |
+| Is all of the user data collected by your app encrypted in transit? | **Yes** (Firebase uses HTTPS) |
+| Which account creation methods does your app support? | **My app does not allow users to create an account** (the anonymous Firebase ID is not an account the user can sign in to) |
+| Do you provide a way for users to request that their data is deleted? | **Yes**. Turning the coach off or "Delete all data" deletes the anonymous ID. Leave the deletion URL empty unless the form requires one |
 
-Answering No ends the questionnaire. Why it's accurate:
-- The app has no `INTERNET` permission and contains no SDKs that send data (no analytics, crash reporting or ads).
-- Data stored only on the device is not "collected" under Play's definition.
-- Android Auto Backup is handled by the system under the user's Google account, not sent to the developer, so it is not collection by the app.
-- Text-to-speech uses the engine already on the device; the app doesn't send data anywhere.
+### Data types
 
-If you later add analytics, crash reporting or any network feature, update this form before releasing that version.
+| Category › type | Collected | Shared | Ephemeral | Required or optional | Purposes |
+|---|---|---|---|---|---|
+| Health and fitness › Health info | Yes | Yes | No | Optional | App functionality |
+| Health and fitness › Fitness info | Yes | Yes | No | Optional | App functionality |
+| App activity › Other user-generated content | Yes | Yes | No | Optional | App functionality |
+| Device or other IDs | Yes | No | No | Optional | App functionality, Fraud prevention, security, and compliance |
+
+Why each one:
+- **Health info**: the coach sends wake and lights-out logs and targets, which describe sleep.
+- **Fitness info**: the coach sends routines, run history and movement anchors.
+- **Other user-generated content**: the questions typed to the coach.
+- **Device or other IDs**: the anonymous Firebase Authentication ID, sent with every coach request and used to limit requests per install. Play Integrity also sends device attestation data. Google Play handles that data, but it is covered here too.
+- **Shared**: the Gemini API free tier lets Google use requests to improve its products. That goes beyond a service provider acting only on our instructions, so coach content is marked shared. The ID is used by Firebase only to run the service, so it is collected, not shared.
+- **Optional**: nothing is sent unless the user turns the coach on.
+- **Not declared**: Firebase Authentication logs IP addresses for abuse prevention. They are not used to infer location, so Approximate location is not declared.
+
+Sources: [Firebase data disclosure](https://firebase.google.com/docs/android/play-data-disclosure), [Play Integrity data safety](https://developer.android.com/google/play/integrity/terms), [Play Console Help](https://support.google.com/googleplay/android-developer/answer/10787469).
+
+Update this form before releasing any version that adds a library or feature that sends data.
 
 ## Other App content answers
 
@@ -113,4 +137,4 @@ If you later add analytics, crash reporting or any network feature, update this 
 | Health apps | Tick only the activity/fitness and sleep-related feature options (exact labels vary in the form); none of the medical, clinical or disease-management ones |
 | Government app | No |
 | Financial features | None |
-| Data deletion | Not applicable (no account, no data collected) |
+| Data deletion | In-app: turning the coach off or "Delete all data" deletes the anonymous ID. No account to delete |

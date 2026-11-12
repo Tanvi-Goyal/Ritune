@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.ritune.android.library)
     alias(libs.plugins.ritune.hilt)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -10,4 +11,5 @@ android {
 dependencies {
     api(project(":core:models"))
     api(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.serialization.json)
 }

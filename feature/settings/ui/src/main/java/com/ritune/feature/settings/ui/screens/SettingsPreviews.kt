@@ -20,6 +20,7 @@ private fun content(
     sound = sound,
     countdown = false,
     theme = theme,
+    coach = false,
     routineActive = routineActive,
     themeSheetOpen = false,
     confirmingDelete = confirmingDelete,

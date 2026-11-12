@@ -27,6 +27,7 @@ Single activity, Navigation Compose with type-safe routes (`@Serializable`). Fea
 | `SummaryRoute(runId)` | Replaces the player | player | No | `ritune://summary/{runId}` |
 | `SettingsGraph` > `SettingsRoute` | Pushed (gear icon) | settings | No | none |
 | `RemindersRoute` | Pushed from Settings | settings | No | none |
+| `CoachRoute` | Pushed from Rhythm or Settings | coach | No | none |
 
 ## Back stack rules
 

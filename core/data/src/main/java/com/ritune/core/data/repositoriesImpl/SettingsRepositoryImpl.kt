@@ -29,6 +29,7 @@ class SettingsRepositoryImpl @Inject constructor(
         val SOUND_ENABLED = booleanPreferencesKey("sound_enabled")
         val COUNTDOWN_ENABLED = booleanPreferencesKey("countdown_enabled")
         val THEME = stringPreferencesKey("theme")
+        val COACH_ENABLED = booleanPreferencesKey("coach_enabled")
     }
 
     override fun observe(): Flow<AppSettings> {
@@ -60,6 +61,7 @@ class SettingsRepositoryImpl @Inject constructor(
             theme = this[PreferencesKeys.THEME]
                 ?.let { name -> ThemeSetting.entries.firstOrNull { it.name == name } }
                 ?: defaults.theme,
+            coachEnabled = this[PreferencesKeys.COACH_ENABLED] ?: defaults.coachEnabled,
         )
     }
 
@@ -69,5 +71,6 @@ class SettingsRepositoryImpl @Inject constructor(
         this[PreferencesKeys.SOUND_ENABLED] = settings.soundEnabled
         this[PreferencesKeys.COUNTDOWN_ENABLED] = settings.countdownEnabled
         this[PreferencesKeys.THEME] = settings.theme.name
+        this[PreferencesKeys.COACH_ENABLED] = settings.coachEnabled
     }
 }

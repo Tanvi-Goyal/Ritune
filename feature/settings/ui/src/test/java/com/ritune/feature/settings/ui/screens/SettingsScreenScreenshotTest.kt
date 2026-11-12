@@ -33,6 +33,7 @@ class SettingsScreenScreenshotTest {
         sound = true,
         countdown = true,
         theme = ThemeSetting.SYSTEM,
+        coach = false,
         routineActive = false,
         themeSheetOpen = false,
         confirmingDelete = false,
@@ -40,11 +41,27 @@ class SettingsScreenScreenshotTest {
     )
 
     @Composable
-    private fun Screen(state: SettingsUiState) {
+    private fun Screen(
+        state: SettingsUiState,
+        onOpenCoach: (() -> Unit)? = null
+    ) {
         RituneTheme {
             Surface(color = MaterialTheme.colorScheme.background) {
-                SettingsContent(state, remember { SnackbarHostState() }, onEvent = {}, onBack = {})
+                SettingsContent(
+                    state,
+                    remember { SnackbarHostState() },
+                    onEvent = {},
+                    onBack = {},
+                    onOpenCoach = onOpenCoach,
+                )
             }
+        }
+    }
+
+    @Test
+    fun settings_withCoach() {
+        composeTestRule.captureScreenSizes("settings_with_coach") {
+            Screen(content.copy(coach = true), onOpenCoach = {})
         }
     }
 

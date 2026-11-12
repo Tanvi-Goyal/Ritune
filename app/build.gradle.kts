@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.ritune.hilt)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.androidx.baselineprofile)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -60,6 +61,9 @@ android {
         }
     }
 
+    sourceSets["release"].kotlin.srcDir("src/playIntegrity/kotlin")
+    sourceSets["benchmark"].kotlin.srcDir("src/playIntegrity/kotlin")
+
     buildFeatures {
         compose = true
     }
@@ -107,6 +111,8 @@ dependencies {
     implementation(project(":feature:today:ui"))
     implementation(project(":feature:player:ui"))
     implementation(project(":feature:settings:ui"))
+    implementation(project(":feature:coach:ui"))
+    implementation(project(":platform:ai-firebase"))
 
     implementation(project(":core:designsystem"))
     implementation(platform(libs.androidx.compose.bom))
@@ -131,4 +137,9 @@ dependencies {
     androidTestImplementation(libs.androidx.navigation.testing)
     androidTestImplementation(libs.androidx.test.uiautomator)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.appcheck.playintegrity)
+    debugImplementation(libs.firebase.ai)
+    debugImplementation(libs.firebase.appcheck.debug)
 }

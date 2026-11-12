@@ -13,6 +13,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import kotlin.test.assertEquals
+import kotlin.time.Instant
 
 @RunWith(AndroidJUnit4::class)
 class RunHistoryRepositoryImplTest {
@@ -42,5 +43,18 @@ class RunHistoryRepositoryImplTest {
 
         assertEquals(summary, repository.observe(summary.runId).first())
         assertEquals("Morning", database.runDao().observe(summary.runId.value).first()?.routineName)
+    }
+
+    @Test
+    fun observeSince_returnsRunsFromThatMomentNewestFirst() = runTest {
+        val routine = aRoutine()
+        val before = aRunSummary(routine, runId = "before", startedAt = Instant.parse("2026-01-01T06:59:59Z"))
+        val atStart = aRunSummary(routine, runId = "at", startedAt = Instant.parse("2026-01-01T07:00:00Z"))
+        val later = aRunSummary(routine, runId = "later", startedAt = Instant.parse("2026-01-03T07:00:00Z"))
+        listOf(before, later, atStart).forEach { repository.save(it) }
+
+        val runs = repository.observeSince(Instant.parse("2026-01-01T07:00:00Z")).first()
+
+        assertEquals(listOf(later, atStart), runs)
     }
 }

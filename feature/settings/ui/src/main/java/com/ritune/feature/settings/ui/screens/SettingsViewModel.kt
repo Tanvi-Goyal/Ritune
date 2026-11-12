@@ -3,6 +3,7 @@ package com.ritune.feature.settings.ui.screens
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ritune.core.domain.usecases.DeleteAllData
+import com.ritune.core.domain.usecases.coach.TurnOffCoach
 import com.ritune.core.domain.usecases.player.ObservePlayerState
 import com.ritune.core.domain.usecases.settings.ObserveSettings
 import com.ritune.core.domain.usecases.settings.UpdateSettings
@@ -28,6 +29,7 @@ class SettingsViewModel @Inject constructor(
     private val updateSettings: UpdateSettings,
     observePlayerState: ObservePlayerState,
     private val deleteAllData: DeleteAllData,
+    private val turnOffCoach: TurnOffCoach,
 ) : ViewModel() {
 
     private data class Local(
@@ -71,6 +73,8 @@ class SettingsViewModel @Inject constructor(
             is SettingsEvent.CountdownChanged -> change {
                 it.copy(countdownEnabled = event.enabled)
             }
+
+            SettingsEvent.CoachTurnedOff -> viewModelScope.launch { turnOffCoach() }
 
             SettingsEvent.ThemeClicked -> local.update {
                 it.copy(themeSheetOpen = true)
@@ -130,6 +134,7 @@ class SettingsViewModel @Inject constructor(
             sound = settings.soundEnabled,
             countdown = settings.countdownEnabled,
             theme = settings.theme,
+            coach = settings.coachEnabled,
             routineActive = player is PlayerState.Running || player is PlayerState.Paused,
             themeSheetOpen = local.themeSheetOpen,
             confirmingDelete = local.confirmingDelete,

@@ -12,6 +12,7 @@ sealed interface SettingsUiState {
         val sound: Boolean,
         val countdown: Boolean,
         val theme: ThemeSetting,
+        val coach: Boolean,
         val routineActive: Boolean,
         val themeSheetOpen: Boolean,
         val confirmingDelete: Boolean,
@@ -24,6 +25,7 @@ sealed interface SettingsEvent {
     data class SpeechChanged(val enabled: Boolean) : SettingsEvent
     data class SoundChanged(val enabled: Boolean) : SettingsEvent
     data class CountdownChanged(val enabled: Boolean) : SettingsEvent
+    data object CoachTurnedOff : SettingsEvent
     data object ThemeClicked : SettingsEvent
     data class ThemeSelected(val theme: ThemeSetting) : SettingsEvent
     data object DismissTheme : SettingsEvent

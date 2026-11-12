@@ -15,13 +15,17 @@ data object SettingsGraph
 @Serializable
 data object SettingsRoute
 
-fun NavGraphBuilder.settingsGraph(navController: NavController) {
+fun NavGraphBuilder.settingsGraph(
+    navController: NavController,
+    onOpenCoach: (() -> Unit)?
+) {
     navigation<SettingsGraph>(startDestination = SettingsRoute) {
         composable<SettingsRoute> {
             val viewModel: SettingsViewModel = hiltViewModel()
             SettingsScreen(
                 viewModel = viewModel,
                 onBack = { navController.popBackStack() },
+                onOpenCoach = onOpenCoach,
             )
         }
     }

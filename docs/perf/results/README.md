@@ -15,7 +15,7 @@ Perfetto traces are not committed; they are 1–2 MB each. Rebuild them by rerun
 
 ## Sessions
 
-Only compare folders from the same session. The Redmi's timings shifted between sessions 1 and 2 on 2026-11-01, for old and new code alike (see "Sessions" and "The Redmi drifts between sessions" in `performance.md`). Each later day is a new session.
+Only compare folders from the same session. The Redmi's timings shifted between sessions 1 and 2 on 2026-11-01, for old and new code alike (see [Sessions](../../performance/benchmark-harness.md#sessions) and [The Redmi drifts between sessions](../../performance/phase-2-macrobenchmark.md#the-redmi-drifts-between-sessions)). Each later day is a new session.
 
 | Session (UTC, 2026-11-01) | Redmi folders |
 |---|---|
@@ -35,5 +35,5 @@ Only compare folders from the same session. The Redmi's timings shifted between 
 - Gradle clears `benchmark/build/outputs/connected_android_test_additional_output/` on every run. Copy each result here straight after its run.
 - `2026-11-01-redmi-startup-day-one` kept no traces, so session 1's cold start can't be broken down from its own run.
 - `2026-11-01-redmi-startup-ab-old-0afdb46` ran the old commit, whose `seed.txt` has no `longRoutine` field. That commit had no long routine, so it is the same as `longRoutine=false`.
-- Session 4 is the fifth attempt at the Phase 3 runs. Earlier attempts stopped on MIUI's "Install via USB" prompt or on auto-rotate (see "Phase 3: Baseline Profiles", run notes, in `performance.md`), and their files live in `superseded/`, which is not committed. Open Detail ran about 40 minutes after the other two journeys. Its compiled runs were redone as a set of four, after an install prompt stopped them.
+- Session 4 is the fifth attempt at the Phase 3 runs. Earlier attempts stopped on MIUI's "Install via USB" prompt or on auto-rotate (see the run notes in [Phase 3: Baseline Profiles](../../performance/phase-3-baseline-profiles.md)), and their files live in `superseded/`, which is not committed. Open Detail ran about 40 minutes after the other two journeys. Its compiled runs were redone as a set of four, after an install prompt stopped them.
 - Session 3's first cold run was lost: the warm and `skipSteps` runs started before it was copied, and each run clears the output folder. `2026-11-02-redmi-startup-sections` is the rerun, made after `skipSteps`. The first warm run, if it ran, was lost the same way, and `2026-11-02-redmi-startup-sections-warm` is the run after cold.

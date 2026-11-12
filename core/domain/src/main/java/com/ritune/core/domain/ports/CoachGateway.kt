@@ -19,4 +19,6 @@ interface CoachGateway {
     ): Flow<ModelEvent>
 
     fun close(conversation: ConversationId)
+
+    suspend fun forgetUser()
 }

@@ -11,6 +11,8 @@ import kotlinx.serialization.Serializable
 internal data class RunHistoryResult(
     val days: Int,
     @SerialName("total_runs") val totalRuns: Int,
+    @SerialName("finished_runs") val finishedRuns: Int,
+    @SerialName("stopped_runs") val stoppedRuns: Int,
     val runs: List<RunItem>,
 )
 
@@ -29,6 +31,8 @@ internal data class RunItem(
 internal fun List<RunSummary>.toResult(days: Int, zone: TimeZone, maxRuns: Int) = RunHistoryResult(
     days = days,
     totalRuns = size,
+    finishedRuns = count { it.outcome == RunOutcome.COMPLETED },
+    stoppedRuns = count { it.outcome == RunOutcome.STOPPED },
     runs = take(maxRuns).map { run ->
         val start = run.startedAt.toLocalDateTime(zone)
         RunItem(

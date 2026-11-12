@@ -52,6 +52,8 @@ class RunHistoryToolTest {
         val result = runHistory()
 
         assertEquals(2, result["total_runs"]!!.jsonPrimitive.int)
+        assertEquals(1, result["finished_runs"]!!.jsonPrimitive.int)
+        assertEquals(1, result["stopped_runs"]!!.jsonPrimitive.int)
         val newest = result["runs"]!!.jsonArray.first().jsonObject
         assertEquals("Morning", newest["routine"]!!.jsonPrimitive.content)
         assertEquals("2026-01-05", newest["date"]!!.jsonPrimitive.content)
@@ -72,6 +74,7 @@ class RunHistoryToolTest {
         val result = runHistory("days" to "1")
 
         assertEquals(RunHistoryTool.MAX_RUNS + 5, result["total_runs"]!!.jsonPrimitive.int)
+        assertEquals(RunHistoryTool.MAX_RUNS + 5, result["finished_runs"]!!.jsonPrimitive.int)
         assertEquals(RunHistoryTool.MAX_RUNS, result["runs"]!!.jsonArray.size)
     }
 }

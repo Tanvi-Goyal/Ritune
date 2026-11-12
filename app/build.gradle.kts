@@ -140,7 +140,6 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.appcheck.playintegrity)
-    // AI lab and the App Check debug provider, debug builds only.
     debugImplementation(libs.firebase.ai)
     debugImplementation(libs.firebase.appcheck.debug)
 }

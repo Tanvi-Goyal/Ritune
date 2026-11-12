@@ -23,6 +23,8 @@ class FakeCoachGateway : CoachGateway {
     var failure: CoachException? = null
     val sent = mutableListOf<CoachInput>()
     val closed = mutableListOf<ConversationId>()
+    var forgotUser = 0
+        private set
 
     fun reply(vararg events: ModelEvent) {
         replies += Reply(events.toList(), gate = null)
@@ -46,5 +48,9 @@ class FakeCoachGateway : CoachGateway {
 
     override fun close(conversation: ConversationId) {
         closed += conversation
+    }
+
+    override suspend fun forgetUser() {
+        forgotUser++
     }
 }

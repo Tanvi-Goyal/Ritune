@@ -26,4 +26,6 @@ player|Guided cues that keep time for you
 player_dark|Keeps going with the screen off
 rhythm_dark|Easy on the eyes at night
 settings|Your cues, your way
+coach_proposal|Ask the coach for a routine
+coach_applied|Nothing changes until you tap Apply
 EOF

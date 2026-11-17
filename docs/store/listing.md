@@ -9,7 +9,7 @@ Copy for Play Console. Character limits are noted next to each field.
 **Short description** (80):
 
 ```
-Log the anchors of your day and run guided routines that work with screen off.
+Log your day's anchors, run guided routines and ask an AI rhythm coach.
 ```
 
 **Full description** (4000):
@@ -43,8 +43,8 @@ Optional and off until you turn it on. Ask about your week in plain words and ge
 
 PRIVATE BY DESIGN
 • No account, no ads, no analytics
-• Your logs, routines and history stay on your phone
-• Only the coach uses the internet, and only after you turn it on
+• Your logs, routines and history are stored on your phone
+• Only the coach uses the internet, after you turn it on. It sends your question and the logs it needs to Google's Gemini
 • Delete all data from Settings at any time
 
 LIGHT AND DARK THEMES
@@ -58,7 +58,7 @@ Ritune is not a medical device and does not give medical advice. Check with a pr
 **Contact email**: goyaltanvi94@gmail.com
 **Privacy policy**: https://tanvi-goyal.github.io/Ritune/privacy-policy
 
-**Graphics**: `docs/store/out/icon-512.png`, `docs/store/out/feature-graphic.png`, `docs/store/out/screenshots/*.png` (upload in this order: today, rhythm, routines, editor, player, player_dark, rhythm_dark, settings).
+**Graphics**: `docs/store/out/icon-512.png`, `docs/store/out/feature-graphic.png`, `docs/store/out/screenshots/*.png` (upload in this order: today, rhythm, routines, editor, player, player_dark, rhythm_dark, settings, coach_proposal, coach_applied).
 
 ## Foreground service declaration (Policy > App content > Foreground service permissions)
 
